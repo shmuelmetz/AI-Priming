@@ -66,3 +66,17 @@ syntax and the OBJREXX RexxUtil subset.
 | 2026-05-03 | `rc` vs `result` applies to classic Rexx | AI incorrectly attributed to ooRexx only |
 | 2026-05-03 | `address...with` is standard Rexx, not ooRexx-only | Corrected 2026-05-04 |
 | 2026-05-03 | OBJREXX 6.00 limitations | ArcaOS compatibility issues |
+
+---
+
+## Do not overload keywords or special variable names
+
+Same rule applies in classic Rexx as in ooRexx. Special variables
+`rc`, `result`, and `sigl` must never be used as local variable names.
+Rexx keywords must not be used as variable or label names.
+
+See `../ooRexx/RULES.md` for the full keyword list.
+
+| Date | Rule added | Triggered by |
+|------|-----------|--------------|
+| 2026-05-05 | Do not overload keywords or special variable names | Applies equally to classic Rexx |

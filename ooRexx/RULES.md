@@ -178,3 +178,218 @@ unambiguous.
 | 2026-05-03 | String concatenation | PowerShell command string failures |
 | 2026-05-03 | `~translate` vs `~upper` | OBJREXX compatibility |
 | 2026-05-03 | Stream close | `miktex-update.log` not flushing |
+
+---
+
+## Collection classes
+
+ooRexx provides built-in collection classes. AI engines frequently
+generate Rexx-style stem code where ooRexx collection classes are
+more appropriate.
+
+```rexx
+/* Array -- ordered, integer-indexed */
+arr = .Array~new
+arr~append('first')
+arr~append('second')
+do item over arr
+    say item
+end
+
+/* Directory -- unordered, string-keyed (like a hash map) */
+dir = .Directory~new
+dir['key'] = 'value'
+say dir['key']
+
+/* OrderedCollection -- ordered, append/remove */
+oc = .OrderedCollection~new
+oc~append('a')
+oc~append('b')
+
+/* Bag, Set, Queue, Stack also available */
+```
+
+Do NOT generate stem-based collections (e.g. `items.0`, `items.1`)
+when an ooRexx collection class is appropriate. Stems are a classic
+Rexx idiom; collection objects are the ooRexx idiom.
+
+---
+
+## `do over` — iterating collections
+
+`do var over collection` iterates any ooRexx collection object:
+
+```rexx
+arr = .Array~of('a', 'b', 'c')
+do item over arr
+    say item
+end
+
+dir = .Directory~new
+dir['x'] = 1
+dir['y'] = 2
+do key over dir
+    say key '->' dir[key]
+end
+```
+
+This also works over stems:
+
+```rexx
+do key over myStem.
+    say key '->' myStem.[key]
+end
+```
+
+Do NOT generate `do i = 1 to stem.0` when `do over` is cleaner.
+
+---
+
+## Array notation for stems
+
+ooRexx supports array-style notation for stem access using `~[]`:
+
+```rexx
+/* Classic Rexx stem notation */
+stem.1 = 'first'
+say stem.1
+
+/* ooRexx array object -- preferred */
+arr = .Array~new(3)
+arr[1] = 'first'
+say arr[1]
+
+/* String-keyed access on Directory */
+dir = .Directory~new
+dir['name'] = 'Shmuel'
+say dir['name']
+```
+
+For mixed integer/string keyed collections (e.g. stdout lines plus
+metadata), use a `.Array` with named string indices alongside integer
+indices:
+
+```rexx
+outArr = .Array~new(out.0)
+do i = 1 to out.0
+    outArr[i] = out.i
+end
+outArr['rc'] = cmdRc      /* named index alongside numeric */
+```
+
+---
+
+## Session history (continued)
+
+| Date | Rule added | Triggered by |
+|------|-----------|--------------|
+| 2026-05-05 | Collection classes | AI generating stem code instead of `.Array`/`.Directory` |
+| 2026-05-05 | `do over` | AI generating `do i = 1 to stem.0` instead |
+| 2026-05-05 | Array notation for stems | `captureCmd` refactor using mixed-index `.Array` |
+
+---
+
+## `.Array` vs `.Directory` — correct class for the key type
+
+`.Array` only accepts **positive integer** subscripts. Using a string
+subscript on an `.Array` raises Error 93.907.
+
+For mixed integer/string keys, use a `.Directory`:
+
+```rexx
+/* WRONG -- .Array does not accept string subscripts */
+arr = .Array~new
+arr['rc'] = 0        /* Error 93.907 */
+
+/* CORRECT -- .Directory accepts any key */
+dir = .Directory~new
+dir['rc']  = 0
+dir['out'] = .Array~new
+dir['err'] = .Array~new
+```
+
+Standard pattern for capturing command output:
+
+```rexx
+captureCmd: procedure
+    parse arg cmd
+    address system cmd with output stem out. error stem err.
+    cmdRc = rc
+    outArr = .Array~new(out.0)
+    do i = 1 to out.0; outArr[i] = out.i; end
+    errArr = .Array~new(err.0)
+    do i = 1 to err.0; errArr[i] = err.i; end
+    result = .Directory~new
+    result['out'] = outArr
+    result['err'] = errArr
+    result['rc']  = cmdRc
+    return result
+
+/* Caller: */
+dir = captureCmd('some-command')
+if dir['rc'] = 0 then say 'OK'
+do item over dir['out']; say item; end
+do item over dir['err']; say '[stderr]' item; end
+```
+
+| Date | Rule added | Triggered by |
+|------|-----------|--------------|
+| 2026-05-05 | `.Array` only takes integer subscripts; use `.Directory` for mixed keys | Error 93.907 on `arr['rc']` |
+
+---
+
+## Reserved special variable names — never use as local variables
+
+Rexx has special variables that are set automatically. Never use these
+as local variable names inside procedures or functions:
+
+| Variable | Set by |
+|----------|--------|
+| `rc` | Host commands (`address system`, bare expressions) |
+| `result` | `call` and function return values |
+| `sigl` | Line number of last `signal` or `call` |
+
+Using `result` as a local variable name inside a procedure will
+conflict with the return value mechanism. Use descriptive names:
+`outDir`, `cmdRc`, `retVal`, etc.
+
+| Date | Rule added | Triggered by |
+|------|-----------|--------------|
+| 2026-05-05 | Never use `result`, `rc`, `sigl` as local variable names | Error 97 from `result = .Directory~new` inside `captureCmd` |
+
+---
+
+## Do not overload keywords or special variable names
+
+### Special variables — never use as variable names
+
+| Variable | Set by |
+|----------|--------|
+| `rc` | Host commands (`address system`, bare expressions) |
+| `result` | `call` and function return values |
+| `sigl` | Line number of last `signal` or `call` |
+
+### Keywords — never use as variable or label names
+
+Rexx keywords that must not be used as variable names:
+
+`address`, `arg`, `call`, `do`, `drop`, `else`, `end`, `exit`,
+`expose`, `forward`, `from`, `if`, `interpret`, `iterate`, `leave`,
+`loop`, `nop`, `numeric`, `options`, `otherwise`, `parse`, `procedure`,
+`pull`, `push`, `queue`, `raise`, `reply`, `return`, `routine`,
+`say`, `select`, `signal`, `then`, `to`, `trace`, `until`, `use`,
+`when`, `while`
+
+ooRexx-specific keywords (in addition to the above):
+
+`class`, `inherit`, `method`, `mixinclass`, `requires`, `self`,
+`subclass`, `super`
+
+### Rule
+
+Use descriptive names that cannot be confused with keywords or special
+variables: `outDir`, `cmdRc`, `retVal`, `loopIdx`, etc.
+
+| Date | Rule added | Triggered by |
+|------|-----------|--------------|
+| 2026-05-05 | Do not overload keywords or special variable names | `result = .Directory~new` conflicting with special variable `result` |

@@ -157,3 +157,47 @@ if osName = 'Windows_NT' then
 else
     sep = '/'
 ```
+
+---
+
+## Collection classes
+
+```rexx
+/* Array */
+arr = .Array~of('a', 'b', 'c')
+do item over arr
+    say item
+end
+
+/* Directory (string-keyed) */
+dir = .Directory~new
+dir['host'] = 'gmu.edu'
+dir['user'] = 'smetz3'
+do key over dir
+    say key '=' dir[key]
+end
+
+/* Mixed-index Array (numeric + named) */
+outArr = .Array~new(out.0)
+do i = 1 to out.0
+    outArr[i] = out.i
+end
+outArr['rc'] = cmdRc
+```
+
+---
+
+## Capturing command output and inspecting result
+
+```rexx
+/* Silent capture -- caller inspects */
+outArr = captureCmd('some-command')
+if outArr['rc'] = 0 then say 'OK'
+else say 'ERROR rc=' outArr['rc']
+
+/* Display all output */
+outArr = captureCmd('some-command')
+do i = 1 to outArr~size
+    if outArr[i] \== .nil then say outArr[i]
+end
+```
