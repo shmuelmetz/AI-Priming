@@ -80,3 +80,41 @@ See `../ooRexx/RULES.md` for the full keyword list.
 | Date | Rule added | Triggered by |
 |------|-----------|--------------|
 | 2026-05-05 | Do not overload keywords or special variable names | Applies equally to classic Rexx |
+
+---
+
+## `signal` — not a `goto`; flushes the entire call stack
+
+[CRITICAL]
+
+This is a property of all Rexx variants, not ooRexx-specific.
+See `../ooRexx/RULES.md` for the full treatment including wrong/correct
+patterns and the `signal on` vs `call on` distinction.
+
+Key points for classic Rexx:
+
+- `signal` flushes the entire call stack — all active `call` frames
+  and `do`/`select` blocks are gone. It is not a `goto`.
+- Use `leave` to exit a loop, `return` to exit a subroutine, `iterate`
+  to continue to the next loop iteration.
+- `signal on` is available in classic Rexx for non-resumable condition
+  handling (error, syntax, halt, novalue, notready, failure).
+- `call on` (resumable condition handling) is **not** available in
+  classic ANSI Rexx (X3.274-1996), TSO/E REXX, or OBJREXX 6.00
+  (ArcaOS). It is an ooRexx extension. Do not generate `call on` for
+  classic Rexx targets.
+
+| Date | Rule added | Triggered by |
+|------|-----------|--------------|
+| 2026-05-11 | `signal` is not `goto`; flushes stack; `call on` not in classic Rexx | Applies equally to classic Rexx |
+
+---
+
+## Placeholder names and general conventions
+
+See `../CONVENTIONS.md` for cross-language conventions including
+`foo`/`bar`/`baz` placeholder names and the `*office` shorthand.
+
+| Date | Rule added | Triggered by |
+|------|-----------|--------------|
+| 2026-05-11 | Cross-reference to CONVENTIONS.md | foo/bar/baz and *office moved to root |

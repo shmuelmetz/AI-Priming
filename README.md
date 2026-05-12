@@ -13,6 +13,7 @@ truth.
 
 ```
 AI-Priming/
+  CONVENTIONS.md  -- Cross-language conventions (foo/bar/baz, *office, etc.)
   <Language>/
     RULES.md        -- Corrections and rules the AI failed to ingest
     IDIOMS.md       -- Canonical idioms and patterns
@@ -38,8 +39,8 @@ Language directory names follow established casing conventions:
 
 At the start of a Claude or GPT session:
 
-1. Upload or paste `RULES.md`, `IDIOMS.md`, `BIBLIOGRAPHY.md`, and
-   `KEYWORDS.md` for the relevant language.
+1. Upload or paste `CONVENTIONS.md` plus `RULES.md`, `IDIOMS.md`,
+   `BIBLIOGRAPHY.md`, and `KEYWORDS.md` for the relevant language.
 2. Instruct the AI: *"Treat the uploaded documents as ground truth
    for this language. Where your training contradicts these rules,
    defer to the documents."*

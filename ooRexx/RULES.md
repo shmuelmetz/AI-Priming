@@ -393,3 +393,253 @@ variables: `outDir`, `cmdRc`, `retVal`, `loopIdx`, etc.
 | Date | Rule added | Triggered by |
 |------|-----------|--------------|
 | 2026-05-05 | Do not overload keywords or special variable names | `result = .Directory~new` conflicting with special variable `result` |
+
+---
+
+## Stems, compound variables, and stem objects — three distinct concepts
+
+These three things are frequently conflated. They are not the same.
+
+### Stem
+A **stem** is a syntactic concept: the `name.` prefix portion of a
+compound variable name. In `out.1`, the stem is `out.`. In `foo.bar`,
+the stem is `foo.`. A stem is not a variable, not an object, and not
+a data structure — it is a naming prefix.
+
+### Compound variable
+A **compound variable** is a variable whose name contains a dot. The
+portion after the stem (the *tail*) is substituted at runtime: if the
+tail names a variable, its value is used; otherwise the tail is used
+literally.
+
+```rexx
+i = 3
+say out.i      /* accesses out.3 */
+say out.0      /* accesses out.0 — tail '0' is literal */
+```
+
+Using compound variables that share a stem as a collection
+(`out.0` = count, `out.1`…`out.n` = values) is a **convention**,
+not a language-enforced data structure.
+
+`address...with output stem out.` populates compound variables
+sharing the stem `out.` — it does not create a `.Stem` object.
+
+### Stem object (`.Stem` class)
+A **stem object** is an ooRexx collection object of class `.Stem`.
+It provides collection methods: `~allIndexes`, `~allItems`, `~size`,
+`~supplier`, etc. It is a proper object, distinct from the syntactic
+stem concept and from compound variables.
+
+```rexx
+/* Compound variables sharing a stem — NOT a stem object */
+out.0 = 3
+out.1 = 'first'
+out.2 = 'second'
+out.3 = 'third'
+
+/* Stem object */
+s = .Stem~new
+s['key'] = 'value'
+do item over s~allItems
+    say item
+end
+```
+
+### Iteration summary
+
+| Structure | Iterate values | Index available |
+|-----------|---------------|-----------------| 
+| Compound variables (stem convention) | `do i = 1 to out.0` | `i` |
+| Stem object (`.Stem`) | `do item over s` | `do i over s~allIndexes` |
+| `.Array` object | `do item over arr` | `do i over arr~allIndexes` |
+
+### Rule
+Never apply `~allIndexes`, `~size`, or other methods to compound
+variables sharing a stem — they have no methods.
+Never use the `stem.0` count convention on a `.Stem` object or
+`.Array` object — they do not use that convention.
+
+| Date | Rule added | Triggered by |
+|------|-----------|--------------|
+| 2026-05-07 | Stem/compound variable/stem object distinction | AI conflating all three |
+
+---
+
+## `signal` — not a `goto`; flushes the entire call stack
+
+[CRITICAL]
+
+This rule applies to all Rexx variants (classic Rexx, ooRexx, NetRexx,
+TSO/E REXX, Regina). It is a fundamental property of the language, not
+an ooRexx extension.
+
+`signal` is **not** a `goto`. It does not pop the stack to a prior
+level — it **flushes the entire call stack**, terminating all active
+`call` frames and `do`/`select`/`loop` blocks in the current execution
+context.
+
+### What `signal` does
+
+- Transfers control to a label in the **current routine** only.
+- Drops all pending `do`/`select`/`loop` blocks unconditionally.
+- Terminates all active `call` frames — the entire stack is gone,
+  not unwound to the nearest handler.
+- In ooRexx, `signal` within a method body similarly exits all nested
+  blocks in that method.
+
+### What `signal` does NOT do
+
+- Does **not** return to the caller (use `return` for that).
+- Does **not** resume a `do` loop at the next iteration (use `iterate`).
+- Does **not** exit only the innermost block (use `leave`).
+- Does **not** behave like a `goto` in C or PL/I — those preserve the
+  call stack; `signal` destroys it.
+- Does **not** unwind to a matching handler like Java/C++ exceptions —
+  use `call on` (see below) if you need resumable condition handling.
+
+### `signal on` vs `call on` — condition handling
+
+Both `signal on` and `call on` trap conditions (errors, syntax faults,
+etc.), but they differ critically in stack behaviour.
+
+**`signal on`** — non-resumable. Flushes the stack on condition.
+The handler label runs in a clean context; there is no way to resume
+the interrupted code.
+
+```rexx
+signal on error name cmdErr
+signal on syntax name syntaxErr
+
+cmdErr:
+    say 'Command error at line' sigl '(rc='rc')'
+    exit 1
+
+syntaxErr:
+    say 'Syntax error at line' sigl
+    exit 1
+```
+
+**`call on`** — resumable. Available in ooRexx and some other
+implementations (not in classic ANSI Rexx or TSO/E REXX). The
+condition handler runs as a subroutine call; on `return`, execution
+resumes after the statement that raised the condition.
+
+```rexx
+/* ooRexx -- call on for resumable error handling */
+call on error  name cmdErr
+call on syntax name syntaxErr
+
+/* ... main logic ... */
+
+cmdErr:
+    say 'Command error at line' sigl '(rc='rc') -- continuing'
+    return   /* resumes after the failing statement */
+
+syntaxErr:
+    say 'Syntax error at line' sigl '-- cannot resume'
+    exit 1
+```
+
+Use `call on` in ooRexx when the handler needs to inspect and
+potentially recover; use `signal on` when the condition is always fatal
+or when portability to classic Rexx is required.
+
+`call on` is **not** available in classic ANSI Rexx, TSO/E REXX, or
+OBJREXX 6.00 (ArcaOS). Use `signal on` in those environments.
+
+### Wrong: using `signal` as a structured exit from nested blocks
+
+```rexx
+/* WRONG -- signal from inside a do loop flushes the stack;
+ * the loop and any enclosing call frames are gone */
+do i = 1 to 10
+    if i = 5 then signal done   /* destroys call stack */
+end
+done:
+    say 'reached done'
+
+/* CORRECT -- use leave to exit the loop */
+do i = 1 to 10
+    if i = 5 then leave
+end
+say 'loop exited at i='i
+
+/* CORRECT -- use return to exit a subroutine */
+myProc: procedure
+    if bad then return
+    /* ... */
+    return
+```
+
+### `signal` in the session script context
+
+The `skipGitHub:` label in `session-2026-05-02.rex` uses `signal`
+correctly: it is at the top level of the script (no enclosing `call`
+frames to lose), and it transfers forward to skip steps 13–14 when
+`gh auth status` fails. This is an appropriate use.
+
+Using `signal` inside a `procedure` or `method` to skip to a label
+outside that routine is a bug — the label is not reachable from inside
+the procedure's scope.
+
+| Date | Rule added | Triggered by |
+|------|-----------|--------------|
+| 2026-05-11 | `signal` is not `goto`; flushes stack; `call on` for resumable handling | Session-script `skipGitHub` label; general LLM confusion |
+
+---
+
+## Placeholder names and general conventions
+
+See `../CONVENTIONS.md` for cross-language conventions including
+`foo`/`bar`/`baz` placeholder names and the `*office` shorthand
+(OpenOffice / LibreOffice / FooOffice).
+
+| Date | Rule added | Triggered by |
+|------|-----------|--------------|
+| 2026-05-11 | Cross-reference to CONVENTIONS.md | foo/bar/baz and *office moved to root |
+
+---
+
+## Stems vs .Array — when each is required
+
+[IMPORTANT]
+
+Prefer `.Array` objects over stem-simulated arrays for all general
+collection use. The classic stem convention (`foo.0`, `foo.1`, ...) is
+a Rexx idiom; ooRexx provides proper collection classes.
+
+```rexx
+/* Prefer .Array */
+items = .Array~of('alpha', 'beta', 'gamma')
+do item over items
+    say item
+end
+
+/* Not this */
+items.0 = 3
+items.1 = 'alpha'
+items.2 = 'beta'
+items.3 = 'gamma'
+do i = 1 to items.0
+    say items.i
+end
+```
+
+### Required exception: ADDRESS with captured output
+
+The `ADDRESS` instruction's `WITH OUTPUT STEM` and `WITH ERROR STEM`
+clauses require stems — there is no `.Array` equivalent for captured
+command output. This is a language constraint, not a style choice.
+
+```rexx
+/* Required -- stems mandatory here */
+address system 'gh repo list' with output stem out. error stem err.
+do i = 1 to out.0
+    say out.i
+end
+```
+
+| Date | Rule added | Triggered by |
+|------|-----------|--------------|
+| 2026-05-11 | Prefer .Array over stem simulation; ADDRESS stem exception | Script using stem arrays where .Array was appropriate |
