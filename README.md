@@ -34,6 +34,18 @@ Language directory names follow established casing conventions:
 | Rexx | `Rexx/` | Active | Classic Rexx; shares many rules with ooRexx |
 | NetRexx | `NetRexx/` | Active | Rexx for the Java platform |
 | PL/I | `PL1/` | Active | IBM Enterprise PL/I for z/OS |
+| LaTeX | `LaTeX/` | Active | arXiv papers, CTAN package, website TeX layer |
+
+## Top-level rule files
+
+In addition to language directories, some rule files live at the top level
+because they apply across multiple languages or to non-language-specific
+concerns:
+
+| File | Scope |
+|------|-------|
+| `CONVENTIONS.md` | Cross-language conventions (placeholders, *office, session zip, etc.) |
+| `LaTeX-RULES.md` | LaTeX/TeX projects: arXiv papers (LCS + M-Atlas), CTAN package, website |
 
 ## Usage
 

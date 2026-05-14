@@ -60,9 +60,56 @@ member of the `?office` family is meant.
 
 ---
 
+## Session zip: primary file delivery vehicle
+
+[IMPORTANT]
+
+The session zip (`session-YYYY-MM-DD.zip`) is the canonical delivery
+vehicle for all files exchanged between Claude and the author. The
+script locates the most recent `session-*.zip` in `Downloads\`
+automatically by date pattern; no hardcoded filename is needed.
+
+**Rules for Claude:**
+
+- Do NOT request extraneous downloads for files that can travel inside
+  the session zip. If a file needs to reach the Windows machine, put
+  it in the zip.
+- Do NOT hardcode a session zip filename (e.g., `session-2026-05-02.zip`)
+  in scripts or instructions. The zip is always found by the pattern
+  `session-*.zip`, sorted by date descending, so the most recent one
+  is used automatically.
+- At the start of each session, ingest the uploaded session zip in
+  full before taking any action. The zip is the ground truth for the
+  current state of the project. Do not rely on memory of previous
+  sessions; always re-read from the zip.
+- If a session is interrupted (capacity limit, timeout, etc.), the
+  user will upload a new session zip at the start of the resumption.
+  Ingest it and resume from the state it represents.
+
+**Files that travel in the session zip:**
+
+- Updated script (`session-YYYY-MM-DD.rex`)
+- AI-Priming rule sets (`CONVENTIONS.md`, `ooRexx-RULES.md`,
+  `Rexx-RULES.md`, `AI-Priming-README.md`)
+- Session notes (`SESSION-NOTES.md`)
+- Web source files that were edited this session
+- TeX sources that were edited this session
+- The GitHub profile approved draft (`github-profile-approved.md`)
+  when ready to deploy
+
+**Files that do NOT travel in the zip (too large or binary):**
+
+- High-resolution images (downloaded by the script from Wikimedia
+  or other sources via `Invoke-WebRequest`)
+- Build artifacts (PDFs, PNGs)
+- Install packages (Poppler, MiKTeX, etc.)
+
+---
+
 ## Repository update log
 
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-05-11 | foo/bar/baz placeholder convention | Not language-specific; moved from ooRexx/RULES.md |
 | 2026-05-11 | *office shorthand | StarOffice, OpenOffice, LibreOffice family |
+| 2026-05-13 | Session zip delivery rule | Capacity-limit hang; need explicit rule for zip-first workflow |
