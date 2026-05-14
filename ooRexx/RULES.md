@@ -643,3 +643,25 @@ end
 | Date | Rule added | Triggered by |
 |------|-----------|--------------|
 | 2026-05-11 | Prefer .Array over stem simulation; ADDRESS stem exception | Script using stem arrays where .Array was appropriate |
+
+---
+
+## SysFileExists on non-system drives
+
+`SysFileExists` may return 0 (false) for files on removable or network
+drives (e.g., drive E:, F:, network shares) even when the file exists.
+This is an environment-dependent limitation.
+
+**Workaround:** use `cmd /C dir` and check the return code instead:
+
+```rexx
+address system 'cmd /C dir "'path'" >NUL 2>NUL'
+fileFound = (rc = 0)
+```
+
+This works reliably for all drive letters. Reserve `SysFileExists` for
+paths on the system drive (C:) where it is reliable.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-05-14 | SysFileExists unreliable on non-system drives | E:\temp\LCS.zip not found by SysFileExists but visible to cmd dir |
