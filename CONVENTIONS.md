@@ -106,6 +106,54 @@ automatically by date pattern; no hardcoded filename is needed.
 
 ---
 
+## Indentation style
+
+[IMPORTANT]
+
+Use a consistent indentation style in all generated code, regardless of
+language. Rules:
+
+- **Indent unit**: 4 spaces. Never tabs.
+- **Continuation lines**: align with the opening delimiter or indent 8
+  spaces (2 units) from the statement start — whichever is more readable.
+- **Nested blocks**: each level adds 4 spaces.
+- **Comments**: align with the code they annotate.
+- **Language overrides**: if a language community has a strong contrary
+  convention (e.g. 2-space JavaScript, 8-space kernel C), note it in the
+  language-specific RULES file; CONVENTIONS.md default applies otherwise.
+
+ooRexx/Rexx specifics are in `ooRexx-RULES.md` and `Rexx-RULES.md`.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-05-13 | Indentation style | Explicit instruction: consistent indent in generated code |
+
+## Upload tracking
+
+[IMPORTANT]
+
+Claude must maintain a permanent record of all files uploaded during a
+session and carry that record forward across the session. Before claiming
+that a file was not uploaded or asking the user to re-upload something,
+Claude must check the upload record first.
+
+**Rules:**
+
+- At the start of each session, reconstruct the upload record from the
+  session zip's SESSION-NOTES.md upload log.
+- Every upload received during the session must be appended to
+  SESSION-NOTES.md under "## Uploads YYYY-MM-DD" immediately upon
+  receipt, before any other processing.
+- Before saying "please upload X" or "X was not uploaded", check the
+  current session's upload record and all prior session upload logs in
+  SESSION-NOTES.md.
+- If a file was uploaded but its content was pruned or not retained,
+  say "not retained" or "pruned from [source]" — not "not uploaded".
+- If a file was genuinely not uploaded in any session, say "not yet
+  uploaded" and request it.
+
+---
+
 ## Repository update log
 
 | Date | Entry | Triggered by |
