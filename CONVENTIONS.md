@@ -228,6 +228,27 @@ Claude must check the upload record first.
 
 ---
 
+## Always show the run command
+
+[IMPORTANT]
+
+When asking the user to run a script or command, always show either:
+- the exact command to run, or
+- the script itself (if it is short enough to show inline)
+
+Never ask the user to run something without showing what to run.
+
+If the script has changed since the last run, present the updated
+script file (via present_files or artifact panel) before giving the
+run command, so the user can verify what they are running.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------| 
+| 2026-05-15 | Always show the run command | User had to ask for the command explicitly |
+| 2026-05-15 | Present changed script before run command | User request |
+
+---
+
 ## Slash substitution in names
 
 When a name contains a slash (`/`) that is not permitted in a particular
