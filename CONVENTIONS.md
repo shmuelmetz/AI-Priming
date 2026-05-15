@@ -60,6 +60,16 @@ member of the `?office` family is meant.
 
 ---
 
+## Numbering in responses
+
+Numbering used by the user in a response to a Claude question is local
+to that response. Claude must not echo that numbering back as if it
+were a directive for labelling, heading structure, or rule identifiers.
+Claude generates its own numbering in a fashion appropriate to the
+content and context.
+
+---
+
 ## Session zip: primary file delivery vehicle
 
 [IMPORTANT]
@@ -189,3 +199,150 @@ checkpoints as capacity limits approach.
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-05-14 | Capacity monitoring and adaptive checkpointing | Capacity limit hang earlier in session |
+
+## General AI priming rules (from AIprofile.txt)
+
+### Hallucination avoidance
+
+When generating code, use available language references, OS documentation,
+and reference manuals to verify syntax. Do not generate syntax from memory
+alone when a reference is available.
+
+When asked to justify a claim, cite accessible sources if they exist, or
+state explicitly that the claim is not based on accessible sources.
+
+### Corrections and requirements
+
+- Do not drop one requirement to satisfy another without permission.
+- Retain corrections: do not regenerate something, or a synonym, that
+  was earlier flagged as incorrect.
+- Query about and correct apparent typos rather than silently accepting
+  them.
+
+### Name normalization
+
+Normalize the typography of the following names consistently. In LaTeX
+sources use the macros shown; in HTML and plain text use the forms shown:
+
+| Name | LaTeX | HTML | Plain text |
+|------|-------|------|------------|
+| TeX | `\TeX` | T<sub>E</sub>X | TeX |
+| LaTeX | `\LaTeX` | L<sup>A</sup>T<sub>E</sub>X | LaTeX |
+| LaTeX 2ε | `\LaTeXe` | L<sup>A</sup>T<sub>E</sub>X 2ε | LaTeX 2e |
+| pdfTeX | `pdf\TeX` | pdfT<sub>E</sub>X | pdfTeX |
+| XeTeX | `\XeTeX` | X<sub>Ǝ</sub>T<sub>E</sub>X | XeTeX |
+| XeLaTeX | `\XeLaTeX` | X<sub>Ǝ</sub>L<sup>A</sup>T<sub>E</sub>X | XeLaTeX |
+| LuaTeX | `Lua\TeX` | LuaT<sub>E</sub>X | LuaTeX |
+| BibTeX | `Bib\TeX` | BibT<sub>E</sub>X | BibTeX |
+| Wikimedia | — | Wiki**m**edia | Wikimedia |
+
+- **REXX** (all caps) on z/OS and z/VM platforms
+- **Rexx** (mixed case) on other platforms (desktop, OS/2, Linux, Windows)
+- **ooRexx** for Object-Oriented Rexx extensions
+- When code requires more than classic Rexx, identify the specific
+  implementation (ooRexx, Regina, TSO/E REXX, NetRexx, etc.)
+
+### PDF page fragments
+
+When linking to a specific page in a PDF using the `#page=` fragment,
+use the **physical page number** (1-based position of the page in the
+file), not the page number rendered on the page. These differ whenever
+the document has front matter (title pages, tables of contents) that
+use Roman numerals or are unnumbered.
+
+```
+https://example.org/paper.pdf#page=12   ← physical page 12 in the file
+```
+
+### TeX name rendering in markup languages
+
+In LaTeX sources, use the standard macros for typeset names:
+`\TeX`, `\LaTeX`, `\LaTeXe`, `\BibTeX`, `\XeTeX`, `\XeLaTeX`,
+`\LuaTeX`, `\pdfTeX`, etc.
+
+In wikitext (Wikipedia and Wikimedia projects), use the
+`{{TeX wordmark|name}}` template with the wordmark name:
+
+| Wordmark name | Renders as |
+|---------------|-----------|
+| `tex` | TeX |
+| `latex` | LaTeX |
+| `latex2e` | LaTeX2ε |
+| `latex3` | LaTeX3 |
+| `bibtex` | BibTeX |
+| `pdftex` | pdfTeX |
+| `xetex` | XeTeX |
+| `xelatex` | XeLaTeX |
+| `luatex` | LuaTeX |
+| `lualatex` | LuaLaTeX |
+| `context` | ConTeXt |
+| `lyx` | LyX |
+| `musixtex` | MusiXTeX |
+| `revtex` | REVTeX |
+| `tetex` | teTeX |
+| `texmacs` | TeXmacs |
+| `xymtex` | XϒMTeX |
+
+Do not use `{{TeX}}`, `{{LaTeX}}` etc. as standalone templates for
+these names — the correct template is `{{TeX wordmark|name}}`.
+Do not invent wordmark names not listed above.
+
+### Markup and links
+
+**Do not drop links when ingesting.**
+When processing a marked-up document, retain the semantic content of
+all existing links — the target URL and the anchor text — in the
+output. Render them in the syntax appropriate to the output format:
+- Input HTML `<a href="url">text</a>` → output Markdown `[text](url)`
+- Input HTML `<a href="url">text</a>` → output wikitext `[url text]`
+- Input LaTeX `\href{url}{text}` → output HTML `<a href="url">text</a>`
+- and so on.
+
+Do not alter link targets, anchor text, or citation keys unless
+explicitly asked.
+
+**Do not strip schemes from URLs.**
+Preserve the scheme (`https://`, `http://`, `ftp://`, etc.) in all
+URLs. Do not output bare hostnames or paths when a full URL with scheme
+was present in the source.
+
+### Author information
+
+| Field | Value |
+|-------|-------|
+| Full name | Seymour Jerome Metz |
+| Email | smetz3@gmu.edu |
+| Website | http://mason.gmu.edu |
+| GitHub | https://github.com/shmuelmetz |
+| LinkedIn | https://www.linkedin.com/in/seymour-metz-a89915152 |
+| ORCID | https://orcid.org/0000-0002-6358-8257 |
+| Hebrew name | שמואל בן ל״ביש |
+
+Name handling:
+- Replace middle names with initials where appropriate.
+- The Hebrew patronymic may be dropped.
+- Do not add alternate typography or Yiddish equivalents for Hebrew
+  names without permission.
+- Render contact information in a style appropriate to the document
+  context.
+
+### Time estimates
+
+Provide time estimates for tasks when asked or when the task is
+non-trivial.
+
+### Wikipedia sourcing (when contributing to Wikipedia)
+
+Evaluate sources for WP:RS (reliable sources) and provide citations in
+WP:CS2 form:
+- Set `=` signs off on both sides with spaces and align them.
+- Place `title=` and `id=` parameters first; place `publisher=` and
+  `access-date=` last.
+- Provide `author-link=` parameters if an author article exists on wiki.
+- Wikilink publisher if a Wikipedia page exists.
+- Attempt to generate `section-url=` and `url=` pointing to sources
+  not behind pay walls or subscription walls.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-05-14 | AIprofile.txt rules folded in | TSM/AIprofile.txt parsed from LCS.zip |
