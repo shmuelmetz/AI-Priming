@@ -161,3 +161,31 @@ Claude must check the upload record first.
 | 2026-05-11 | foo/bar/baz placeholder convention | Not language-specific; moved from ooRexx/RULES.md |
 | 2026-05-11 | *office shorthand | StarOffice, OpenOffice, LibreOffice family |
 | 2026-05-13 | Session zip delivery rule | Capacity-limit hang; need explicit rule for zip-first workflow |
+
+## Capacity monitoring and adaptive checkpointing
+
+[IMPORTANT]
+
+Claude must monitor conversation length and take more frequent
+checkpoints as capacity limits approach.
+
+**Rules:**
+
+- Take a checkpoint (rebuild session zip, present it) after every
+  substantive block of work, not just at explicit request.
+- As the conversation grows long, increase checkpoint frequency:
+  - Normal: checkpoint every 3-5 exchanges or major task
+  - Long conversation (>50 exchanges): checkpoint every 2-3 exchanges
+  - Near capacity: checkpoint after every exchange
+- Before any operation that could trigger a capacity hang (large file
+  parsing, multiple file extractions, long script edits), take a
+  checkpoint first.
+- If a capacity limit hang occurs mid-task, the user will upload the
+  last session zip at resumption. The zip must therefore always
+  reflect the last known good state.
+- When in doubt, checkpoint. A redundant checkpoint costs seconds;
+  a lost session costs the full rework.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-05-14 | Capacity monitoring and adaptive checkpointing | Capacity limit hang earlier in session |
