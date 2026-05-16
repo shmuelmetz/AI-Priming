@@ -665,38 +665,3 @@ paths on the system drive (C:) where it is reliable.
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-05-14 | SysFileExists unreliable on non-system drives | E:\temp\LCS.zip not found by SysFileExists but visible to cmd dir |
-
-## parse source — getting the script's own path
-
-`parse source` returns information about the running script:
-
-```rexx
-parse source OS Cmd Sfile
-```
-
-- `OS`    — operating system (e.g., `WindowsNT`, `OS/2`)
-- `Cmd`   — invocation type (`COMMAND`, `SUBROUTINE`, `FUNCTION`, `METHOD`)
-- `Sfile` — full path to the script file
-
-Use `filespec(PATH, Sfile)` to extract the directory, and
-`filespec(NAME, Sfile)` to extract the filename.
-
-**Typical use:** locating companion files (data files, class packages)
-in the same directory as the script, without hardcoding paths:
-
-```rexx
-parse source . . Sfile
-Sdir = filespec('PATH', Sfile)
-dataFile = .stream~new(Sdir'names')
-```
-
-This is the pattern used in `Hebrew.cmd` to locate its `names`
-transliteration table.
-
-**Note:** in a `::METHOD` context, `parse source` returns the path of
-the `.cmd` or `.rex` file that contains the class, not the caller.
-
-| Date | Entry | Triggered by |
-|------|-------|--------------| 
-| 2026-05-15 | parse source | Hebrew.cmd usage; user question |
-
