@@ -750,3 +750,51 @@ Applies to any context where quote nesting would otherwise be needed.
 | Date | Entry | Triggered by |
 |------|-------|--------------| 
 | 2026-05-16 | Quote/apostrophe variables | User suggestion re: gh GraphQL quoting |
+
+## SysFileTree — scanning directories for files
+
+`SysFileTree(fileSpec, stem, options)` populates a stem with matching
+file paths. Returns 0 on success.
+
+```rexx
+call SysFileTree 'C:\Users\Owner\Downloads\*.ps1', files., 'FO'
+do i = 1 to files.0
+    say files.i   /* full path of each match */
+end
+```
+
+Options (combinable):
+- `F` — files only (no directories)
+- `O` — only return names (no size/date prefix)
+- `D` — directories only
+- `S` — recurse into subdirectories
+- `T` — include timestamps in output
+- `B` — both files and directories
+
+`fileSpec` supports `*` and `?` wildcards. The stem index `0` holds the
+count; indices `1` through `stem.0` hold the paths.
+
+Use `SysFileTree` in preference to `cmd /C dir /B` when you need the
+results in ooRexx variables rather than external output.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------| 
+| 2026-05-16 | SysFileTree | User suggestion for bin/Downloads monitoring |
+
+## Python file writes: use raw strings or binary mode for ooRexx scripts
+
+When Claude writes ooRexx scripts via Python, backslash sequences in
+Python strings are interpreted as escape codes. `\f` becomes form feed
+(0x0C), `\n` becomes newline, `\t` becomes tab, etc.
+
+To avoid corruption when writing ooRexx code containing `\` (logical
+not operator):
+- Use raw strings: `r'\found'` instead of `'\found'`
+- Or write in binary mode and encode explicitly
+- Or double the backslash: `'\\found'`
+
+Always verify with `cat -A` after writing if `\` operators are involved.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------| 
+| 2026-05-16 | Python backslash escapes corrupt ooRexx \\ operators | form feed at line 224 |
