@@ -727,3 +727,26 @@ address system 'git --force'
 | Date | Entry | Triggered by |
 |------|-------|--------------| 
 | 2026-05-15 | Uninitialized symbols are uppercased | User note on lowercase symbols |
+
+## Quote/apostrophe variables for complex string building
+
+When building strings that require both single and double quotes,
+define variables at the top of the script:
+
+```rexx
+q = '"'   /* double-quote character */
+a = "'"   /* apostrophe character   */
+```
+
+Then use them to construct complex strings without nesting or escaping:
+
+```rexx
+cmd = 'gh api graphql -f query=' a 'mutation { foo(id: ' q nodeId q ') }' a
+```
+
+This avoids the need for PS1 helper files or escaped quote sequences.
+Applies to any context where quote nesting would otherwise be needed.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------| 
+| 2026-05-16 | Quote/apostrophe variables | User suggestion re: gh GraphQL quoting |
