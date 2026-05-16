@@ -228,6 +228,37 @@ Claude must check the upload record first.
 
 ---
 
+## Preserve extensions for REXX-aware application scripts and class files
+
+Do not change the file extension of:
+- Scripts run by REXX-aware applications (e.g., FT/2 .FTX files, .CMD
+  files used as class packages)
+- ooRexx class files (::CLASS packages)
+
+These extensions are meaningful to the application or interpreter that
+loads them. Renaming breaks the load mechanism.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------| 
+| 2026-05-15 | Preserve extensions for REXX app scripts and class files | Hebrew.cmd, EXGEDCOMH.FTX |
+
+---
+
+## Files uploaded to Claude go into the appropriate repo
+
+When files are uploaded to Claude for a project repo, Claude writes them
+to outputs, the user saves them to the local repo, and the session script
+auto-commits and pushes any uncommitted changes found in that repo.
+
+This applies to all repos, not just Personal. No staging folders are
+needed; the session script detects uncommitted changes via git status.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------| 
+| 2026-05-15 | Files uploaded to Claude go into appropriate repo | FT-2-to-Gramps files |
+
+---
+
 ## Always show the run command
 
 [IMPORTANT]
