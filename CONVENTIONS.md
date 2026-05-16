@@ -226,10 +226,6 @@ Claude must check the upload record first.
 - If a file was genuinely not uploaded in any session, say "not yet
   uploaded" and request it.
 
----
-
-## Preserve extensions for REXX-aware application scripts and class files
-
 Do not change the file extension of:
 - Scripts run by REXX-aware applications (e.g., FT/2 .FTX files, .CMD
   files used as class packages)
@@ -256,6 +252,20 @@ needed; the session script detects uncommitted changes via git status.
 | Date | Entry | Triggered by |
 |------|-------|--------------| 
 | 2026-05-15 | Files uploaded to Claude go into appropriate repo | FT-2-to-Gramps files |
+
+---
+
+## Always present script and zip together
+
+When asking the user to download or run the session script:
+- Always present the script file via present_files at the same time.
+- Always present the session zip via present_files at the same time.
+- Never ask the user to save individual files from within the zip;
+  present the zip instead and let the script extract what it needs.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------| 
+| 2026-05-15 | Always present script and zip together | User rule |
 
 ---
 
@@ -515,3 +525,57 @@ TeX files). This is a permitted optimisation, not a requirement.
 |------|-------|--------------|
 | 2026-05-14 | Repo seeding: large build products may be dropped | Explicit instruction |
 | 2026-05-14 | Corrected: dropping PDFs is permitted, not required | Clarification |
+
+## Permanent record of completed one-time actions
+
+[IMPORTANT]
+
+Keep a permanent record in SESSION-NOTES.md of one-time actions that
+have been completed and verified. Record: what was done, when, and the
+commit SHA or other evidence of completion. Once recorded, remove the
+corresponding code from the session script.
+
+Do not remove code that may need to be repeated (e.g., idempotent
+maintenance, ongoing commits, steps that depend on external state).
+
+When pruning script steps, add an entry here before removing the code.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------| 
+| 2026-05-15 | Permanent record of completed one-time actions | User request |
+
+---
+
+## Preserve extensions for REXX-aware application scripts and class files
+
+## New ooRexx code: split general from specific
+
+New ooRexx code must be split into:
+- **Reusable classes** (general-purpose, no pruning): live in Tools or
+  other appropriate public repo. Examples: GitRepo, ZipExtract, PS1Runner,
+  FileOps. Repo placement is case-by-case; Tools is the default for
+  public-worthy classes.
+- **Session-specific code**: uses the classes; gets pruned when the task
+  is done.
+
+Do not embed reusable logic in session scripts. Write it as a class first.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------| 
+| 2026-05-15 | New code: split general from specific | User request |
+
+---
+
+## Existing ooRexx code: refactor toward reuse (TODO)
+
+The existing session script (`session-2026-05-02.rex`) embeds reusable
+logic inline. Refactor it incrementally:
+- Extract general-purpose routines into classes in the Tools repo.
+- Replace inline code with class method calls.
+- Do not refactor and add features in the same change.
+
+This is a long-running TODO; track progress in SESSION-NOTES.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------| 
+| 2026-05-15 | Existing code: refactor toward reuse | User request |
