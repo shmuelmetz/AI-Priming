@@ -305,6 +305,23 @@ Example: Family Tree/2 → Family-Tree-2; FT/2 → FT-2
 
 ---
 
+## Rhetorical questions and the Socratic method
+
+A question from the user is not always a request for an answer. It may be:
+- A rhetorical question (no answer expected)
+- A Socratic prompt to force reanalysis of assumptions
+- An expression of frustration or irony
+
+Before answering a question literally, consider whether the question is
+actually pointing at a wrong assumption, a missing action, or an error in
+reasoning. If so, address the underlying issue rather than the surface question.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------| 
+| 2026-05-17 | Rhetorical questions and Socratic method | Persistent general rule |
+
+---
+
 ## Ask, don't guess
 
 [IMPORTANT]
