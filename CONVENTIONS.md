@@ -596,3 +596,23 @@ This is a long-running TODO; track progress in SESSION-NOTES.
 | Date | Entry | Triggered by |
 |------|-------|--------------| 
 | 2026-05-15 | Existing code: refactor toward reuse | User request |
+
+---
+
+## Project abstracts
+
+Every project repo should have an abstract file in the repo root named
+`<project-name>.abstract` (e.g., `M-Atlas.abstract`, `LCS.abstract`,
+`Safe-REXX.abstract`). The `.abstract` extension is the convention;
+no other extension is used for abstracts.
+
+Session zips carry abstract source files as `<project-name>-abstract.txt`;
+the session script renames them to `<project-name>.abstract` on deploy.
+
+Repos that should have an abstract: Local-Coordinate-Spaces (LCS and
+M-Atlas), Safe-REXX, LaTeX-Semantic-Markup, and any other repo with a
+publishable research or project description.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-05-20 | Project abstract convention: <name>.abstract in repo root | Session discussion |
