@@ -616,3 +616,19 @@ publishable research or project description.
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-05-20 | Project abstract convention: <name>.abstract in repo root | Session discussion |
+
+---
+
+## General defensive programming
+
+These rules apply to all languages. They originate in the Safe REXX
+papers but are not REXX-specific.
+
+- Use meaningful variable names.
+- Use judicious comments.
+- Use a consistent indentation style.
+- Adopt a clear and consistent programming style throughout a program.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-05-22 | General defensive programming rules moved here from Rexx-RULES.md | Rules are language-agnostic |
