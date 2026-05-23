@@ -798,3 +798,9 @@ Always verify with `cat -A` after writing if `\` operators are involved.
 | Date | Entry | Triggered by |
 |------|-------|--------------| 
 | 2026-05-16 | Python backslash escapes corrupt ooRexx \\ operators | form feed at line 224 |
+
+## DATE() and TIME() functions
+
+<!-- See also: Rexx-RULES DATE()/TIME() -->
+For the full `DATE()` and `TIME()` format table, see
+[Rexx-RULES.md](../Rexx/RULES.md) — DATE()/TIME() section.
