@@ -632,3 +632,11 @@ papers but are not REXX-specific.
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-05-22 | General defensive programming rules moved here from Rexx-RULES.md | Rules are language-agnostic |
+
+## Windows environment
+
+<!-- Windows-kludge rule: prefer working alternatives -->
+If a working open or cross-platform alternative exists for a broken
+Windows facility, use the alternative rather than working around the bug.
+Do not invest effort hacking a path through a known Windows defect
+when a working substitute is available.
