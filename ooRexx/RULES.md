@@ -804,3 +804,23 @@ Always verify with `cat -A` after writing if `\` operators are involved.
 <!-- See also: Rexx-RULES DATE()/TIME() -->
 For the full `DATE()` and `TIME()` format table, see
 [Rexx-RULES.md](../Rexx/RULES.md) — DATE()/TIME() section.
+
+## String literal framing and quoting
+
+<!-- ooRexx string literal framing: use opposite delimiter -->
+Use the framing delimiter that avoids escaping:
+- Literal contains apostrophes but no double quotes: frame with `"`
+- Literal contains double quotes but no apostrophes: frame with `'`
+- Literal contains both: frame with whichever requires fewer doublings.
+To include the framing delimiter literally, double it:
+- `''''` inside `'...'` produces one apostrophe
+- `""` inside `"..."` produces one double quote
+
+## Caseless string comparisons
+
+<!-- ooRexx caseless string methods: prefer over translate() -->
+Prefer ooRexx caseless string methods over `translate()` in new code:
+- `str~caselessEquals(other)` instead of `translate(str) = translate(other)`
+- `str~caselessPos(needle)` instead of `pos(needle, translate(str))`
+- `str~caselessCompareTo(other)` for ordering
+`translate()` is classic Rexx and portable; caseless methods are ooRexx-specific but cleaner.
