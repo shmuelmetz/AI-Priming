@@ -201,3 +201,11 @@ do i = 1 to outArr~size
     if outArr[i] \== .nil then say outArr[i]
 end
 ```
+
+## File and directory deletion
+
+<!-- SysFileDelete: files only; SysRmDir: empty directories only -->
+- `SysFileDelete(path)` -- files only; cannot remove directories
+- `SysRmDir(path)` -- empty directories only; fails if non-empty
+- To remove a non-empty directory tree (e.g. a git clone with
+  read-only objects): `address system 'cmd /C rmdir /S /Q "path"'`
