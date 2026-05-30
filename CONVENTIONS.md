@@ -640,3 +640,11 @@ If a working open or cross-platform alternative exists for a broken
 Windows facility, use the alternative rather than working around the bug.
 Do not invest effort hacking a path through a known Windows defect
 when a working substitute is available.
+
+## Linux compatibility
+
+<!-- Linux-friendly rule: all deliverables must be Linux-compatible -->
+All deliverables must be Linux-friendly: no Windows-only line endings,
+paths, tools, or assumptions in any file generated or patched.
+Use LF line endings, forward slashes in portable contexts, and
+cross-platform tools wherever possible.
