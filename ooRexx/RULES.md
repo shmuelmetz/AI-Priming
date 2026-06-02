@@ -346,11 +346,15 @@ address system 'cmd /C \"\"'infoUnzipBin'\" -j -o -q \"'zipFile'\" member -d \"'
 |------|-------|--------------|
 | 2026-06-02 | Prefer infozip over PowerShell for zip ops | zipContains hung using PS ZipFile class |
 
+---
+
 ## DATE() and TIME() functions
 
 <!-- See also: Rexx-RULES DATE()/TIME() -->
 For the full `DATE()` and `TIME()` format table, see
 [Rexx-RULES.md](../Rexx/RULES.md) — DATE()/TIME() section.
+
+---
 
 ## String literal framing and quoting
 
@@ -362,6 +366,8 @@ Use the framing delimiter that avoids escaping:
 To include the framing delimiter literally, double it:
 - `''''` inside `'...'` produces one apostrophe
 - `""` inside `"..."` produces one double quote
+
+---
 
 ## Caseless string comparisons
 

@@ -730,3 +730,27 @@ a preventable failure.
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-06-02 | Hang issue tracking rule | User instruction; zipContains PS hang; message-limit resumption |
+
+## Script action evaluation: frequency and conditionality
+
+[IMPORTANT]
+
+Before adding or retaining a script action, evaluate which category it
+belongs to and implement accordingly:
+
+| Category | Criterion | Implementation |
+|----------|-----------|----------------|
+| **No longer needed** | Task is permanently done and self-evidencing | Remove from script; record in SESSION-NOTES completed-actions table |
+| **One-time / sentinel** | Task must run exactly once | Sentinel file gates it; remove code after sentinel confirmed |
+| **Interval-based** | Task is expensive and state is stable | `fileAgeDays` or date comparison gate (e.g. 30-day MiKTeX pattern) |
+| **Special circumstance** | Task only applies when a trigger is present | Gate on presence of file, zip entry, env var, or flag |
+| **Always needed** | Task is cheap and state can drift silently | Run unconditionally every session |
+
+Apply this evaluation when adding new steps and when reviewing existing
+ones. A step that has printed "already done" or "already present" on
+every run for the last several sessions is a candidate for removal or
+a longer interval.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-06-02 | Script action evaluation rule | User instruction |
