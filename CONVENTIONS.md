@@ -294,38 +294,44 @@ add the rule here permanently.
 
 ---
 
-## Safe/unsafe message
-
-[IMPORTANT]
-
-Before presenting the script and zip, Claude emits either:
-- **Safe** — it is safe to launch the script from the Claude.ai UI.
-- **Unsafe** — it is not safe to launch the script from the Claude.ai UI; run it manually from the command line instead.
-
-| Date | Entry | Triggered by |
-|------|-------|--------------|
-| 2026-06-01 | Safe/unsafe defined | Whether it is safe to click the Claude.ai launch button |
-
----
-
 ## Pairing rule (aka lockstep rule): always present script and zip together
 
 [IMPORTANT]
 
 The **pairing rule** and **lockstep rule** are synonyms for this rule.
 
-Always present the script file and the session zip together in the
-same present_files call or in immediately consecutive calls.
+**What:** Always present the script file and the session zip together in the
+same `present_files` call or in immediately consecutive calls.
 Never present one without the other.
 Never present other files (e.g. CONVENTIONS.md, diff) in place of
 or instead of the script+zip pair.
 Never ask the user to save individual files from within the zip;
 present the zip instead and let the script extract what it needs.
 
+**How (ordering within the response):**
+
+1. Produce all analysis, explanations, change summaries, and other
+   prose content first.
+2. Emit the safe/unsafe message immediately after all other content —
+   no intervening text between it and the files.
+3. Call `present_files` with the script and zip immediately after the
+   safe/unsafe message — nothing between them.
+
+The safe/unsafe message is:
+- **Safe** (`Bootstrap will self-upgrade.`) — the Claude.ai launch
+  button can be used; the bootstrap will copy the new script into place.
+- **Unsafe** — the script cannot self-upgrade; give the explicit copy
+  command immediately after the unsafe message, then call `present_files`.
+
+The effect is that the download links appear at the very bottom of the
+response, directly below the safe/unsafe line, so the user can act on
+them without scrolling past unrelated content.
+
 | Date | Entry | Triggered by |
 |------|-------|--------------| 
 | 2026-05-15 | Always present script and zip together | User rule |
 | 2026-06-01 | Named pairing rule / lockstep rule | Clarification |
+| 2026-06-02 | Expanded to specify ordering within response | User: "say how, not just what" |
 
 ---
 
