@@ -134,6 +134,29 @@ content and context.
 
 ---
 
+## Rules are permanent, not per-chat
+
+[IMPORTANT]
+
+Rules discovered or corrected during a session must be written into the
+permanent rules files (`CONVENTIONS.md`, `ooRexx-RULES.md`,
+`Rexx-RULES.md`, or the appropriate language-specific file) and included
+in the session zip. There are no per-chat rules. A rule that exists only
+in Claude's context window is not a rule — it will be lost at the end of
+the session.
+
+When a rule is stated or corrected during a session, Claude must:
+
+1. Add it to the appropriate permanent rules file immediately.
+2. Include the updated rules file in the session zip.
+3. Never treat it as chat-local knowledge.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-06-01 | Rules are permanent, not per-chat | User correction: rules must travel in zip |
+
+---
+
 ## Session zip: primary file delivery vehicle
 
 [IMPORTANT]
@@ -255,17 +278,45 @@ needed; the session script detects uncommitted changes via git status.
 
 ---
 
-## Always present script and zip together
+## TODO: safe/unsafe launch button rule
 
-When asking the user to download or run the session script:
-- Always present the script file via present_files at the same time.
-- Always present the session zip via present_files at the same time.
+[IMPORTANT — INCOMPLETE]
+
+The Claude.ai launch button for the session script may run the wrong
+version of the script under certain circumstances. Research is needed
+to determine exactly when it is safe to click the launch button and
+when it is unsafe. Once determined, the rule must be added here
+permanently and carried forward in all session zips.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-06-01 | TODO added | Lengthy prior exchanges on this topic; context not retained |
+
+---
+
+## Pairing rule (aka lockstep rule): always present script and zip together
+
+[IMPORTANT]
+
+The **pairing rule** and **lockstep rule** are synonyms for this rule.
+
+When presenting the session script and zip:
+- Immediately before presenting the files, emit either:
+  - A **safe** message: the Claude.ai launch button is working, or
+  - An **unsafe** message: the Claude.ai launch button is broken.
+  This message must appear in the chat, not inside a file.
+- Always present the script file and the session zip together in the
+  same present_files call or in immediately consecutive calls.
+- Never present one without the other.
+- Never present other files (e.g. CONVENTIONS.md, diff) in place of
+  or instead of the script+zip pair.
 - Never ask the user to save individual files from within the zip;
   present the zip instead and let the script extract what it needs.
 
 | Date | Entry | Triggered by |
 |------|-------|--------------| 
 | 2026-05-15 | Always present script and zip together | User rule |
+| 2026-06-01 | Named pairing rule / lockstep rule; unsafe message must contain failing command | Clarification |
 
 ---
 
@@ -491,6 +542,7 @@ was present in the source.
 | Email | smetz3@gmu.edu |
 | Website | http://mason.gmu.edu |
 | GitHub | https://github.com/shmuelmetz |
+| Stack Exchange | https://stackexchange.com/users/110591/shmuel |
 | LinkedIn | https://www.linkedin.com/in/seymour-metz-a89915152 |
 | ORCID | https://orcid.org/0000-0002-6358-8257 |
 | Hebrew name | שמואל בן ל״ביש |
