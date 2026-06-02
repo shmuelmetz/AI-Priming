@@ -278,19 +278,33 @@ needed; the session script detects uncommitted changes via git status.
 
 ---
 
-## TODO: safe/unsafe launch button rule
+## TODO: when is it safe to launch the script from the UI?
 
 [IMPORTANT — INCOMPLETE]
 
-The Claude.ai launch button for the session script may run the wrong
-version of the script under certain circumstances. Research is needed
-to determine exactly when it is safe to click the launch button and
-when it is unsafe. Once determined, the rule must be added here
-permanently and carried forward in all session zips.
+Safe/unsafe refers to whether it is safe to click the Claude.ai launch
+button to run the session script. Prior sessions established that it is
+not always safe (the wrong version may run). Research is needed to
+determine exactly under what circumstances it is safe. Once determined,
+add the rule here permanently.
 
 | Date | Entry | Triggered by |
 |------|-------|--------------|
-| 2026-06-01 | TODO added | Lengthy prior exchanges on this topic; context not retained |
+| 2026-06-01 | TODO added | Lengthy prior exchanges; context not retained |
+
+---
+
+## Safe/unsafe message
+
+[IMPORTANT]
+
+Before presenting the script and zip, Claude emits either:
+- **Safe** — it is safe to launch the script from the Claude.ai UI.
+- **Unsafe** — it is not safe to launch the script from the Claude.ai UI; run it manually from the command line instead.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-06-01 | Safe/unsafe defined | Whether it is safe to click the Claude.ai launch button |
 
 ---
 
@@ -300,23 +314,18 @@ permanently and carried forward in all session zips.
 
 The **pairing rule** and **lockstep rule** are synonyms for this rule.
 
-When presenting the session script and zip:
-- Immediately before presenting the files, emit either:
-  - A **safe** message: the Claude.ai launch button is working, or
-  - An **unsafe** message: the Claude.ai launch button is broken.
-  This message must appear in the chat, not inside a file.
-- Always present the script file and the session zip together in the
-  same present_files call or in immediately consecutive calls.
-- Never present one without the other.
-- Never present other files (e.g. CONVENTIONS.md, diff) in place of
-  or instead of the script+zip pair.
-- Never ask the user to save individual files from within the zip;
-  present the zip instead and let the script extract what it needs.
+Always present the script file and the session zip together in the
+same present_files call or in immediately consecutive calls.
+Never present one without the other.
+Never present other files (e.g. CONVENTIONS.md, diff) in place of
+or instead of the script+zip pair.
+Never ask the user to save individual files from within the zip;
+present the zip instead and let the script extract what it needs.
 
 | Date | Entry | Triggered by |
 |------|-------|--------------| 
 | 2026-05-15 | Always present script and zip together | User rule |
-| 2026-06-01 | Named pairing rule / lockstep rule; unsafe message must contain failing command | Clarification |
+| 2026-06-01 | Named pairing rule / lockstep rule | Clarification |
 
 ---
 
