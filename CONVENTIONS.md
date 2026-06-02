@@ -709,3 +709,24 @@ All deliverables must be Linux-friendly: no Windows-only line endings,
 paths, tools, or assumptions in any file generated or patched.
 Use LF line endings, forward slashes in portable contexts, and
 cross-platform tools wherever possible.
+
+## Hang issue tracking
+
+[IMPORTANT]
+
+Known hang issues must be recorded permanently and carried forward
+across sessions. A hang that recurs because it was not documented is
+a preventable failure.
+
+**Rules:**
+
+- When a hang is observed or suspected, record it in SESSION-NOTES.md
+  under a "## Known hang issues" section with: date, symptom, root
+  cause (if known), and workaround or fix applied.
+- Carry the hang log forward in every session zip.
+- Before using any facility that has previously hung, check the hang
+  log and apply the known workaround.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-06-02 | Hang issue tracking rule | User instruction; zipContains PS hang; message-limit resumption |
