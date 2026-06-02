@@ -305,6 +305,47 @@ address system cmd with output stem out. error stem err. input stem noIn.
 |------|-------|--------------|
 | 2026-06-01 | Valid WITH I/O types | `input string ''` rejected with Error 25.933 |
 
+---
+
+## Prefer infozip over PowerShell for zip operations
+
+[IMPORTANT]
+
+Use PowerShell only when there is no working alternative. For zip
+inspection and extraction, always prefer infozip (`unzip.exe`) via
+`address system` rather than PowerShell's `System.IO.Compression`
+or `Expand-Archive`.
+
+**Rationale:** PowerShell startup is slow and can hang in some
+execution contexts (e.g., when run from a GUI-less session or under
+certain priority settings). `infozip` is a plain console binary with
+no such latency.
+
+**Pattern for zip membership test** (replaces PowerShell `ZipFile`):
+
+```rexx
+/* Returns .TRUE if zipFile contains entry, .FALSE otherwise */
+noIn.0 = 0
+address system 'cmd /C \"\"'infoUnzipBin'\" -l -q \"'zipFile'\"\"' ,
+    with output stem zcOut. error stem zcErr. input stem noIn.
+zcRc = rc
+found = .FALSE
+do i = 1 to zcOut.0
+    parse var zcOut.i . . . zcName   /* fields: length  date  time  name */
+    if strip(zcName) = entry then do; found = .TRUE; leave; end
+end
+```
+
+**Pattern for zip extraction** (use infoUnzipBin, not Expand-Archive):
+
+```rexx
+address system 'cmd /C \"\"'infoUnzipBin'\" -j -o -q \"'zipFile'\" member -d \"'destDir'\"\"'
+```
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-06-02 | Prefer infozip over PowerShell for zip ops | zipContains hung using PS ZipFile class |
+
 ## DATE() and TIME() functions
 
 <!-- See also: Rexx-RULES DATE()/TIME() -->
