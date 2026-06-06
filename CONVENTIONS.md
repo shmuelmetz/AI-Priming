@@ -695,10 +695,22 @@ papers but are not REXX-specific.
 - Use judicious comments.
 - Use a consistent indentation style.
 - Adopt a clear and consistent programming style throughout a program.
+- Log all relevant output unconditionally, not just on failure.
+- Anticipate failure modes: check return codes, test for file existence
+  before reading, verify expected output is non-empty.
+- Never discard diagnostic information that would be needed to diagnose
+  a problem — capture stderr, retain rc even from successful commands,
+  and preserve intermediate results until the step is confirmed complete.
+- Prefer explicit failure detection over relying on downstream errors
+  to surface problems.
+
+- Do not use pronouns with ambiguous referents; repeat the noun or restructure the sentence.
 
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-05-22 | General defensive programming rules moved here from Rexx-RULES.md | Rules are language-agnostic |
+| 2026-06-05 | Log unconditionally; anticipate failures; never discard diagnostics | Session item 2 |
+| 2026-06-05 | No pronouns with ambiguous referents | Session rule |
 
 ## Windows environment
 

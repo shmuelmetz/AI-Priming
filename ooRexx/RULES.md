@@ -377,3 +377,57 @@ Prefer ooRexx caseless string methods over `translate()` in new code:
 - `str~caselessPos(needle)` instead of `pos(needle, translate(str))`
 - `str~caselessCompareTo(other)` for ordering
 `translate()` is classic Rexx and portable; caseless methods are ooRexx-specific but cleaner.
+
+---
+
+## Template receivers vs. match patterns
+
+In a `parse` template, a variable **not** enclosed in parentheses is a
+**receiver**: it is assigned the next parsed token/field from the source
+string. It does **not** match against the variable's current value.
+
+A variable enclosed in parentheses `(foo)` is a **match pattern**: REXX
+uses `foo`'s current value as a literal string to scan for in the
+parse source.
+
+```rexx
+parse var line word rest     /* word receives first token; rest gets remainder */
+parse var line (delim) rest  /* scans line for value of delim; rest follows it */
+```
+
+Confusing these is a silent logic error: the unparenthesized form always
+succeeds and overwrites the variable; the parenthesized form may leave
+variables empty if the pattern is not found.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-06-05 | Template receiver vs. pattern | Session item 3 |
+
+---
+
+## Prefer `parse var` over `parse value ... with`
+
+When the parse source is already a variable, use `parse var`:
+
+```rexx
+parse var foo template
+```
+
+not:
+
+```rexx
+parse value foo with template
+```
+
+`parse var` is more readable, saves a keyword, and makes the source
+obvious at a glance. Reserve `parse value ... with` for expression
+sources:
+
+```rexx
+parse value foo || bar with template
+parse value myFunc()   with template
+```
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-06-05 | Prefer `parse var` over `parse value ... with` | Session item 4 |
