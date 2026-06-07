@@ -772,3 +772,4 @@ a longer interval.
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-06-02 | Script action evaluation rule | User instruction |
+| 2026-06-07 | Memory monitoring | User instruction: monitor `userMemories` usage; when approaching capacity, recommend consolidation, archiving, or dropping stale entries |
