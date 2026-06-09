@@ -773,3 +773,43 @@ a longer interval.
 |------|-------|--------------|
 | 2026-06-02 | Script action evaluation rule | User instruction |
 | 2026-06-07 | Memory monitoring | User instruction: monitor `userMemories` usage; when approaching capacity, recommend consolidation, archiving, or dropping stale entries |
+
+---
+
+## Do not use stem.tail to simulate an array
+
+Stems with numeric tails (`stem.0`, `stem.1`, ...) are classic Rexx
+idiom but error-prone in ooRexx: computed tails require a simple symbol,
+and the pattern is superseded by proper collection classes.
+
+Use `.Array` instead:
+
+```rexx
+arr = .Array~new
+arr~append(item)          /* add */
+do x over arr ... end     /* iterate */
+arr~items                 /* count */
+arr~allindexes            /* integer indexes */
+arr~allitems              /* all values */
+arr~insert(item, idx)     /* insert at position */
+```
+
+Reserve stems for interop with `address system` (stdin/stdout/stderr
+stems are required by the `with input/output/error stem` clause).
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-06-07 | Do not use stem.tail to simulate an array | Session item |
+
+## Session management
+
+- **Never suggest starting a new session if work has not been successfully downloaded.**
+  Undownloaded work is lost when the session ends. If interrupted for any reason
+  (rate limit, context length, browser close), continue in the same session when
+  possible. A "Continue" prompt in the same session is always preferred over starting
+  fresh.
+- **Exception:** if a new session is unavoidable, Claude may present a text block
+  that, together with the last **successfully downloaded** zip, is sufficient to
+  re-establish context in a new chat. The block must identify: current script version,
+  pending work items, any rules added since the last successfully downloaded zip, and
+  the specific task interrupted. A presented-but-not-yet-downloaded zip does not count.
