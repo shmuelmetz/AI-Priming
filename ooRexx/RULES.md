@@ -431,3 +431,31 @@ parse value myFunc()   with template
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-06-05 | Prefer `parse var` over `parse value ... with` | Session item 4 |
+
+---
+
+## stem.tail syntax: inherited from Rexx; ooRexx adds no new restrictions
+
+The stem compound-variable syntax (`stem.tail`) is inherited unchanged
+from classic Rexx. ooRexx does not add new restrictions on tail
+expressions. However, the idiom of using stems to simulate arrays
+(`stem.0` as count, `stem.1`...`stem.N` as elements) is superseded
+by `.Array`. Do not use stems for array simulation in new ooRexx code.
+
+### .Array methods to know
+
+| Method | Purpose |
+|--------|---------|
+| `~append(item)` | Add item at end |
+| `~insert(item, idx)` | Insert before index (omit idx to prepend) |
+| `~allindexes` | Supplier of all integer indexes |
+| `~allitems` | Supplier of all values |
+| `~items` | Count of non-empty slots |
+| `~size` | Highest occupied index |
+| `~at(idx)` / `arr[idx]` | Retrieve by index |
+
+Iteration: `do x over arr` visits all non-empty items in index order.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-06-07 | stem.tail inherited from Rexx; .Array methods | Session item |
