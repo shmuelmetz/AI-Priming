@@ -107,6 +107,23 @@ with how the files are organised in the Copilot working copies.
 
 ---
 
+## Shirt TeX sources: no web-specific material
+
+Shirt TeX sources (`Personal\shirts\`) must not include web-specific
+material: no navigation links, no Home links, no page headers or footers
+serving a web context. Exceptions:
+
+- `\href` or similar commands used only for hyperlinking in a web
+  rendering, where the printed shirt shows only the visible text
+- URLs that are substantively part of the shirt design (e.g. a URL
+  printed as content on the shirt)
+
+This rule applies globally to all shirt TeX sources. Where a shirt TeX
+source and a web-facing version would otherwise diverge, they must be
+kept as separate files.
+
+---
+
 ## Uploaded file descriptions
 
 [IMPORTANT]
