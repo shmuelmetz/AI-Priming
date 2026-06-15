@@ -107,6 +107,19 @@ with how the files are organised in the Copilot working copies.
 
 ---
 
+## Preserve usage notes when consolidating definitions
+
+When replacing inline CSS, TeX macros, or other definitions with a
+common definition file (e.g., site.css, a shared .sty), retain any
+inline usage notes and comments at the point of use. Do not silently
+drop them on the assumption the definition file is self-documenting.
+
+In particular, retain usage notes on `tooltip` and `tooltiptext`
+classes, which document browser compatibility constraints and the
+rationale for the implementation choice.
+
+---
+
 ## Shirt TeX sources: no web-specific material
 
 Shirt TeX sources (`Personal\shirts\`) must not include web-specific
