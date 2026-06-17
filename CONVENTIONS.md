@@ -321,6 +321,7 @@ add the rule here permanently.
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-06-01 | TODO added | Lengthy prior exchanges; context not retained |
+| 2026-06-17 | Explicit-copy ("Unsafe") framing rejected as not matching actual workflow; reverted to "Safe" (self-upgrade) message. Still unresolved -- need to confirm exactly how the launch step works before closing this TODO. | User feedback |
 
 ---
 
