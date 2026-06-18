@@ -824,9 +824,22 @@ address system 'program args <NUL >out.log 2>&1'
 `noIn.` (empty stem, `noIn.0 = 0`) is defined near the top of
 `session-2026-05-02.rex` for exactly this purpose.
 
+**Companion rule — solve the actual problem, not a harder one:**
+Before adding complexity (a bat file, a poll loop, a background
+thread, a timeout mechanism), confirm the actual failure mode
+requires it. The pdftoppm saga (2026-06-17 to 2026-06-18) is the
+canonical example: ten iterations of increasing complexity were
+applied to a hang that turned out to be caused entirely by shell
+redirection fragility. Once that was removed, a plain synchronous
+`address system ... with` worked on the first try. Threading was
+correct in principle but premature; the simpler fix was the right
+fix. When a complex solution fails, ask whether the problem it was
+solving actually exists before adding more complexity on top.
+
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-06-18 | address...with rule | User instruction; multiple hangs traced to shell-redirection fragility |
+| 2026-06-18 | KISS companion rule | .Thread~new NOMETHOD on run after threading rewrite; Dirac.pdf had taken 0.7s all along |
 
 ## Script action evaluation: frequency and conditionality
 
