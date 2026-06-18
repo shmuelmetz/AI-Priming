@@ -775,10 +775,58 @@ a preventable failure.
 - Carry the hang log forward in every session zip.
 - Before using any facility that has previously hung, check the hang
   log and apply the known workaround.
+- **When a log is truncated (run did not complete), consider whether
+  running the problematic step directly in a command window would
+  surface more information faster than another round-trip of edit,
+  run, upload, diagnose.** If the failing step is isolatable (e.g. a
+  single external command), log the exact command being run so the
+  user can paste it directly into a cmd window without opening any
+  files.
 
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-06-02 | Hang issue tracking rule | User instruction; zipContains PS hang; message-limit resumption |
+| 2026-06-18 | Add truncated-log / direct-command-window rule | User instruction during pdftoppm hang investigation |
+
+## Clarifying questions
+
+Before asking the user for information, evaluate whether the user
+has access to that information. The user interacts via a log file;
+information that would require checking Task Manager, event logs,
+process state, or what the console was doing at a moment in time is
+typically not available to them. Asking for it wastes a round-trip
+and frustrates. Instead: instrument the code to capture that
+information directly, and reason from what the log actually contains.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-06-18 | Clarifying-questions rule | User instruction; repeated "was the window still running?" queries during hang investigation |
+
+## Shell redirection vs. address...with
+
+In ooRexx, `address system 'cmd ...'` accepts a `with` clause for
+stdin/stdout/stderr using stems, which is safer and more portable
+than embedding shell redirection operators (`<`, `>`, `2>&1`) in
+the command string. Shell redirection operators inside nested quotes
+across multiple levels of `cmd /C`/`start /B` are fragile and have
+caused multiple silent failures in this script. Prefer:
+
+```rexx
+address system 'program args' with input stem noIn. output stem outStem. error stem errStem.
+```
+
+over:
+
+```rexx
+address system 'program args <NUL >out.log 2>&1'
+```
+
+`noIn.` (empty stem, `noIn.0 = 0`) is defined near the top of
+`session-2026-05-02.rex` for exactly this purpose.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-06-18 | address...with rule | User instruction; multiple hangs traced to shell-redirection fragility |
 
 ## Script action evaluation: frequency and conditionality
 
