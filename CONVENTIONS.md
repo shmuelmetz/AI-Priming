@@ -840,6 +840,7 @@ solving actually exists before adding more complexity on top.
 |------|-------|--------------|
 | 2026-06-18 | address...with rule | User instruction; multiple hangs traced to shell-redirection fragility |
 | 2026-06-18 | KISS companion rule | .Thread~new NOMETHOD on run after threading rewrite; Dirac.pdf had taken 0.7s all along |
+| 2026-06-18 | KISS addendum: fix the right problem | pdftoppm hung on Euler.pdf even after shell-redirection was fixed (via address...with). Root cause was calling pdftoppm on a corrupt xelatex output (15 bytes), not a concurrency or redirection issue. Fix: minimum-size gate before calling pdftoppm. Three rounds of mechanism fixes (bat file, threading, fire-and-forget kill) were applied to a problem that was actually about invalid input. |
 
 ## Script action evaluation: frequency and conditionality
 
