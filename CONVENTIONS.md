@@ -906,3 +906,30 @@ stems are required by the `with input/output/error stem` clause).
   re-establish context in a new chat. The block must identify: current script version,
   pending work items, any rules added since the last successfully downloaded zip, and
   the specific task interrupted. A presented-but-not-yet-downloaded zip does not count.
+
+## Baen Free Library e-books
+
+<!-- Baen Free Library e-books on M:\BAEN\\ -->
+E-books on removable drive M: (`M:\\BAEN\\`).
+
+### 1632 universe (Eric Flint)
+| Title | Author(s) | ISBN | Year |
+|---|---|---|---|
+| *1632* | Flint | 0671578499 | 2000 |
+| *1633* | Flint & Weber | 0743435427 | 2002 |
+| *Ring of Fire* (anthology) | ed. Flint | 074347175X | 2004 |
+| *Changer of Worlds* (anthology) | ed. Weber | 0671319752 | 2001 |
+| *Crown of Slaves* | Flint & Weber | 0743471482 | 2003 |
+| *Grantville Gazette, Vol. I* (anthology) | ed. Flint | 0743488601 | 2004 |
+GG Vol. I is a one-time anthology, not an archive of the ongoing magazine.
+### Honorverse (Weber)
+| *On Basilisk Station* | 0743435710 | 1993 |
+| *The Honor of the Queen* | 0743435729 | 1993 |
+| *The Shadow of Saganami* | 0743488520 | 2004 |
+### Vorkosigan Saga (Bujold)
+| *The Warrior's Apprentice* | 067172066X | 1986 |
+| *The Mountains of Mourning* (novella) | 1011250002 | 1989 |
+| *Shards of Honor* (PDF) | -- | 1986 |
+### War God (Weber)
+| *Oath of Swords* | 0671876422 | 1994 |
+### Other (not yet ingested; see baen_dir.txt for full list)

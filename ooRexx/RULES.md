@@ -459,3 +459,25 @@ Iteration: `do x over arr` visits all non-empty items in index order.
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-06-07 | stem.tail inherited from Rexx; .Array methods | Session item |
+
+## Stream I/O: prefer stream methods over BIFs
+
+<!-- ooRexx stream I/O: prefer stream methods over BIFs -->
+Prefer ooRexx object methods over classic BIFs for stream I/O:
+- Use `stream~command('OPEN WRITE REPLACE')` before full-file writes
+  instead of relying on `SysFileDelete` + `lineout` (which appends
+  to a new file and silently duplicates content if the delete fails).
+- Use `stream~command('CLOSE')` or `stream~close()` to flush.
+- `lineout(file, content)` opens in append mode; always precede a
+  full-file overwrite with `call stream file, 'C', 'OPEN WRITE REPLACE'`
+  (BIF form) or `stream~command('OPEN WRITE REPLACE')` (method form).
+- For new ooRexx code, prefer the method form on a `.Stream` object:
+  ```
+  s = .Stream~new(path)
+  s~command('OPEN WRITE REPLACE')
+  s~lineout(content)
+  s~close()
+  ```
+Classic BIF form (`call stream file, 'C', 'OPEN WRITE REPLACE'`) is
+acceptable in existing code; the key invariant is the `OPEN WRITE REPLACE`
+before any full-file write.
