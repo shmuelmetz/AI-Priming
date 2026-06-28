@@ -601,6 +601,17 @@ Name handling:
 - Render contact information in a style appropriate to the document
   context.
 
+### Hebrew phrases in web content
+
+When quoting a Hebrew phrase in HTML or any web-facing content:
+- Spell it in **ktav malei** (full spelling, with vav/yod vowel letters).
+- Immediately follow the phrase with a parenthetical giving both the
+  transliteration and the English translation, in that order, e.g.:
+  `פלשתים (Pelishtim, "Philistines")`.
+- **Exception:** when the purpose is to display niqqud (vowel points),
+  use the pointed form and omit the parenthetical if the niqqud itself
+  conveys the vocalization.
+
 ### Time estimates
 
 Provide time estimates for tasks when asked or when the task is
