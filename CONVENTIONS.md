@@ -933,8 +933,8 @@ stems are required by the `with input/output/error stem` clause).
 
 ## Baen Free Library e-books
 
-<!-- Baen Free Library e-books on M:\BAEN\\ -->
-E-books on removable drive M: (`M:\\BAEN\\`).
+<!-- Baen Free Library e-books on M:\BAEN\ -->
+E-books on removable drive M: (`M:\BAEN\`).
 
 ### 1632 universe (Eric Flint)
 | Title | Author(s) | ISBN | Year |
