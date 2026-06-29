@@ -876,6 +876,16 @@ ones. A step that has printed "already done" or "already present" on
 every run for the last several sessions is a candidate for removal or
 a longer interval.
 
+**Cache data needed for log readability; gate the generating code.**
+For any step that queries external services (e.g. `gh repo list`,
+`gh project list`) solely for log readability, cache the output to a
+file in `scripts\`. Re-query when: (a) the cache file is absent, or
+(b) the cache is older than a threshold (default 7 days). Use
+`fileAgeDays()` for age checks. Also re-query if a change in this
+session directly affects the cached data (e.g. a repo was just created).
+If the same data also drives downstream logic, that query runs
+unconditionally; only the display/log-readability portion is cached.
+
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-06-02 | Script action evaluation rule | User instruction |
