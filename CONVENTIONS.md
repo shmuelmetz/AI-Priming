@@ -348,11 +348,14 @@ present the zip instead and let the script extract what it needs.
 3. Call `present_files` with the script and zip immediately after the
    safe/unsafe message — nothing between them.
 
-The safe/unsafe message is:
-- **Safe** (`Bootstrap will self-upgrade.`) — the Claude.ai launch
-  button can be used; the bootstrap will copy the new script into place.
-- **Unsafe** — the script cannot self-upgrade; give the explicit copy
-  command immediately after the unsafe message, then call `present_files`.
+The safe/unsafe message is exactly one of these three, verbatim:
+
+1. `Safe to launch from UI`
+2. `Safe to download to bin and launch from UI`
+3. `Unsafe - download to bin and run session-2026-05-02.rex from command window`
+
+No paraphrase, no substitution, no additional text before or after the
+message. Use whichever applies to the current situation.
 
 The effect is that the download links appear at the very bottom of the
 response, directly below the safe/unsafe line, so the user can act on
