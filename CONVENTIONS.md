@@ -856,6 +856,28 @@ solving actually exists before adding more complexity on top.
 | 2026-06-18 | KISS companion rule | .Thread~new NOMETHOD on run after threading rewrite; Dirac.pdf had taken 0.7s all along |
 | 2026-06-18 | KISS addendum: fix the right problem | pdftoppm hung on Euler.pdf even after shell-redirection was fixed (via address...with). Root cause was calling pdftoppm on a corrupt xelatex output (15 bytes), not a concurrency or redirection issue. Fix: minimum-size gate before calling pdftoppm. Three rounds of mechanism fixes (bat file, threading, fire-and-forget kill) were applied to a problem that was actually about invalid input. |
 
+## Script ownership boundaries
+
+The session script owns only the directories and files it explicitly
+created or manages:
+
+- `C:\Users\Owner\Downloads\` — session zips, temp files, staging dirs
+- `C:\Users\Owner\repos\Personal\` — the Personal repo and its contents
+- Other known repos (`AI-Priming`, `Tools`, `Local-Coordinate-Spaces`,
+  `Safe-REXX`, `FT-2-to-Gramps`, `ISPF-LPEX-mapping`, `rexx-lint`,
+  `Pygments-Extensions`) — only the specific files the script manages
+
+The script does **not** own:
+- `C:\Users\Owner\bin\` — the script manages its own files there
+  (session-2026-05-02.rex, sync-bin.rex, etc.) and auto-deletes known
+  session ephemera, but must not flag or delete other files in bin\
+- `C:\Users\Owner\repos\` — the script must not scan for unexpected
+  repos or flag/delete repos it did not create
+- Any other directory not listed above
+
+Corollary: before adding a scan that flags or deletes files, confirm
+that the target directory is owned by this script.
+
 ## Script action evaluation: frequency and conditionality
 
 [IMPORTANT]
