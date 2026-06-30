@@ -856,6 +856,17 @@ solving actually exists before adding more complexity on top.
 | 2026-06-18 | KISS companion rule | .Thread~new NOMETHOD on run after threading rewrite; Dirac.pdf had taken 0.7s all along |
 | 2026-06-18 | KISS addendum: fix the right problem | pdftoppm hung on Euler.pdf even after shell-redirection was fixed (via address...with). Root cause was calling pdftoppm on a corrupt xelatex output (15 bytes), not a concurrency or redirection issue. Fix: minimum-size gate before calling pdftoppm. Three rounds of mechanism fixes (bat file, threading, fire-and-forget kill) were applied to a problem that was actually about invalid input. |
 
+## ZIP PATH RULE
+
+When extracting or inspecting files from a zip archive, ignore any
+drive letter prefix in the stored paths (e.g. `M:`, `C:`). A zip
+created on ArcaOS or from a removable drive may store paths like
+`M:\BAEN\BookTitle\chapter1.html`. The relevant path for extraction
+is everything after the drive letter and colon. Do not treat the drive
+letter as meaningful or attempt to access a path like
+`/home/claude/M:/BAEN/...` — always strip the drive prefix and use
+the bare relative path.
+
 ## Script ownership boundaries
 
 The session script owns only the directories and files it explicitly
