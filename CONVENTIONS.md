@@ -995,3 +995,69 @@ GG Vol. I is a one-time anthology, not an archive of the ongoing magazine.
 ### War God (Weber)
 | *Oath of Swords* | 0671876422 | 1994 |
 ### Other (not yet ingested; see baen_dir.txt for full list)
+
+## Tooltip quote sourcing (Favorite.Things.html and similar)
+
+<!-- Tooltip quote-sourcing rule: dual-location and authorized-source requirements -->
+All tooltip quotes must be verified against source text (exact, not paraphrase),
+and only against legitimately-sourced text -- purchased, licensed, library-borrowed,
+or an author/publisher's own authorized free-distribution channel (e.g. the actual
+Baen Free Library / Fifth Imperium archive for Baen promo-CD titles). Copies from
+unauthorized ebook-piracy distribution sites (e.g. files carrying an
+`OceanofPDF.com`-style origin marker) are not used as source text, even if the
+underlying work was at some point freely distributed through an authorized
+channel, since the specific file's provenance and edition cannot be verified.
+
+Where a title exists both as a standalone book and inside an anthology/omnibus,
+record the quote's location in **both** forms where applicable (e.g. a
+*Shards of Honor* quote should also note if it appears in the *Cordelia's Honor*
+omnibus), since the anthology's table of contents may not list the novel
+separately and a future source search against only one form could miss it.
+
+## Documents\SF reference tree
+
+<!-- Documents\SF root: science-fiction reference material -->
+`%USERPROFILE%\Documents\SF` is the root for SF/fantasy reference material used in
+tooltip and web-content research, replacing the old flat `Documents\Baen\`.
+- `SF\Baen\E-books` -- documentation pointer only; e-book files remain on
+  removable drive `M:\BAEN\`, not physically relocated.
+- `SF\Baen\Book-CD` -- CD-ROM images/directories actually possessed and locally
+  scannable (e.g. `Cryoburn.CD`).
+- `SF\Baen\Book-CD-Archive` -- catalog-only reference metadata (no local files)
+  for Baen promotional CD-ROM discs not possessed, sourced from the Baen Free
+  Library CD-ROM bibliography (Fifth Imperium archive).
+- `SF\Wrede` -- non-Baen titles needed for tooltip work (e.g. *A Matter of Magic*,
+  Tor imprint, never distributed via Baen).
+
+## Book-CD-Archive catalog
+
+<!-- Book-CD-Archive catalog on C:\Users\Owner\Documents\SF\Baen\Book-CD-Archive -->
+Reference metadata only (not locally possessed) for Baen Free
+Library promotional CD-ROMs, sourced from the Fifth Imperium
+archive bibliography. See C:\Users\Owner\Documents\SF\Baen\Book-CD-Archive for the source PDF.
+
+### 1632 series (Ring of Fire universe)
+- CD 13: 1634: The Baltic War Disk -- adds 1634: The Galileo Affair,
+  1634: The Ram Rebellion, 1634: The Baltic War, Grantville Gazette
+  II-III, Flint standalones Mother of Demons, The Philosophical
+  Strangler.
+- CD 23: 1635: The Eastern Front Disk -- adds 1635: The Eastern
+  Front, 1635: The Bavarian Crisis, Grantville Gazette IV-V, The
+  Anaconda Project, Heirs of Alexandria (Shadow of the Lion, This
+  Rough Magic).
+### Honorverse
+- CD 01: The War of Honor Disk -- adds Short Victorious War, Field
+  of Dishonor, Flag in Exile, Honor Among Enemies, In Enemy Hands,
+  Echoes of Honor, Ashes of Victory, War of Honor, More Than Honor,
+  Worlds of Honor.
+- CD 06b: The Shadow of Saganami Disk -- adds Crown of Slaves,
+  Apocalypse Troll, Excalibur Alternative, Mutineers' Moon.
+- CD 22: The Mission of Honor Disk -- adds Mission of Honor,
+  Safehold backlist (titles unspecified in bibliography).
+### Tinker series (Elfhome universe)
+- CD 09: The Wind Rider's Oath Disk (Wen Spencer section) -- adds
+  Tinker, Wolf Who Rules, Alien Taste, Tainted Trail, Bitter Waters,
+  Dog Warrior.
+### Excluded
+- A Matter of Magic (Wrede) -- Tor imprint, never on a Baen disc;
+  lives under C:\Users\Owner\Documents\SF\Wrede, not Book-CD-Archive.
