@@ -990,3 +990,17 @@ GG Vol. I is a one-time anthology, not an archive of the ongoing magazine.
 ### War God (Weber)
 | *Oath of Swords* | 0671876422 | 1994 |
 ### Other (not yet ingested; see baen_dir.txt for full list)
+
+## Cryoburn.CD contents
+
+<!-- Cryoburn.CD contents on C:\Users\Owner\Documents\Baen\Cryoburn.CD -->
+Directory listing of C:\Users\Owner\Documents\Baen\Cryoburn.CD (8 subdirectory(ies)):
+
+- Essays
+- Forwards
+- Gallery
+- images
+- Interviews
+- Novels
+- Speeches
+- Travel Memoirs
