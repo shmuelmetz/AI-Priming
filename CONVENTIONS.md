@@ -1029,35 +1029,48 @@ tooltip and web-content research, replacing the old flat `Documents\Baen\`.
 - `SF\Wrede` -- non-Baen titles needed for tooltip work (e.g. *A Matter of Magic*,
   Tor imprint, never distributed via Baen).
 
-## Book-CD-Archive catalog
+## Baen Book-CD zip naming convention
 
-<!-- Book-CD-Archive catalog on C:\Users\Owner\Documents\SF\Baen\Book-CD-Archive -->
-Reference metadata only (not locally possessed) for Baen Free
-Library promotional CD-ROMs, sourced from the Fifth Imperium
-archive bibliography. See C:\Users\Owner\Documents\SF\Baen\Book-CD-Archive for the source PDF.
+<!-- Baen Book-CD zip naming convention -->
+Individual anthologies or novels extracted locally from a whole-disc Baen CD
+archive (see Book-CD-Archive catalog below) are repackaged as:
 
-### 1632 series (Ring of Fire universe)
-- CD 13: 1634: The Baltic War Disk -- adds 1634: The Galileo Affair,
-  1634: The Ram Rebellion, 1634: The Baltic War, Grantville Gazette
-  II-III, Flint standalones Mother of Demons, The Philosophical
-  Strangler.
-- CD 23: 1635: The Eastern Front Disk -- adds 1635: The Eastern
-  Front, 1635: The Bavarian Crisis, Grantville Gazette IV-V, The
-  Anaconda Project, Heirs of Alexandria (Shadow of the Lion, This
-  Rough Magic).
-### Honorverse
-- CD 01: The War of Honor Disk -- adds Short Victorious War, Field
-  of Dishonor, Flag in Exile, Honor Among Enemies, In Enemy Hands,
-  Echoes of Honor, Ashes of Victory, War of Honor, More Than Honor,
-  Worlds of Honor.
-- CD 06b: The Shadow of Saganami Disk -- adds Crown of Slaves,
-  Apocalypse Troll, Excalibur Alternative, Mutineers' Moon.
-- CD 22: The Mission of Honor Disk -- adds Mission of Honor,
-  Safehold backlist (titles unspecified in bibliography).
-### Tinker series (Elfhome universe)
-- CD 09: The Wind Rider's Oath Disk (Wen Spencer section) -- adds
-  Tinker, Wolf Who Rules, Alien Taste, Tainted Trail, Bitter Waters,
-  Dog Warrior.
-### Excluded
-- A Matter of Magic (Wrede) -- Tor imprint, never on a Baen disc;
-  lives under C:\Users\Owner\Documents\SF\Wrede, not Book-CD-Archive.
+    Baen-CD<NN>-<TitleSlug>.zip
+
+- `CD<NN>` -- the disc identifier exactly as used in the Book-CD-Archive catalog
+  (e.g. `CD01`, `CD06`, `CD06B`, `CD13`, `CD22`, `CD23`) -- number plus letter
+  suffix where the disc has one, no separator between them.
+- `<TitleSlug>` -- the title in Title Case with spaces replaced by hyphens
+  (standard slash-substitution hyphen rule extends to spaces here); colons
+  separating a subtitle become a hyphen; apostrophes are dropped, not replaced;
+  ampersands spell out as "and"; leading articles are kept. Do not abbreviate
+  words in the title itself (series/volume labels may still say "Volume", not
+  "Vol", for the same reason).
+
+Worked examples:
+- *1634: The Baltic War* from CD 13 -> `Baen-CD13-1634-The-Baltic-War.zip`
+- *On Basilisk Station* from CD 01 -> `Baen-CD01-On-Basilisk-Station.zip`
+- *Grantville Gazette, Volume II* from CD 13 -> `Baen-CD13-Grantville-Gazette-Volume-II.zip`
+- *Wind Rider's Oath* from CD 06 -> `Baen-CD06-Wind-Riders-Oath.zip`
+- *The Shadow of Saganami* from CD 06B -> `Baen-CD06B-The-Shadow-of-Saganami.zip`
+
+If a future disc ever produces two different titles that would slug identically
+(not observed so far), disambiguate by appending the disc's Fifth-Imperium
+folder token in parentheses rather than shortening either title.
+
+## Grantville Gazette e-zine issue inventory
+
+<!-- Grantville Gazette e-zine issue inventory -->
+The Grantville Gazette exists in two distinct forms that must not be conflated:
+the ongoing numbered **e-zine** (individual electronic issues, sold/distributed
+separately) and the print/ebook **anthology volumes** (curated selections from
+a range of e-zine issues, e.g. *Grantville Gazette, Volume I-V*, each packaged
+as a single title on a Book-CD). The bibliography currently only documents the
+anthology volumes; no CD has yet been inspected for raw numbered e-zine issues.
+This table tracks e-zine issues confirmed present once a Book-CD is actually
+downloaded and inventoried -- do not populate from anthology volume contents,
+since a volume's table of contents does not guarantee it names issues by number.
+
+| Issue # | Title/Date (if known) | Found on | Format | Status |
+|---|---|---|---|---|
+| -- | -- | -- | -- | none confirmed yet |
