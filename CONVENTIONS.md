@@ -963,6 +963,11 @@ stems are required by the `with input/output/error stem` clause).
   re-establish context in a new chat. The block must identify: current script version,
   pending work items, any rules added since the last successfully downloaded zip, and
   the specific task interrupted. A presented-but-not-yet-downloaded zip does not count.
+- **Log upload workflow:** Shmuel uploading `session-2026-05-02.log` after a script run
+  is normal workflow, not an ambiguous or unexplained upload. Always scan it for
+  anomalies without being asked, including expensive/slow actions (network calls,
+  `filter-repo`, `pdftoppm`, etc.) running more often than necessary. Cross-check each
+  finding against later runs in the same log before reporting it as open vs. resolved.
 
 ## Baen Free Library e-books
 
@@ -990,17 +995,3 @@ GG Vol. I is a one-time anthology, not an archive of the ongoing magazine.
 ### War God (Weber)
 | *Oath of Swords* | 0671876422 | 1994 |
 ### Other (not yet ingested; see baen_dir.txt for full list)
-
-## Cryoburn.CD contents
-
-<!-- Cryoburn.CD contents on C:\Users\Owner\Documents\Baen\Cryoburn.CD -->
-Directory listing of C:\Users\Owner\Documents\Baen\Cryoburn.CD (8 subdirectory(ies)):
-
-- Essays
-- Forwards
-- Gallery
-- images
-- Interviews
-- Novels
-- Speeches
-- Travel Memoirs
