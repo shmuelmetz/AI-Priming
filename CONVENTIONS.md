@@ -850,11 +850,24 @@ correct in principle but premature; the simpler fix was the right
 fix. When a complex solution fails, ask whether the problem it was
 solving actually exists before adding more complexity on top.
 
+**Multi-argument program invocation:** `address system '"prog" "arg1"' ,
+'/FLAG:"arg2" /FLAG2:"arg3"'` (a plain quoted command string, several
+separate quoted arguments) works directly via `address system` --
+ooRexx passes it straight through. Do not wrap it in `cmd /C "..."`;
+that's Windows-specific, doesn't help (confirmed by testing -- identical
+failure with and without the wrap when a different bug was the actual
+cause), and breaks portability to ArcaOS/Linux for no benefit. If a
+multi-argument invocation is actually failing, the fix is to find the
+real cause (log both `['out']` and `['err']` from the result -- error
+text from the called program's own `say`/error-reporting goes to
+stdout, not stderr), not to add a shell-specific wrapper speculatively.
+
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-06-18 | address...with rule | User instruction; multiple hangs traced to shell-redirection fragility |
 | 2026-06-18 | KISS companion rule | .Thread~new NOMETHOD on run after threading rewrite; Dirac.pdf had taken 0.7s all along |
 | 2026-06-18 | KISS addendum: fix the right problem | pdftoppm hung on Euler.pdf even after shell-redirection was fixed (via address...with). Root cause was calling pdftoppm on a corrupt xelatex output (15 bytes), not a concurrency or redirection issue. Fix: minimum-size gate before calling pdftoppm. Three rounds of mechanism fixes (bat file, threading, fire-and-forget kill) were applied to a problem that was actually about invalid input. |
+| 2026-07-11 | Multi-argument invocation: no `cmd /C` wrap, no args-file workaround -- plain `address system` handles multiple quoted arguments directly | User: "Avoid windoze specific code, e.g., cmd /C" + "address system foo bar with ... stem should work" + "if you stick to rexx then you can pass multiple arguments" -- both `cmd /C` wrapping and a subsequent args-file redesign were unnecessary complexity added while debugging next-pending.rex/baen-extract.rex invocation |
 
 ## ZIP PATH RULE
 
