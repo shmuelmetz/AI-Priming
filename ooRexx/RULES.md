@@ -428,9 +428,24 @@ parse value foo || bar with template
 parse value myFunc()   with template
 ```
 
+**This is not just a style preference for collection-indexed access.**
+`parse var` requires an actual variable name as its target; an indexed
+expression like `dir['out']` or `arr[1]` is not a legal `parse var`
+target and is a hard syntax/parse error, not merely less readable. Any
+time the source is a collection element (a `captureCmd`/`wrapCmd`
+result's `['out']`/`['err']`, a stem tail, an array index), use
+`parse value` with the expression, not `parse var`:
+
+```rexx
+result = captureCmd('...')
+/* result['out'] is a .Array of lines, not a string -- index it first */
+parse value result['out'][1] with template
+```
+
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-06-05 | Prefer `parse var` over `parse value ... with` | Session item 4 |
+| 2026-07-11 | Indexed expressions are not legal `parse var` targets -- use `parse value` | Bug caught wiring next-pending.rex into session-2026-05-02.rex (captureCmd `['out']` is a `.Array`, not a string) |
 
 ---
 
@@ -459,6 +474,34 @@ Iteration: `do x over arr` visits all non-empty items in index order.
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-06-07 | stem.tail inherited from Rexx; .Array methods | Session item |
+
+---
+
+## When to replace independent routines with a class and methods
+
+Default to independent `::ROUTINE`s (or separate standalone tool scripts,
+per the Tools-repo split-reusable-worker-routines convention) rather than
+reaching for a class. Look specifically for cases where several routines
+keep passing the *same cluster of state* back and forth as separate
+arguments/return values, or repeat the *same setup/teardown* around each
+call (open a stream, validate a path, parse the same file format) — that
+duplication is the signal a class-with-methods would be cleaner, because
+the shared state becomes instance data instead of a parameter list every
+call site has to get right, and the setup/teardown becomes the
+constructor/a shared method instead of copy-pasted boilerplate.
+
+Do not convert routines to a class just because they're related by topic;
+relatedness alone isn't the trigger, repeated shared state or repeated
+setup/teardown is. If routines are already independent (no shared state
+beyond what's passed as simple, obvious arguments, no repeated
+boilerplate), leave them as routines — a class adds indirection
+(construction, method-lookup, `~` message sends) that buys nothing when
+there's no state to encapsulate.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-07-11 | When to replace independent routines with a class | User-stated rule |
+
 
 ## Stream I/O: prefer stream methods over BIFs
 
