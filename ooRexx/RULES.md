@@ -479,13 +479,24 @@ Iteration: `do x over arr` visits all non-empty items in index order.
 
 ## When to replace independent routines with a class and methods
 
+*(This belongs in Rexx-RULES.md, not here -- it's a Rexx-family rule
+[classic Rexx, ooRexx, NetRexx], not ooRexx-specific. Rexx-RULES.md
+wasn't in this session's zip, so I can't move it there without risking
+clobbering content I haven't seen -- upload it if you want this
+relocated properly. Noting the general-scope correction in place for
+now.)*
+
 Look for cases where replacing independent routines with a class and
 methods leads to cleaner code.
+
+If you need access to the caller's variables, consider packaging things
+as objects rather than reaching for shared/exposed variable scope.
 
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-07-11 | When to replace independent routines with a class | User-stated rule |
 | 2026-07-11 | Rule restated in general form -- earlier version added specific trigger conditions (shared state, setup/teardown) that weren't in the original rule | User correction: "too specific; my rule was deliberately general" |
+| 2026-07-11 | Clarified scope: applies to Rexx-like languages generally (Rexx, ooRexx, NetRexx), not ooRexx specifically; added caller-variable-access corollary | User: "My intent was for that to be a persistent hint for, e.g., rexx, oorexx, netrexx" / "If need access to the callers variables, consider packaging things as objects." |
 
 
 ## Stream I/O: prefer stream methods over BIFs
