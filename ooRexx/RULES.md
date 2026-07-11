@@ -479,28 +479,13 @@ Iteration: `do x over arr` visits all non-empty items in index order.
 
 ## When to replace independent routines with a class and methods
 
-Default to independent `::ROUTINE`s (or separate standalone tool scripts,
-per the Tools-repo split-reusable-worker-routines convention) rather than
-reaching for a class. Look specifically for cases where several routines
-keep passing the *same cluster of state* back and forth as separate
-arguments/return values, or repeat the *same setup/teardown* around each
-call (open a stream, validate a path, parse the same file format) — that
-duplication is the signal a class-with-methods would be cleaner, because
-the shared state becomes instance data instead of a parameter list every
-call site has to get right, and the setup/teardown becomes the
-constructor/a shared method instead of copy-pasted boilerplate.
-
-Do not convert routines to a class just because they're related by topic;
-relatedness alone isn't the trigger, repeated shared state or repeated
-setup/teardown is. If routines are already independent (no shared state
-beyond what's passed as simple, obvious arguments, no repeated
-boilerplate), leave them as routines — a class adds indirection
-(construction, method-lookup, `~` message sends) that buys nothing when
-there's no state to encapsulate.
+Look for cases where replacing independent routines with a class and
+methods leads to cleaner code.
 
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-07-11 | When to replace independent routines with a class | User-stated rule |
+| 2026-07-11 | Rule restated in general form -- earlier version added specific trigger conditions (shared state, setup/teardown) that weren't in the original rule | User correction: "too specific; my rule was deliberately general" |
 
 
 ## Stream I/O: prefer stream methods over BIFs
