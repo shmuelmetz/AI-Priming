@@ -570,6 +570,91 @@ target interpreter (ooRexx here) before relying on it cross-implementation.
 |------|-------|--------------|
 | 2026-07-11 | Indirect external calls: `CALL (expr) args` | User quoted the ooRexx language reference after Claude's Regina-based test of this syntax failed and Claude wrongly concluded the syntax itself was invalid, rather than that Regina doesn't implement this ooRexx extension |
 
+## JSON class (`::REQUIRES "json.cls"`)
+
+Bundled with ooRexx 5.x, not yet used anywhere in `session-2026-05-02.rex`.
+`.JSON~toString(object)` / `.JSON~fromString(string)` (or via the `json`
+mixin's `~makeJSON`/instance parsing, depending on version) convert
+between Rexx objects (Directory/Array/String/numbers) and JSON text.
+Candidate use case identified but not yet acted on: `download-priority.txt`
+is flat pipe-delimited text (`CD01|Title|URL|Bytes`), which is already
+straining now that `CD13B` needs adding (see Book-CD-Archive catalog) --
+pipe-delimited text doesn't nest, JSON does. Not switched over yet;
+flat text has been sufficient so far and a format change mid-project
+isn't free. Reach for this if the catalog's structure keeps growing.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-07-12 | JSON class noted as available, candidate use case identified | User question: "use case for ::requires json.cls?" |
+
+## Validate class
+
+Bundled with ooRexx 5.x. Class methods for asserting argument
+correctness -- **each one raises a SYNTAX error on failure and returns
+nothing on success** (it's an assertion, not a `.true`/`.false` test).
+Supersedes the deprecated `ArgUtil` class.
+
+| Method | Validates | Digits default |
+|---|---|---|
+| `classType(name, object, class)` | `object` is an instance of `class` | -- |
+| `requestClassType(name, object, class)` | `object` convertible to `class` via `request`; returns the converted object | -- |
+| `length(name, number, digits)` | zero or positive whole number | `internalDigits` |
+| `position(name, number, digits)` | positive whole number | `internalDigits` |
+| `logical(name, number)` | `.true` or `.false` | -- |
+| `number(name, number)` | valid Rexx number | -- |
+| `wholeNumber(name, number, digits)` | whole number | 9 |
+| `nonNegativeNumber(name, number, digits)` | zero or positive number | 9 |
+| `positiveNumber(name, number, digits)` | positive number | 9 |
+| `nonNegativeWholeNumber(name, number, digits)` | zero or positive whole number | 9 |
+| `positiveWholeNumber(name, number, digits)` | positive whole number | 9 |
+| `numberRange(name, number, min, max, digits)` | number within range | 9 |
+| `wholeNumberRange(name, number, min, max, digits)` | whole number within range | 9 |
+
+Candidate use case identified but not yet wired in: `baen-extract.rex`'s
+`dryRun`/`verbose`/`overwrite` arguments currently get informally coerced
+(`(dryRun \= 0)`) rather than validated; `download-priority.txt`'s
+`cdBytes` field is used as a byte count without confirming it's numeric
+first. Since `.Validate` raises SYNTAX on failure, wiring it in requires
+getting `SIGNAL ON SYNTAX` scoping right -- see the routine-encapsulation
+rule below, which resolves the specific problem that blocked doing this
+during this session's download/extraction work.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-07-12 | Validate class documented in full, candidate use cases identified | User uploaded rexxref.pdf and asked to retain this persistently |
+
+## Encapsulate in a routine or method to limit SIGNAL SYNTAX (etc.) side effects
+
+Per the ooRexx language reference (§2.25, RETURN): **"If no internal
+routine (subroutine or function) is active, RETURN and EXIT are
+identical in their effect on the program that is run."** This means a
+`SIGNAL ON SYNTAX NAME label` trap set in the mainline, whose label ends
+in a bare `RETURN`, does not "fall through and resume" the way it might
+look like it should -- it terminates the program, same as EXIT, because
+no internal routine is active at that point.
+
+If code needs to trap a condition (SYNTAX or otherwise) and have it
+*not* propagate out to a caller/mainline, wrap the guarded operation in
+its own routine or method (an internal label reached via `CALL`, a
+`::ROUTINE`, or a `::METHOD`) and set the condition trap *inside* that
+routine. With an internal routine active, `RETURN` behaves as a genuine
+return-to-caller, not as EXIT, and per §11.2 ("Action Taken when a
+Condition Is Trapped"): "The state ... of each condition trap is saved
+on entry to a subroutine and is then restored on RETURN" -- so the trap
+is automatically scoped to that routine's invocation and doesn't need
+manual save/restore of the caller's trap state either.
+
+This is the fix for the specific problem hit this session: a `SIGNAL ON
+SYNTAX` guard set directly around a mainline `CALL (expr) args` (to
+protect against a bug in a small Tools-repo utility aborting the whole
+session run) was abandoned as unverifiable via Regina testing. The
+actual fix is to put the guarded `CALL` inside a small wrapper routine
+of its own, not to guard it in place in the mainline.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-07-12 | Encapsulate in a routine/method to limit SIGNAL SYNTAX side effects | User-stated rule, following the discovery that `ignErr`'s mainline-level `SIGNAL ON` + bare `RETURN` may not behave as its own comment claims |
+
 
 ## Stream I/O: prefer stream methods over BIFs
 
