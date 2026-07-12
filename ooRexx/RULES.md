@@ -498,6 +498,78 @@ as objects rather than reaching for shared/exposed variable scope.
 | 2026-07-11 | Rule restated in general form -- earlier version added specific trigger conditions (shared state, setup/teardown) that weren't in the original rule | User correction: "too specific; my rule was deliberately general" |
 | 2026-07-11 | Clarified scope: applies to Rexx-like languages generally (Rexx, ooRexx, NetRexx), not ooRexx specifically; added caller-variable-access corollary | User: "My intent was for that to be a persistent hint for, e.g., rexx, oorexx, netrexx" / "If need access to the callers variables, consider packaging things as objects." |
 
+---
+
+## Avoid single-character variable names
+
+*(Rexx-family rule, not ooRexx-specific -- see note above about
+Rexx-RULES.md not being in this session's zip.)*
+
+Single-character variable names are a real hazard in Rexx, not just a
+style nit: a symbol placed immediately after a closing quote can collide
+with typed-literal suffixes (`'1010'B` binary, `'FF'X` hex, and others),
+silently changing what the parser thinks the expression means. `a'|'b`
+was written intending "concatenate a, the literal |, and variable b" but
+parses as "the string `|` interpreted as a **binary literal with suffix
+B**" -- caught live this session, producing "Only 0, 1, and blank are
+valid in a binary string; found '|'", a confusing error that pointed
+nowhere near the actual (single-character-name) cause. Use descriptive
+multi-character names; if a loop index or throwaway needs to be short,
+two-plus characters (`ix`, `dir`, `iz`) is enough to avoid the collision
+class entirely.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-07-11 | Avoid single-character variable names | User: "isn't there a rule bout one character variable names" -- prompted by a `'|'b` typed-literal-suffix collision hitting exactly this class of bug |
+
+## Avoid INTERPRET; there are usually cleaner ways
+
+*(Rexx-family rule, not ooRexx-specific.)*
+
+`INTERPRET` builds and executes code from a string at runtime. It's
+occasionally the only tool for the job, but it's usually reached for
+before checking whether the language already has a direct feature for
+what's needed -- e.g. an indirect external-routine call by computed name
+is `CALL (expr) args` (the parenthesised form, evaluated once and used
+as the call target -- see "Indirect external calls" below), not
+`INTERPRET 'call ''' name ''' args'`. Prefer the direct language feature;
+reach for `INTERPRET` only once it's confirmed nothing else does the job.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-07-11 | Avoid INTERPRET; there are usually cleaner ways | User-stated rule, in response to Claude reaching for INTERPRET to work around an indirect-call syntax question that had a direct answer |
+
+## Indirect external calls: `CALL (expr) args`
+
+`CALL (expr) args` -- an expression in parentheses, not a bare
+name/variable -- evaluates `expr` first, and its value becomes the call
+target (checked against label names and built-in function names
+case-sensitively; the language processor does not uppercase it).
+This is the correct way to call a routine whose name/path is held in a
+variable:
+
+```rexx
+nextPendingExe = toolsDir'\PriorityQueue\next-pending.rex'
+call (nextPendingExe) queueFile, sentinelDir, sentinelPrefix
+result1 = result
+```
+
+A bare `CALL variableName args` (no parens) does **not** dereference the
+variable -- it uses the literal symbol text `VARIABLENAME` as the call
+target, which is almost never what's wanted and fails confusingly (looks
+like a missing-program error, not a variable-vs-literal mixup).
+
+Caution: this specific parenthesised form is confirmed from the ooRexx
+language reference, but Regina (classic Rexx) rejects it outright
+("String or symbol expected after CALL keyword; found '('") -- it's an
+ooRexx extension beyond the ANSI/TRL2 baseline, not something to assume
+works unmodified on every Rexx implementation. Verify on the actual
+target interpreter (ooRexx here) before relying on it cross-implementation.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-07-11 | Indirect external calls: `CALL (expr) args` | User quoted the ooRexx language reference after Claude's Regina-based test of this syntax failed and Claude wrongly concluded the syntax itself was invalid, rather than that Regina doesn't implement this ooRexx extension |
+
 
 ## Stream I/O: prefer stream methods over BIFs
 
