@@ -1044,6 +1044,19 @@ tooltip and web-content research, replacing the old flat `Documents\Baen\`.
 
 ## Baen Book-CD zip naming convention
 
+<!-- Stacked filename suffixes indicate successive transformations -->
+**Persistent note on Baen HTML filenames:** stacked underscore suffixes
+(e.g. `0671578286__10.htm` vs `0671578286___1.htm` -- two vs three
+underscores) often indicate successive transformation stages, not
+decoration -- don't assume they're arbitrary when navigating these
+archives; treat the underscore count as meaningful until proven
+otherwise for a given disc.
+
+<!-- Always specify output directory on generated zip commands -->
+**Rule: always specify the output directory explicitly on any zip
+command generated for the user to run** -- don't rely on an implicit
+relative/current-directory destination.
+
 <!-- Baen Book-CD zip naming convention -->
 Individual anthologies or novels extracted locally from a whole-disc Baen CD
 archive (see Book-CD-Archive catalog below) are repackaged as:
