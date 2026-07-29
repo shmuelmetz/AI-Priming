@@ -812,9 +812,19 @@ typically not available to them. Asking for it wastes a round-trip
 and frustrates. Instead: instrument the code to capture that
 information directly, and reason from what the log actually contains.
 
+STRENGTHENED: this extends beyond information-gathering to any
+manual operation the script could perform instead. Do not hand the
+user a step to run by hand -- a command, a check, a file move, marking
+something done -- when that step could be built into the script or
+tool being delivered. Before asking for or requiring a manual step,
+verify it genuinely cannot be automated (e.g. it requires a UAC
+consent click, or lives on a machine Claude has no access to); if it
+can be automated, automate it rather than offloading it.
+
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-06-18 | Clarifying-questions rule | User instruction; repeated "was the window still running?" queries during hang investigation |
+| 2026-07-29 | Strengthened to cover manual operations generally | User instruction |
 
 ## Shell redirection vs. address...with
 
