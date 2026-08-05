@@ -348,14 +348,11 @@ present the zip instead and let the script extract what it needs.
 3. Call `present_files` with the script and zip immediately after the
    safe/unsafe message — nothing between them.
 
-The safe/unsafe message is exactly one of these three, verbatim:
-
-1. `Safe to launch from UI`
-2. `Safe to download to bin and launch from UI`
-3. `Unsafe - download to bin and run session-2026-05-02.rex from command window`
-
-No paraphrase, no substitution, no additional text before or after the
-message. Use whichever applies to the current situation.
+The safe/unsafe message is:
+- **Safe** (`Bootstrap will self-upgrade.`) — the Claude.ai launch
+  button can be used; the bootstrap will copy the new script into place.
+- **Unsafe** — the script cannot self-upgrade; give the explicit copy
+  command immediately after the unsafe message, then call `present_files`.
 
 The effect is that the download links appear at the very bottom of the
 response, directly below the safe/unsafe line, so the user can act on
@@ -604,17 +601,6 @@ Name handling:
 - Render contact information in a style appropriate to the document
   context.
 
-### Hebrew phrases in web content
-
-When quoting a Hebrew phrase in HTML or any web-facing content:
-- Spell it in **ktav malei** (full spelling, with vav/yod vowel letters).
-- Immediately follow the phrase with a parenthetical giving both the
-  transliteration and the English translation, in that order, e.g.:
-  `פלשתים (Pelishtim, "Philistines")`.
-- **Exception:** when the purpose is to display niqqud (vowel points),
-  use the pointed form and omit the parenthetical if the niqqud itself
-  conveys the vocalization.
-
 ### Time estimates
 
 Provide time estimates for tasks when asked or when the task is
@@ -812,19 +798,9 @@ typically not available to them. Asking for it wastes a round-trip
 and frustrates. Instead: instrument the code to capture that
 information directly, and reason from what the log actually contains.
 
-STRENGTHENED: this extends beyond information-gathering to any
-manual operation the script could perform instead. Do not hand the
-user a step to run by hand -- a command, a check, a file move, marking
-something done -- when that step could be built into the script or
-tool being delivered. Before asking for or requiring a manual step,
-verify it genuinely cannot be automated (e.g. it requires a UAC
-consent click, or lives on a machine Claude has no access to); if it
-can be automated, automate it rather than offloading it.
-
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-06-18 | Clarifying-questions rule | User instruction; repeated "was the window still running?" queries during hang investigation |
-| 2026-07-29 | Strengthened to cover manual operations generally | User instruction |
 
 ## Shell redirection vs. address...with
 
@@ -860,57 +836,11 @@ correct in principle but premature; the simpler fix was the right
 fix. When a complex solution fails, ask whether the problem it was
 solving actually exists before adding more complexity on top.
 
-**Multi-argument program invocation:** `address system '"prog" "arg1"' ,
-'/FLAG:"arg2" /FLAG2:"arg3"'` (a plain quoted command string, several
-separate quoted arguments) works directly via `address system` --
-ooRexx passes it straight through. Do not wrap it in `cmd /C "..."`;
-that's Windows-specific, doesn't help (confirmed by testing -- identical
-failure with and without the wrap when a different bug was the actual
-cause), and breaks portability to ArcaOS/Linux for no benefit. If a
-multi-argument invocation is actually failing, the fix is to find the
-real cause (log both `['out']` and `['err']` from the result -- error
-text from the called program's own `say`/error-reporting goes to
-stdout, not stderr), not to add a shell-specific wrapper speculatively.
-
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-06-18 | address...with rule | User instruction; multiple hangs traced to shell-redirection fragility |
 | 2026-06-18 | KISS companion rule | .Thread~new NOMETHOD on run after threading rewrite; Dirac.pdf had taken 0.7s all along |
 | 2026-06-18 | KISS addendum: fix the right problem | pdftoppm hung on Euler.pdf even after shell-redirection was fixed (via address...with). Root cause was calling pdftoppm on a corrupt xelatex output (15 bytes), not a concurrency or redirection issue. Fix: minimum-size gate before calling pdftoppm. Three rounds of mechanism fixes (bat file, threading, fire-and-forget kill) were applied to a problem that was actually about invalid input. |
-| 2026-07-11 | Multi-argument invocation: no `cmd /C` wrap, no args-file workaround -- plain `address system` handles multiple quoted arguments directly | User: "Avoid windoze specific code, e.g., cmd /C" + "address system foo bar with ... stem should work" + "if you stick to rexx then you can pass multiple arguments" -- both `cmd /C` wrapping and a subsequent args-file redesign were unnecessary complexity added while debugging next-pending.rex/baen-extract.rex invocation |
-
-## ZIP PATH RULE
-
-When extracting or inspecting files from a zip archive, ignore any
-drive letter prefix in the stored paths (e.g. `M:`, `C:`). A zip
-created on ArcaOS or from a removable drive may store paths like
-`M:\BAEN\BookTitle\chapter1.html`. The relevant path for extraction
-is everything after the drive letter and colon. Do not treat the drive
-letter as meaningful or attempt to access a path like
-`/home/claude/M:/BAEN/...` — always strip the drive prefix and use
-the bare relative path.
-
-## Script ownership boundaries
-
-The session script owns only the directories and files it explicitly
-created or manages:
-
-- `C:\Users\Owner\Downloads\` — session zips, temp files, staging dirs
-- `C:\Users\Owner\repos\Personal\` — the Personal repo and its contents
-- Other known repos (`AI-Priming`, `Tools`, `Local-Coordinate-Spaces`,
-  `Safe-REXX`, `FT-2-to-Gramps`, `ISPF-LPEX-mapping`, `rexx-lint`,
-  `Pygments-Extensions`) — only the specific files the script manages
-
-The script does **not** own:
-- `C:\Users\Owner\bin\` — the script manages its own files there
-  (session-2026-05-02.rex, sync-bin.rex, etc.) and auto-deletes known
-  session ephemera, but must not flag or delete other files in bin\
-- `C:\Users\Owner\repos\` — the script must not scan for unexpected
-  repos or flag/delete repos it did not create
-- Any other directory not listed above
-
-Corollary: before adding a scan that flags or deletes files, confirm
-that the target directory is owned by this script.
 
 ## Script action evaluation: frequency and conditionality
 
@@ -931,16 +861,6 @@ Apply this evaluation when adding new steps and when reviewing existing
 ones. A step that has printed "already done" or "already present" on
 every run for the last several sessions is a candidate for removal or
 a longer interval.
-
-**Cache data needed for log readability; gate the generating code.**
-For any step that queries external services (e.g. `gh repo list`,
-`gh project list`) solely for log readability, cache the output to a
-file in `scripts\`. Re-query when: (a) the cache file is absent, or
-(b) the cache is older than a threshold (default 7 days). Use
-`fileAgeDays()` for age checks. Also re-query if a change in this
-session directly affects the cached data (e.g. a repo was just created).
-If the same data also drives downstream logic, that query runs
-unconditionally; only the display/log-readability portion is cached.
 
 | Date | Entry | Triggered by |
 |------|-------|--------------|
@@ -986,16 +906,11 @@ stems are required by the `with input/output/error stem` clause).
   re-establish context in a new chat. The block must identify: current script version,
   pending work items, any rules added since the last successfully downloaded zip, and
   the specific task interrupted. A presented-but-not-yet-downloaded zip does not count.
-- **Log upload workflow:** Shmuel uploading `session-2026-05-02.log` after a script run
-  is normal workflow, not an ambiguous or unexplained upload. Always scan it for
-  anomalies without being asked, including expensive/slow actions (network calls,
-  `filter-repo`, `pdftoppm`, etc.) running more often than necessary. Cross-check each
-  finding against later runs in the same log before reporting it as open vs. resolved.
 
 ## Baen Free Library e-books
 
-<!-- Baen Free Library e-books on M:\BAEN\ -->
-E-books on removable drive M: (`M:\BAEN\`).
+<!-- Baen Free Library e-books on M:\BAEN\\ -->
+E-books on removable drive M: (`M:\\BAEN\\`).
 
 ### 1632 universe (Eric Flint)
 | Title | Author(s) | ISBN | Year |
@@ -1018,95 +933,3 @@ GG Vol. I is a one-time anthology, not an archive of the ongoing magazine.
 ### War God (Weber)
 | *Oath of Swords* | 0671876422 | 1994 |
 ### Other (not yet ingested; see baen_dir.txt for full list)
-
-## Tooltip quote sourcing (Favorite.Things.html and similar)
-
-<!-- Tooltip quote-sourcing rule: dual-location and authorized-source requirements -->
-All tooltip quotes must be verified against source text (exact, not paraphrase),
-and only against legitimately-sourced text -- purchased, licensed, library-borrowed,
-or an author/publisher's own authorized free-distribution channel (e.g. the actual
-Baen Free Library / Fifth Imperium archive for Baen promo-CD titles). Copies from
-unauthorized ebook-piracy distribution sites (e.g. files carrying an
-`OceanofPDF.com`-style origin marker) are not used as source text, even if the
-underlying work was at some point freely distributed through an authorized
-channel, since the specific file's provenance and edition cannot be verified.
-
-Where a title exists both as a standalone book and inside an anthology/omnibus,
-record the quote's location in **both** forms where applicable (e.g. a
-*Shards of Honor* quote should also note if it appears in the *Cordelia's Honor*
-omnibus), since the anthology's table of contents may not list the novel
-separately and a future source search against only one form could miss it.
-
-## Documents\SF reference tree
-
-<!-- Documents\SF root: science-fiction reference material -->
-`%USERPROFILE%\Documents\SF` is the root for SF/fantasy reference material used in
-tooltip and web-content research, replacing the old flat `Documents\Baen\`.
-- `SF\Baen\E-books` -- documentation pointer only; e-book files remain on
-  removable drive `M:\BAEN\`, not physically relocated.
-- `SF\Baen\Book-CD` -- CD-ROM images/directories actually possessed and locally
-  scannable (e.g. `Cryoburn.CD`).
-- `SF\Baen\Book-CD-Archive` -- catalog-only reference metadata (no local files)
-  for Baen promotional CD-ROM discs not possessed, sourced from the Baen Free
-  Library CD-ROM bibliography (Fifth Imperium archive).
-- `SF\Wrede` -- non-Baen titles needed for tooltip work (e.g. *A Matter of Magic*,
-  Tor imprint, never distributed via Baen).
-
-## Baen Book-CD zip naming convention
-
-<!-- Stacked filename suffixes indicate successive transformations -->
-**Persistent note on Baen HTML filenames:** stacked underscore suffixes
-(e.g. `0671578286__10.htm` vs `0671578286___1.htm` -- two vs three
-underscores) often indicate successive transformation stages, not
-decoration -- don't assume they're arbitrary when navigating these
-archives; treat the underscore count as meaningful until proven
-otherwise for a given disc.
-
-<!-- Always specify output directory on generated zip commands -->
-**Rule: always specify the output directory explicitly on any zip
-command generated for the user to run** -- don't rely on an implicit
-relative/current-directory destination.
-
-<!-- Baen Book-CD zip naming convention -->
-Individual anthologies or novels extracted locally from a whole-disc Baen CD
-archive (see Book-CD-Archive catalog below) are repackaged as:
-
-    Baen-CD<NN>-<TitleSlug>.zip
-
-- `CD<NN>` -- the disc identifier exactly as used in the Book-CD-Archive catalog
-  (e.g. `CD01`, `CD06`, `CD06B`, `CD13`, `CD22`, `CD23`) -- number plus letter
-  suffix where the disc has one, no separator between them.
-- `<TitleSlug>` -- the title in Title Case with spaces replaced by hyphens
-  (standard slash-substitution hyphen rule extends to spaces here); colons
-  separating a subtitle become a hyphen; apostrophes are dropped, not replaced;
-  ampersands spell out as "and"; leading articles are kept. Do not abbreviate
-  words in the title itself (series/volume labels may still say "Volume", not
-  "Vol", for the same reason).
-
-Worked examples:
-- *1634: The Baltic War* from CD 13 -> `Baen-CD13-1634-The-Baltic-War.zip`
-- *On Basilisk Station* from CD 01 -> `Baen-CD01-On-Basilisk-Station.zip`
-- *Grantville Gazette, Volume II* from CD 13 -> `Baen-CD13-Grantville-Gazette-Volume-II.zip`
-- *Wind Rider's Oath* from CD 06 -> `Baen-CD06-Wind-Riders-Oath.zip`
-- *The Shadow of Saganami* from CD 06B -> `Baen-CD06B-The-Shadow-of-Saganami.zip`
-
-If a future disc ever produces two different titles that would slug identically
-(not observed so far), disambiguate by appending the disc's Fifth-Imperium
-folder token in parentheses rather than shortening either title.
-
-## Grantville Gazette e-zine issue inventory
-
-<!-- Grantville Gazette e-zine issue inventory -->
-The Grantville Gazette exists in two distinct forms that must not be conflated:
-the ongoing numbered **e-zine** (individual electronic issues, sold/distributed
-separately) and the print/ebook **anthology volumes** (curated selections from
-a range of e-zine issues, e.g. *Grantville Gazette, Volume I-V*, each packaged
-as a single title on a Book-CD). The bibliography currently only documents the
-anthology volumes; no CD has yet been inspected for raw numbered e-zine issues.
-This table tracks e-zine issues confirmed present once a Book-CD is actually
-downloaded and inventoried -- do not populate from anthology volume contents,
-since a volume's table of contents does not guarantee it names issues by number.
-
-| Issue # | Title/Date (if known) | Found on | Format | Status |
-|---|---|---|---|---|
-| -- | -- | -- | -- | none confirmed yet |
