@@ -34,7 +34,8 @@ Language directory names follow established casing conventions:
 | Rexx | `Rexx/` | Active | Classic Rexx; shares many rules with ooRexx |
 | NetRexx | `NetRexx/` | Active | Rexx for the Java platform |
 | PL/I | `PL1/` | Active | IBM Enterprise PL/I for z/OS |
-| LaTeX | `LaTeX/` | Active | arXiv papers, CTAN package, website TeX layer |
+| Python | `Python/` | Active | Started 2026-08-27 from the `pygments-extensions` project |
+| LaTeX | -- | Active | No `LaTeX/` directory exists; rules live in the top-level `LaTeX-RULES.md` instead (see below) |
 
 ## Top-level rule files
 
