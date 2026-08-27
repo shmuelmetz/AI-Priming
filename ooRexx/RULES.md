@@ -595,3 +595,38 @@ collection objects over stem simulation.
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-08-26 | Indirect stem access: three forms | User reported "lots of stem.(expression) errors" despite the collection-object rule already being documented above |
+
+---
+
+## Prefer chained methods over nested function calls — including for plain character strings
+
+[IMPORTANT]
+
+Every ooRexx string is a `.String` object with methods. The chained-method
+style isn't reserved for "real" objects like `.Array`/`.Directory` — it
+applies just as much to ordinary character-string manipulation, where
+classic-Rexx habit reaches for nested BIF calls instead:
+
+```rexx
+/* WRONG -- classic-Rexx nested-function style */
+result = translate(substr(str, 1, 5))
+result = strip(space(translate(str)))
+
+/* CORRECT -- ooRexx: chain methods on the string object */
+result = str~substr(1, 5)~translate
+result = str~translate~space~strip
+```
+
+Nested function calls read inside-out (evaluate the innermost call
+first to understand what happens first); chained methods read
+left-to-right in actual execution order, which is why ooRexx style
+prefers them even when every value involved is "just a string." This
+generalizes the same "collection objects over stem simulation"
+preference already documented above (see "Collection classes"): the
+underlying point in both cases is that ooRexx values are objects with
+methods, and BIF/nested-function style is the classic-Rexx fallback,
+not the ooRexx-idiomatic default.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-08-27 | Chained methods over nested functions, including for strings | User style guideline, given while reviewing a Pygments ooRexx lexer under construction |
