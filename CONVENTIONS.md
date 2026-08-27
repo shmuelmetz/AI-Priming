@@ -85,11 +85,13 @@ scripts or instructions.
 ```rexx
 /* SysDriveMap('C:', 'REMOVABLE') returns space-separated list of    */
 /* removable drives, e.g. 'D: E:'. Search each for the target file.  */
+/* SysFileExists is the native check -- no shelling out to dir/cmd   */
+/* needed (see the ooRexx RULES.md "Never wrap commands in cmd /c"   */
+/* rule for why a cmd /C dir ... >NUL 2>NUL pattern is discouraged). */
 lcsZip = ''
 do drive over SysDriveMap('C:', 'REMOVABLE')~makeArray(' ')
     candidate = drive'\LCS.zip'
-    address system 'cmd /C dir "'candidate'" >NUL 2>NUL'
-    if rc = 0 then do; lcsZip = candidate; leave; end
+    if SysFileExists(candidate) then do; lcsZip = candidate; leave; end
 end
 if lcsZip = '' then call tee '  SKIP: LCS.zip not found on any removable drive'
 ```
