@@ -326,7 +326,7 @@ no such latency.
 ```rexx
 /* Returns .TRUE if zipFile contains entry, .FALSE otherwise */
 noIn.0 = 0
-address system 'cmd /C \"\"'infoUnzipBin'\" -l -q \"'zipFile'\"\"' ,
+address system '"'infoUnzipBin'" -l -q "'zipFile'"' ,
     with output stem zcOut. error stem zcErr. input stem noIn.
 zcRc = rc
 found = .FALSE
@@ -339,12 +339,20 @@ end
 **Pattern for zip extraction** (use infoUnzipBin, not Expand-Archive):
 
 ```rexx
-address system 'cmd /C \"\"'infoUnzipBin'\" -j -o -q \"'zipFile'\" member -d \"'destDir'\"\"'
+address system '"'infoUnzipBin'" -j -o -q "'zipFile'" member -d "'destDir'"'
 ```
+
+Note: the original version of these two patterns wrapped the command in
+`cmd /C \"\"...\"\"` — doubled, backslash-escaped quotes. That extra
+`cmd /C` layer is unnecessary and, per the dedicated rule below, actively
+wrong once real-world paths or arguments contain their own quotes.
+`address system` already dispatches straight to the native shell; passing
+a plain quoted command string (as above) is both simpler and correct.
 
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-06-02 | Prefer infozip over PowerShell for zip ops | zipContains hung using PS ZipFile class |
+| 2026-08-26 | Removed `cmd /C` wrapper from these examples | See "Never wrap commands in `cmd /c`" below |
 
 ---
 
@@ -481,3 +489,109 @@ Prefer ooRexx object methods over classic BIFs for stream I/O:
 Classic BIF form (`call stream file, 'C', 'OPEN WRITE REPLACE'`) is
 acceptable in existing code; the key invariant is the `OPEN WRITE REPLACE`
 before any full-file write.
+
+---
+
+## Never wrap commands in `cmd /c`
+
+[IMPORTANT]
+
+Do not wrap `address system` commands in `cmd /c "..."`, even on
+Windows, even when the alternative "feels" like it needs a shell.
+`address system` already dispatches straight to the platform's native
+shell — an explicit `cmd /c` layer is redundant at best.
+
+**It is actively wrong, not just redundant, on Windows:** once the
+wrapped command itself contains quoted arguments — a commit message
+with spaces, a path with spaces, anything needing its own `"..."` —
+passing the whole thing through `cmd /c "..."` mangles the nested
+quoting. `cmd.exe`'s quote parser does not handle multiple nested
+quoted segments reliably, and the outer `cmd /c` layer adds one more
+level than necessary. This is why the bug keeps recurring: it appears
+to work on trivial test commands with no embedded quotes, then breaks
+the first time someone runs it against real input.
+
+```rexx
+/* WRONG -- extra cmd /c layer, breaks once cmd itself has quotes */
+address system 'cmd /c cd "' || repoDir || '" && git commit -m "' || msg || '"'
+
+/* CORRECT -- address system already picks the right native shell */
+address system 'cd "' || repoDir || '" && git commit -m "' || msg || '"'
+```
+
+The same applies to drive-letter switching before a `cd` on Windows
+(`C: && cd "..."`) — unnecessary; a quoted `cd "C:\full\path"` changes
+drive and directory together.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-08-26 | Never wrap commands in `cmd /c` | Recurring bug in `git-commit.rex`/`web-commit.rex`; user reported it breaking on Windows itself, not just non-Windows platforms |
+
+---
+
+## Indirect/computed stem access: three forms, only one is safe per context
+
+[IMPORTANT]
+
+There are two *different*, non-interchangeable stem mechanisms in
+ooRexx, and mixing up their access syntax produces bugs ranging from a
+hard error to a silent wrong answer.
+
+**1. Classic compound variable** (`mystem.1 = 'x'` style storage).
+Indirect/computed tail access is `mystem.[expr]` — dot, then bracket:
+
+```rexx
+mystem.1 = 'one'
+mystem.2 = 'two'
+mystem.3 = 'three'
+i = 3
+say mystem.[i]        /* CORRECT: 'three' */
+```
+
+Two wrong forms for this case, verified by direct test:
+
+```rexx
+say mystem.(i)         /* WRONG: Error 43, "routine not found" --
+                           parsed as a call to a function literally
+                           named MYSTEM. */
+
+say mystem[i]           /* WRONG, but does NOT error -- silently
+                           returns the wrong value. See below. */
+```
+
+The no-dot bracket form is the more dangerous of the two precisely
+because it never raises an error. An otherwise-unset simple variable
+`mystem` evaluates to the string of its own name (`"MYSTEM"`), and
+bracket notation on a bare string invokes ooRexx String's `[]` method,
+which does *character indexing*. `mystem[3]` in the example above
+silently returns `"S"` (the 3rd character of `"MYSTEM"`) — a
+plausible-looking value that is simply wrong.
+
+**2. Real Stem collection object** (`mystem = .stem~new`). Once
+`mystem` holds an actual `.stem` instance, plain bracket notation is
+correct and idiomatic — this is the genuine "use a collection object"
+pattern, not classic-compound-variable simulation:
+
+```rexx
+mystem = .stem~new
+mystem[foo] = bar
+say mystem[foo]        /* CORRECT */
+```
+
+**Do not mix the two on what's meant to be the same collection.** A
+real Stem object's bracket-indexed storage is a separate namespace
+from classic `mystem.tail` compound variables of the same base name —
+after `mystem = .stem~new; mystem[3] = 'bar'`, plain `mystem.3` does
+**not** see `'bar'`; it still shows the uninitialized
+`"MYSTEM.3"`.
+
+**Recommendation:** prefer explicitly instantiating `.stem~new` (or
+`.Array`/`.Table`/`.Directory` as appropriate — see "Collection
+classes" above) and using plain bracket notation throughout, rather
+than classic compound variables plus the `.[expr]` indirect-tail form.
+It is less error-prone and matches the general preference for ooRexx
+collection objects over stem simulation.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-08-26 | Indirect stem access: three forms | User reported "lots of stem.(expression) errors" despite the collection-object rule already being documented above |
