@@ -321,6 +321,7 @@ outArr['rc'] = cmdRc      /* named index alongside numeric */
 | 2026-05-05 | Collection classes | AI generating stem code instead of `.Array`/`.Directory` |
 | 2026-05-05 | `do over` | AI generating `do i = 1 to stem.0` instead |
 | 2026-05-05 | Array notation for stems | `captureCmd` refactor using mixed-index `.Array` |
+| 2026-08-28 | `~insert(item, 0)` is invalid; omit idx to prepend | Real crash writing `web-manifest-crawl.rex`'s insertion sort -- the same day this row was already documented |
 | 2026-08-27 | `~of(...)` is a general Collection method, not Array-specific | User: "it's basically a collection class method, but .array is the simplest case" -- verified across 11 collection classes before writing up the ordered-vs-keyed calling-convention split |
 
 ---
@@ -499,6 +500,19 @@ by `.Array`. Do not use stems for array simulation in new ooRexx code.
 | `~at(idx)` / `arr[idx]` | Retrieve by index |
 
 Iteration: `do x over arr` visits all non-empty items in index order.
+
+**`~insert(item, 0)` is not "insert at position 0"** -- there is no
+position 0. To prepend, omit the index argument entirely
+(`arr~insert(item)`); passing a literal `0` raises "Method argument 2
+must be a positive whole number." This exact row already said "omit
+idx to prepend," and it still got violated the same day writing a
+manual insertion-sort loop (`web-manifest-crawl.rex`) that computed
+`idx - 1` for the "insert before the first element" case without
+special-casing `idx = 1`, feeding 0 straight into `~insert`. Having a
+rule documented does not mean it gets checked before writing new
+code with the same shape -- worth an explicit `if idx = 1 then
+arr~insert(item); else arr~insert(item, idx - 1)` guard in this
+specific loop pattern, not just knowing the rule in the abstract.
 
 | Date | Entry | Triggered by |
 |------|-------|--------------|
