@@ -213,6 +213,41 @@ Do NOT generate stem-based collections (e.g. `items.0`, `items.1`)
 when an ooRexx collection class is appropriate. Stems are a classic
 Rexx idiom; collection objects are the ooRexx idiom.
 
+### `~of(...)` — one-call construct-and-populate
+
+`~of` is a general **Collection** class method, not something
+specific to `.Array` — every collection class exposes it, but the
+calling convention splits along the same ordered-vs-keyed line as the
+rest of the hierarchy. Verified directly against the interpreter,
+2026-08-27, across `Array Table Set Bag Queue List Relation Directory
+IdentityTable StringTable CircularQueue`:
+
+```rexx
+/* Ordered/unkeyed collections: each argument is a plain item,
+ * appended in order -- Array, Set, Bag, Queue, List, CircularQueue. */
+arr = .Array~of('a', 'b', 'c')          /* arr[1]='a', arr[2]='b', ... */
+set = .Set~of('a', 'b', 'c')
+queue = .Queue~of('a', 'b', 'c')
+
+/* Keyed collections: each argument must itself be a single-dimensional
+ * array holding (index, item) -- Table, Relation, Directory,
+ * IdentityTable, StringTable. A bare value fails immediately:
+ * "OF argument 1 must be a single-dimensional array; found "x"." */
+dir = .Directory~of(.Array~of('key1', 'val1'), .Array~of('key2', 'val2'))
+say dir~at('key1')                       /* val1 */
+
+tbl = .Table~of(.Array~of(1, 'a'), .Array~of(2, 'b'))
+say tbl~at(1)                            /* a */
+```
+
+`.Array~of(...)` is simply the simplest case of this — the one where
+"item" and "index" coincide with sequential position, so no explicit
+pairing is needed. Prefer it over `.Array~new` plus a run of
+`~append` calls when the full contents are known up front as a
+literal list; this is the direct object-collection replacement for
+the classic `Withheld.0 = 3 / Withheld.1 = '...' / ...` stem-array
+idiom.
+
 ---
 
 ## `do over` — iterating collections
@@ -286,6 +321,7 @@ outArr['rc'] = cmdRc      /* named index alongside numeric */
 | 2026-05-05 | Collection classes | AI generating stem code instead of `.Array`/`.Directory` |
 | 2026-05-05 | `do over` | AI generating `do i = 1 to stem.0` instead |
 | 2026-05-05 | Array notation for stems | `captureCmd` refactor using mixed-index `.Array` |
+| 2026-08-27 | `~of(...)` is a general Collection method, not Array-specific | User: "it's basically a collection class method, but .array is the simplest case" -- verified across 11 collection classes before writing up the ordered-vs-keyed calling-convention split |
 
 ---
 
