@@ -585,6 +585,42 @@ after `mystem = .stem~new; mystem[3] = 'bar'`, plain `mystem.3` does
 **not** see `'bar'`; it still shows the uninitialized
 `"MYSTEM.3"`.
 
+**3. Using another compound variable directly as a tail component**
+(`stem.othercompound.0`) does not do what it looks like, and — unlike
+the two cases above — it is *valid* syntax, so nothing ever flags it:
+
+```rexx
+orphans.0 = 0
+orphans.0 = orphans.0 + 1
+orphans.orphans.0 = 'first'      /* WRONG: does not mean "orphans.1" */
+orphans.0 = orphans.0 + 1
+orphans.orphans.0 = 'second'     /* WRONG: silently overwrites the same slot */
+
+say orphans.1                     /* uninitialized: "ORPHANS.1" */
+say orphans.orphans.0             /* 'second' -- 'first' is gone */
+```
+
+The tail is split on periods into independent pieces *before* any
+substitution happens — here `["orphans", "0"]` — and each piece is
+resolved on its own as a plain simple-variable lookup (or left
+literal if purely numeric). A piece is never itself re-parsed as a
+compound-variable reference, so there is no way to splice in "the
+current value of `orphans.0`" by writing its dotted name inline. In
+the example, piece `"orphans"` looks up the simple variable `ORPHANS`
+(never assigned, so it defaults to its own name, `"ORPHANS"`) and
+piece `"0"` is numeric and stays literal — giving the single **fixed**
+derived tail `"ORPHANS.0"` every time, regardless of the stem's actual
+count. Every iteration clobbers the same variable
+(`ORPHANS.ORPHANS.0`) instead of indexing a growing list, and every
+value but the last is silently lost with no error at any point.
+Verified by direct test, not reasoned from the syntax alone.
+
+The fix is the same indirection already shown for case 1: copy the
+index into a plain simple variable first, then use it as the tail —
+`n = orphans.0; orphans.n = value` — a bare simple-symbol tail like
+`n` needs no bracket at all; `.[expr]` is only for tails more complex
+than a single symbol.
+
 **Recommendation:** prefer explicitly instantiating `.stem~new` (or
 `.Array`/`.Table`/`.Directory` as appropriate — see "Collection
 classes" above) and using plain bracket notation throughout, rather
@@ -595,6 +631,7 @@ collection objects over stem simulation.
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-08-26 | Indirect stem access: three forms | User reported "lots of stem.(expression) errors" despite the collection-object rule already being documented above |
+| 2026-08-27 | Added case 3: nested compound reference as a tail component is valid but silently wrong | Real bug in `remote-orphan-cleanup.rex` (`orphans.orphans.0 = remRel`), caught by mock-data test before running live; my own first fix comment mischaracterized it as "invalid" until the user corrected it |
 
 ---
 
