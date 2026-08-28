@@ -542,6 +542,30 @@ before any full-file write.
 
 ---
 
+## `EXPOSE` inside `::ROUTINE` is a parse-time syntax error
+
+`EXPOSE` is not legal inside a `::ROUTINE` body — a routine has no
+access to a caller's variable pool the way an internal subroutine
+does. Attempting it raises **Error 27.1** at *parse time*, before any
+instruction in the calling scope executes.
+
+The parse-time timing is the trap: a `signal on syntax` trap (or any
+other error handler) set up in the caller **will not fire**, because
+the whole program fails to parse before execution ever begins. A
+script invoking such a routine via `address system ... with output
+stem ... error stem ...` will show a non-zero `rc`, empty output, and
+the real error only in the captured stderr stem — not in any
+in-process trap. Symptom in practice: a launched window opens and
+closes immediately with no log file written at all, because the trap
+that was supposed to write the log never ran.
+
+To test for this class of error, don't rely on a `signal on syntax`
+trap in the same process — invoke the suspect code as a genuinely
+separate process (`address system` with output/error stems, or
+equivalent) and inspect its captured stderr and `rc`.
+
+---
+
 ## Never wrap commands in `cmd /c`
 
 [IMPORTANT]
