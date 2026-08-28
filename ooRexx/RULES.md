@@ -657,6 +657,21 @@ index into a plain simple variable first, then use it as the tail —
 `n` needs no bracket at all; `.[expr]` is only for tails more complex
 than a single symbol.
 
+**Related, easy to trip over while testing the above**: a quoted
+string literal can never BE a tail either, even when it contains no
+dots — `stem.'some/value'` is not "a compound variable with literal
+tail `some/value`". Tails are lexical pieces of one symbol token, and
+a symbol can only contain letters, digits, `.`, `_`, `!`, `?` — a
+slash breaks the token immediately. `stem.'x' = 1` parses as bare
+`stem.` (the stem's own tail-less/default value) *concatenated* with
+the string literal `'x'` via abuttal, which is not a valid assignment
+target at all; whatever oddity results is not a compound-variable
+write. The only way to make an arbitrary string (slashes included)
+into a tail is symbol substitution — `p = 'some/value'; stem.p = 1` —
+never a literal glued onto the stem. Confirmed 2026-08-27 debugging a
+mock test for `remote-orphan-cleanup.rex` that used the literal form
+and got a silently wrong (but non-crashing) result.
+
 **Recommendation:** prefer explicitly instantiating `.stem~new` (or
 `.Array`/`.Table`/`.Directory` as appropriate — see "Collection
 classes" above) and using plain bracket notation throughout, rather
@@ -668,6 +683,7 @@ collection objects over stem simulation.
 |------|-------|--------------|
 | 2026-08-26 | Indirect stem access: three forms | User reported "lots of stem.(expression) errors" despite the collection-object rule already being documented above |
 | 2026-08-27 | Added case 3: nested compound reference as a tail component is valid but silently wrong | Real bug in `remote-orphan-cleanup.rex` (`orphans.orphans.0 = remRel`), caught by mock-data test before running live; my own first fix comment mischaracterized it as "invalid" until the user corrected it |
+| 2026-08-27 | Added: a quoted string literal can never be a tail | Debugging a retest of the case-3 fix above -- a mock test written with `stem.'literal'` produced a silently wrong, non-crashing result |
 
 ---
 
