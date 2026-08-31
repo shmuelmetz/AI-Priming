@@ -209,3 +209,64 @@ end
 - `SysRmDir(path)` -- empty directories only; fails if non-empty
 - To remove a non-empty directory tree (e.g. a git clone with
   read-only objects): `address system 'cmd /C rmdir /S /Q "path"'`
+
+---
+
+## Attribute-less class as a method anchor
+
+A class with no instance attributes at all, used purely as a namespace
+to group related class (not instance) methods -- the ooRexx equivalent
+of a Java-style "static utility class." Never instantiated; callers
+invoke methods directly on the class object itself.
+
+```rexx
+::CLASS 'PathUtil' PUBLIC
+
+::METHOD normalize CLASS
+    use strict arg path
+    return path~changeStr('/', '\')
+
+::METHOD isAbsolute CLASS
+    use strict arg path
+    return path~left(1) == '\' | path~match(2, ':')
+
+/* Usage -- no ~new anywhere */
+say .PathUtil~normalize('a/b/c')
+```
+
+---
+
+## Method-less singleton as an attribute anchor (in lieu of globals)
+
+ooRexx has no true global variables -- only `.local` environment
+symbols or per-class `::ATTRIBUTE ... CLASS` variables shared across
+all instances. A single shared instance of a plain attribute-holding
+class (or, more simply, a `.Directory` stashed in `.local`) gives
+callers a single named place to read and write shared state without
+reaching for `.local` symbols directly everywhere.
+
+```rexx
+::CLASS 'Config' PUBLIC
+
+::METHOD init CLASS
+    expose instance
+    instance = .nil
+
+::METHOD instance CLASS
+    expose instance
+    if instance == .nil then instance = self~new
+    return instance
+
+::ATTRIBUTE sessionId
+::ATTRIBUTE verbose
+
+/* Usage -- one shared instance, plain attribute access */
+.Config~instance~sessionId = '2026-08-30-01'
+if .Config~instance~verbose then say 'session:' .Config~instance~sessionId
+```
+
+The simpler alternative for a handful of loosely-related settings: skip
+the class entirely and stash one `.Directory` in `.local` at startup
+(`.local~config = .Directory~new`), then read/write it by key
+(`.local~config['sessionId']`) everywhere else -- less ceremony when
+there's no behavior to attach, only data.
