@@ -858,3 +858,51 @@ mainline code anywhere in the file to call the routine that was defined.
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-08-31 | `::CLASS ... PUBLIC` required across `::REQUIRES`; `PUBLIC` not transitive; `::REQUIRES` relative paths resolve against CWD, use bare filename + `PATH`/`setenv` instead; mainline must precede all directives, and defining `::ROUTINE main` does not call it | Building `rexx-lint`'s first check against Josep Maria Blasco's Rexx Parser -- four separate silent/confusing failures in a row before the tool produced any output at all |
+
+---
+
+## Debugging: reach for `TRACE` before guessing from black-box behavior
+
+[IMPORTANT]
+
+When an ooRexx program's *observed* behavior doesn't match what the
+source *should* do -- especially anything involving `ADDRESS`,
+string-building, or implicit operators -- add `TRACE I` (or `TRACE
+ALL` for still more detail) near the top of the script and run it
+again, rather than iterating on black-box hypotheses (rewording the
+command, adding/removing quotes, trying alternate constructs) and
+inferring the cause from outcomes alone. `TRACE I` prints every
+clause as it executes, the intermediate result of each sub-expression
+(`>L>` literal, `>V>` variable fetch, `>O>` operator result, `>=>`
+assignment, `>>>` final clause result), and, critically, the *exact*
+string handed to `ADDRESS` or any other target -- which settles
+"is the string I built actually correct" as a fact instead of a guess.
+
+**Worked example, 2026-09-01**: an `ADDRESS SYSTEM` call re-invoking
+`rexx` on a second script, built as `'rexx' argString` with two
+quoted, backslash-laden path arguments, silently returned `rc=0` with
+no output at all -- as if the child had run and done nothing. Several
+rounds of varying the call shape (with/without `WITH ... STEM`
+redirection, one argument vs. two, hardcoded vs. built from a
+variable) failed to isolate the cause and even produced misleading
+signal (a *different*, unrelated `Error 43` from a separate test run
+that had simply forgotten to re-export `PATH` in that shell
+invocation, easy to mistake for the real bug). Adding `TRACE I`
+immediately showed the `>=>` and `>V>` lines: the constructed command
+string was **already byte-for-byte identical** to the one that runs
+correctly when typed directly at a prompt. That single fact reframed
+the whole investigation -- the bug isn't in the string-building code
+at all, it's specifically in how this platform's `ADDRESS SYSTEM`
+dispatches a command line containing two separate quoted,
+backslash-containing arguments together (a one-argument redirected
+call and a multi-argument unredirected call each work fine in
+isolation; only the combination fails). Minutes with `TRACE I`
+resolved what black-box guessing hadn't after several attempts.
+
+**Rule of thumb**: if a second attempt at explaining unexpected
+behavior from outputs alone would just be another guess, that's the
+signal to add `TRACE I` instead of guessing a third time.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-09-01 | Reach for `TRACE` before guessing from black-box behavior | User: "trace i is your friend", after several black-box attempts to isolate an `ADDRESS SYSTEM` quoting issue |
