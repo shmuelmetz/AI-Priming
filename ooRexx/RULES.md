@@ -961,3 +961,29 @@ signal to add `TRACE I` instead of guessing a third time.
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-09-01 | Reach for `TRACE` before guessing from black-box behavior | User: "trace i is your friend", after several black-box attempts to isolate an `ADDRESS SYSTEM` quoting issue |
+
+---
+
+## Prefer `~abbrev(prefix)` over `left(x, n) = prefix` for a prefix check
+
+`String`'s `~abbrev(informal [, minimum])` method tests whether the
+receiver starts with `informal` — a direct, self-documenting way to
+write a prefix check, verified empirically:
+
+```rexx
+say 'session-2026-05-02.rex'~abbrev('session-')   -- 1
+say 'other-file.rex'~abbrev('session-')           -- 0
+say 'session-'~abbrev('session-2026')             -- 0 (receiver too short)
+```
+
+`left(x, length(prefix)) = prefix` does the same comparison, but
+requires the reader to separately confirm the `length()` call actually
+measures the right string and that the two operands haven't drifted
+out of sync (e.g. after an edit that changes the literal prefix on one
+side but not the `length()` argument on the other) — `~abbrev` removes
+that whole class of transcription error by taking the prefix once.
+Prefer it for any new prefix-check code.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-09-01 | Prefer `~abbrev(prefix)` over `left(x,n)=prefix` | Chat-export review (real-world-conventions pass) surfaced a user rule from 2026-06-05 that never made it into this file |
