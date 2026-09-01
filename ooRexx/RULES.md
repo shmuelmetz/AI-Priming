@@ -757,3 +757,104 @@ not the ooRexx-idiomatic default.
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-08-27 | Chained methods over nested functions, including for strings | User style guideline, given while reviewing a Pygments ooRexx lexer under construction |
+
+---
+
+## `::CLASS` needs `PUBLIC` to be visible from another package
+
+[IMPORTANT]
+
+Every file ooRexx parses -- the program you invoke directly, or one pulled
+in via `::REQUIRES` -- becomes its own `.Package` object. A class defined
+with plain `::CLASS Foo` parses cleanly on its own and is usable by *its own
+package's* mainline code, but is **not** visible via the leading-dot
+environment-symbol lookup (`.Foo~new`) from a *different* package that
+reaches it only through `::REQUIRES`. The failure is silent at `::REQUIRES`
+time -- no error until the first actual reference -- and reads like the
+class doesn't exist at all:
+
+```
+Error 97 running myfile.rex:  Object method not found.
+Error 97.1:  Object ".FOO" does not understand message "NEW".
+```
+
+Fix: declare the class `PUBLIC`:
+
+```rexx
+::class Foo public     /* required for .Foo~new to work from another package */
+```
+
+**`PUBLIC` is also not transitive across a chain of packages.** `::REQUIRES`
+establishes a direct edge from the requiring package to the required one,
+and the leading-dot lookup from within a given package only consults (a)
+that package's own classes, `PUBLIC` or not, and (b) the `PUBLIC` classes of
+packages *that package itself* directly `::REQUIRES` -- never the whole
+transitive closure of every package loaded anywhere in the run. So if
+package A `::REQUIRES` both B and C, and B's code references a public class
+from C, B must `::REQUIRES` C itself; B does not inherit visibility of C
+just because A happened to require both. Each package needs an explicit
+`::REQUIRES` for every class it directly references, regardless of what
+some other package up the chain has already loaded.
+
+## `::REQUIRES` with a relative path resolves against CWD, not the file's own directory
+
+[IMPORTANT]
+
+`::REQUIRES '../lib/Foo.cls'` works when the current working directory
+happens to make that relative path correct, and breaks with `Error 43.901:
+Could not find file "../lib/Foo.cls" for ::REQUIRES` the moment the program
+is invoked from anywhere else -- including via an absolute path to the
+program itself. The relative path is *not* resolved relative to the
+directory containing the `::REQUIRES` directive.
+
+A bare filename with no path prefix, by contrast, is resolved via the
+program search path (`PATH`), independent of CWD -- this is exactly how
+upstream Rexx projects (the Rexx Parser, net-oo-rexx) get away with
+`::REQUIRES 'Rexx.Parser.cls'` from anywhere: they ship a `setenv.cmd` /
+`setenv.sh` that prepends their own `bin/` to `PATH`, and the require uses a
+bare filename, never a relative path.
+
+**Pattern to follow for any multi-file ooRexx project:** use bare filenames
+in every `::REQUIRES`, and ship a `setenv` script that adds each directory
+containing a required file (`bin/`, `lib/`, `checks/`, etc.) to `PATH`.
+Document running that script (or otherwise extending `PATH`) as a
+prerequisite, the same way the Rexx Parser's own README does.
+
+## Mainline code cannot follow a directive at the top level
+
+A program's non-directive ("mainline") statements must form one contiguous
+block at the very start of the file, before the first `::` directive of any
+kind. Once a `::CLASS`, `::ROUTINE`, or `::REQUIRES` directive has appeared,
+every subsequent top-level clause must also be a directive -- plain
+executable code cannot resume after it, even to just call a routine defined
+below:
+
+```rexx
+/* WRONG -- fails with Error 99.916, "Unrecognized directive instruction" */
+::requires 'Foo.cls'
+say .Foo~new~greet
+
+/* WRONG in a different way -- parses, but the mainline never runs,
+ * because ::ROUTINE only *defines* main; nothing calls it */
+::requires 'Foo.cls'
+::routine main
+  say .Foo~new~greet
+
+/* CORRECT -- mainline first, explicitly invoking the entry routine,
+ * directives after */
+parse arg argLine
+exit main(argLine)
+
+::requires 'Foo.cls'
+::routine main
+  use strict arg argLine
+  say .Foo~new~greet
+```
+
+The second "wrong" example is the easier trap to fall into: it raises no
+error at all, parses fine, and simply does nothing, because there is no
+mainline code anywhere in the file to call the routine that was defined.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-08-31 | `::CLASS ... PUBLIC` required across `::REQUIRES`; `PUBLIC` not transitive; `::REQUIRES` relative paths resolve against CWD, use bare filename + `PATH`/`setenv` instead; mainline must precede all directives, and defining `::ROUTINE main` does not call it | Building `rexx-lint`'s first check against Josep Maria Blasco's Rexx Parser -- four separate silent/confusing failures in a row before the tool produced any output at all |
