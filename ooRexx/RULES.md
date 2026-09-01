@@ -55,6 +55,60 @@ delRc = result
 if delRc \= 0 then say 'ERROR: delete failed (rc='delRc')'
 ```
 
+### Never name your own variable `result` — a later bare message send can silently drop it
+
+The `result` special variable isn't only touched by `call`. Any
+message-send statement used *bare* -- as a whole clause, its return
+value not assigned to anything -- is handled the same way a `call` to
+an internal routine is: if the invoked method has a real return value,
+`result` is set to it; if the method returns **nothing at all** (not
+even `.nil` -- some Collection methods, e.g. `~put`, are defined to
+return no result object), `result` is **dropped** (reverts to
+uninitialized, i.e. to its own name, `'RESULT'`, per ordinary Rexx
+uninitialized-variable semantics) exactly as if that had been a `call`
+to a routine with no `return expr`.
+
+This means naming your *own* local variable `result` -- inside a
+`::routine` or a `::method`, it makes no difference -- is a latent
+bug, not just a style nit. It breaks the moment ANY bare message-send
+statement whose invoked method returns nothing executes -- and that
+includes the utterly ordinary case of building up `result` itself via
+repeated bare sends to it, since each one, right after it runs, drops
+the variable it was just sent to:
+
+```rexx
+::method detect class
+  result = .Directory~new        -- fine: plain assignment
+  result~put('', 'INTERPRETER')  -- runs fine (result is still the
+                                     real Directory when THIS line's
+                                     receiver is evaluated) -- but
+                                     ~put returns no result object,
+                                     so immediately after this
+                                     statement completes, `result`
+                                     itself reverts to uninitialized
+  result~put('', 'DIALECT')      -- Error 97.1: Object "RESULT" does
+                                     not understand message "PUT" --
+                                     the *previous* line already
+                                     reverted `result` to the string
+                                     "RESULT" as a side effect of
+                                     itself, before this line's
+                                     receiver was even evaluated
+```
+
+Verified directly, in order: `putReturn = d~put('v','k')` raises
+`Error 91.999: Message "PUT" did not return a result` (proving `~put`
+truly returns nothing, not `.nil`); a single bare `result~put(...)`
+statement -- with no *other* statement involved at all -- reproducibly
+drops `result` immediately afterward; and an identically-shaped
+sequence using any other variable name is never affected by any of
+this.
+
+**Rule of thumb**: don't use `result` as an ordinary variable name in
+ooRexx code at all, even locally. Pick anything else (`info`, `found`,
+`outcome`, ...) -- there is no scope in which reusing the name buys
+anything, and the failure mode when it breaks points at the wrong
+line.
+
 ---
 
 ## `address...with` — capturing child process output (standard Rexx)
@@ -178,6 +232,7 @@ unambiguous.
 | 2026-05-03 | String concatenation | PowerShell command string failures |
 | 2026-05-03 | `~translate` vs `~upper` | OBJREXX compatibility |
 | 2026-05-03 | Stream close | `miktex-update.log` not flushing |
+| 2026-09-01 | Never name your own variable `result` -- a bare message send whose method returns nothing drops it, even one sent to `result` itself | Real `Error 97.1` in `rexx-lint`'s `ExtprocDialect.cls`: a `.Directory` named `result`, built up via consecutive bare `result~put(...)` calls, reverted to uninitialized (`"RESULT"`) after the very first one, since `~put` returns no result object at all -- the second call then failed trying to send `~put` to the string `"RESULT"` |
 
 ---
 
