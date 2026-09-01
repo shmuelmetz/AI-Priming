@@ -156,6 +156,40 @@ substituting a guess.
 
 ---
 
+## Ellipsis in replacement text means "keep the original"
+
+[IMPORTANT]
+
+Standard English usage: an ellipsis ("...") marks omitted material —
+most commonly, words left out of a quotation that the reader is meant
+to understand as still being there, just not repeated. Formal style
+guides (Chicago, MLA, APA) all treat it this way: the ellipsis stands
+in for elided content, it does not mean the content is gone or that
+three literal dots belong in the finished text. Other uses exist
+(trailing off in dialogue, a dramatic pause) but they are not in play
+here.
+
+When the user gives Claude replacement or corrected text for an edit
+and that text contains an ellipsis, apply the omission sense: the
+ellipsis stands for whatever text already occupies that position in
+the original/preexisting version. Substitute that preexisting text
+there. Do not delete that span, and do not render three literal dots
+in the output.
+
+Example: original text reads "X, unlike Y, which is Z." The user
+gives the correction 'reads "X. Unlike Y, X is Z ... reading code
+that looks like a plain jump"' — where "..." was not itself typed by
+the user but stands for whatever followed at that point in the
+original. The result keeps the original's trailing clause, not a
+literal ellipsis:
+"X. Unlike Y, X is Z — reading code that looks like a plain jump."
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-09-01 | Ellipsis in replacement text means "keep the original" | User instruction while correcting a dangling-"which" sentence in a draft |
+
+---
+
 ## Numbering in responses
 
 Numbering used by the user in a response to a Claude question is local
