@@ -7,7 +7,15 @@ See also `../ooRexx/BIBLIOGRAPHY.md` for ooRexx-specific references.
 ### ANSI REXX Standard
 - **Title:** American National Standard for Information Technology —
   Programming Language REXX (X3.274-1996)
-- **Notes:** The formal language standard.
+- **Notes:** The formal language standard. Section citations (§X.Y.Z)
+  in this repo are drawn from RexxLA's hosted copy of the X3J18
+  committee's document (self-identified throughout as "X3J18-199X",
+  https://www.rexxla.org/rexxlang/standards/j18pub.pdf) -- the last
+  public-review draft before 1996 ratification, not a copy of the
+  final published ANSI text itself. Same content lineage (same
+  committee, ratified with no known section-numbering changes), but
+  worth knowing if a specific citation is ever double-checked against
+  a purchased ANSI copy.
 
 ### IBM TSO/E REXX Reference
 - **Title:** z/OS TSO/E REXX Reference (SA32-0972)

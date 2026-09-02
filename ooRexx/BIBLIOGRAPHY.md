@@ -8,11 +8,15 @@ when their training contradicts the content here.
 ### ooRexx Language Reference
 - **Title:** Open Object Rexx Reference (Version 5.1.0)
 - **Publisher:** RexxLA (Rexx Language Association)
-- **URL:** https://www.oorexx.org/docs/rexxref/
+- **URL:** https://www.oorexx.org/docs/rexxref/ ; PDF fetched this
+  session from https://www.oorexx.org/docs/pdf/rexxref.pdf (edition
+  2022.12.22, labeled "5.0.0" on its own title page)
 - **PDF:** Included in ooRexx-5.1.0-pdf.zip (RexxLA download page)
 - **Notes:** The definitive language specification. All syntax,
   built-in functions, special variables (`rc`, `result`, `sigl`),
-  and `address...with` semantics are defined here.
+  and `address...with` semantics are defined here. §1.13.4 ("Stems")
+  confirms every stem symbol is always bound to a genuine Stem
+  object -- see RULES.md's indirect-stem-access section.
 
 ### ooRexx Programming Guide
 - **Title:** Open Object Rexx Programming Guide (Version 5.1.0)
@@ -36,7 +40,9 @@ when their training contradicts the content here.
 - **Title:** American National Standard for Information Technology —
   Programming Language REXX (X3.274-1996)
 - **Notes:** The formal standard. ooRexx is a superset; where they
-  differ, ooRexx documentation takes precedence.
+  differ, ooRexx documentation takes precedence. Section citations in
+  this repo come from RexxLA's hosted X3J18 committee draft (see
+  Rexx/BIBLIOGRAPHY.md), not a copy of the final published text.
 
 ### IBM TSO/E REXX Reference
 - **Title:** z/OS TSO/E REXX Reference (SA32-0972)

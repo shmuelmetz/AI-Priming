@@ -740,37 +740,44 @@ i = 3
 say mystem.i          /* CORRECT: 'three' -- bare-symbol substitution */
 ```
 
-`mystem.[expr]` — dot, then bracket — is a genuinely ooRexx-only
-extension, not a classic-Rexx construct: `[]` is the String class's
-own operator, absent from classic Rexx entirely. Reach for it only
-when the tail needs to be computed from a real *expression*, which
-bare-symbol substitution can't do in one step:
-
-```rexx
-j = 2
-say mystem.[j + 1]    /* CORRECT: 'three' -- ooRexx-only; classic Rexx
-                          would need a temp variable first, n = j + 1;
-                          say mystem.n */
-```
-
-Two wrong forms for this case, verified by direct test:
-
 ```rexx
 say mystem.(i)         /* WRONG: Error 43, "routine not found" --
                            parsed as a call to a function literally
                            named MYSTEM. */
-
-say mystem[i]           /* WRONG, but does NOT error -- silently
-                           returns the wrong value. See below. */
 ```
 
-The no-dot bracket form is the more dangerous of the two precisely
-because it never raises an error. An otherwise-unset simple variable
-`mystem` evaluates to the string of its own name (`"MYSTEM"`), and
-bracket notation on a bare string invokes ooRexx String's `[]` method,
-which does *character indexing*. `mystem[3]` in the example above
-silently returns `"S"` (the 3rd character of `"MYSTEM"`) — a
-plausible-looking value that is simply wrong.
+`mystem[i]` and `mystem.[i]` are both valid *only* in ooRexx — `[]` is
+an ooRexx operator entirely absent from classic Rexx, which has no
+defined lexical meaning for `[`/`]` at all. In ooRexx, both parse and
+run, but do different things, and the difference is **not** a special
+"dot-then-bracket" tail-access syntax — it's the one general rule
+ooRexx applies everywhere: `[]` is an ordinary message send, and its
+meaning depends entirely on the class of whatever precedes it. On a
+`.String` it selects a character; on a `.Stem` it selects an element.
+`mystem` (no trailing dot) is a plain simple variable, evaluating to
+the String `"MYSTEM"` while dropped; `mystem.` (trailing dot, no
+tail) is *always already* a genuine Stem object -- the ooRexx Language
+Reference (S1.13.4) states this outright: "The value of a stem is
+always a Stem object." No `~new` is needed to get one; `mystem.~class`
+returns `The Stem class` even before any compound variable under it
+has been assigned. So:
+
+```rexx
+say mystem[i]           /* WRONG, but raises NO error: [] on the
+                           String "MYSTEM" selects character 3, "S" --
+                           a plausible-looking value that is simply
+                           wrong */
+
+say mystem.[i]          /* CORRECT: 'three' -- [] on the Stem object
+                           mystem. already is selects an element,
+                           exactly like mystem[foo] below on an
+                           explicit .stem~new object */
+```
+
+Reach for `mystem.[expr]` over bare-symbol substitution only when the
+tail needs to be computed from a real expression in one step (bare
+substitution can't: `mystem.[j + 1]` where classic-compatible code
+would need `n = j + 1; say mystem.n`).
 
 **2. Real Stem collection object** (`mystem = .stem~new`). Once
 `mystem` holds an actual `.stem` instance, plain bracket notation is
@@ -783,12 +790,16 @@ mystem[foo] = bar
 say mystem[foo]        /* CORRECT */
 ```
 
-**Do not mix the two on what's meant to be the same collection.** A
-real Stem object's bracket-indexed storage is a separate namespace
-from classic `mystem.tail` compound variables of the same base name —
-after `mystem = .stem~new; mystem[3] = 'bar'`, plain `mystem.3` does
-**not** see `'bar'`; it still shows the dropped-symbol value
-`"MYSTEM.3"`.
+**Do not mix the two on what's meant to be the same collection.**
+`.stem~new` creates a fresh, otherwise-anonymous Stem object,
+genuinely distinct from the Stem object automatically bound to a
+compound-variable stem of the same name — assigning the new object to
+a simple variable doesn't connect the two, even though both are
+ordinary Stem objects supporting the same bracket notation. After
+`mystem = .stem~new; mystem[3] = 'bar'`, plain `mystem.3` does **not**
+see `'bar'`; it still shows the dropped-symbol value `"MYSTEM.3"`, and
+`(mystem. == mystem)` is `0` — confirming they're genuinely different
+objects, not aliases, despite sharing a base name.
 
 **3. Using another compound variable directly as a tail component**
 (`stem.othercompound.0`) does not do what it looks like, and — unlike
