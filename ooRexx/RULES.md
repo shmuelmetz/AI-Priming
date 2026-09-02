@@ -390,8 +390,11 @@ Valid I/O redirect types in the `address...with` clause are:
 `ADDRESS WITH` semantics define only `STREAM` and `STEM` as resource
 types, alongside plain `NORMAL`); `USING` -- supplying the input value
 directly, `input using (expr)`, with no stem or stream needed -- is
-not in the standard. Verified against ooRexx 5.2.0; not checked
-directly against OREXX or Regina.
+not in the standard. Verified against ooRexx 5.2.0. Regina does not
+have it either: its reference manual's `ADDRESS WITH` syntax diagram
+lists only `STREAM`, `STEM`, `LIFO`, and `FIFO` (Regina's own
+extensions beyond ANSI are `LIFO`/`FIFO`, not `USING`) -- `USING`
+appears nowhere in the manual. OREXX/OBJREXX not checked directly.
 
 To provide empty stdin (preventing interactive blocking):
 
@@ -399,6 +402,29 @@ To provide empty stdin (preventing interactive blocking):
 noIn.0 = 0
 address system cmd with output stem out. error stem err. input stem noIn.
 ```
+
+## RexxUtil's own repertoire also varies by implementation
+
+The name `RexxUtil` does not denote one standardized function set, any
+more than `address...with`'s I/O types do. OS/2's original RexxUtil
+includes Workplace-Shell-specific functions -- `SysCreateObject`,
+`SysDestroyObject`, `SysSetObjectData`, `SysQueryClassList`, and the
+like -- with no counterpart outside OS/2/eComStation/ArcaOS, since they
+manipulate an object-oriented desktop shell those platforms don't
+have. Checked across two other implementations: ordinary file/system
+functions (`SysFileTree`, `SysMkDir`, `SysTempFileName`) are part of
+the common core, present in both ooRexx (verified via `RxFuncQuery`
+after `SysLoadFuncs`) and Regina's `RegUtil` package (per its own
+reference manual). The four Workplace-Shell-specific functions above
+are absent from both: `RxFuncQuery` reports them unregistered in
+ooRexx 5.2.0, and none appears anywhere in RegUtil's reference manual.
+OBJREXX 6.00 (ArcaOS)'s RexxUtil is documented as differing from
+ooRexx's, but not checked function-by-function.
+
+A package-level "did RexxUtil load?" check says nothing about whether
+a specific function is part of that implementation's repertoire --
+guard a platform-specific call with its own `RxFuncQuery` on the
+function's own name.
 
 | Date | Entry | Triggered by |
 |------|-------|--------------|

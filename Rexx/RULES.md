@@ -25,6 +25,17 @@ OBJREXX 6.00 (ArcaOS) may not support it — verify before use.
 TSO/E REXX uses `OUTTRAP` instead; Regina supports `address...with`
 in recent versions.
 
+**`USING` is an ooRexx-only resource type, not part of the standard.**
+ANSI X3.274-1996's own `ADDRESS WITH` semantics define only `STREAM`
+and `STEM` as resource types (besides plain `NORMAL`); `input using
+(expr)` -- supplying the input value directly, no stem or stream
+needed -- is an ooRexx extension beyond that, verified working in
+ooRexx 5.2.0. Regina does not have it: its own reference manual's
+`ADDRESS WITH` syntax diagram lists only `STREAM`, `STEM`, `LIFO`, and
+`FIFO` as resource types (`LIFO`/`FIFO` being Regina's own extensions
+beyond ANSI) -- `USING` appears nowhere in it. OREXX/OBJREXX not
+checked directly.
+
 ---
 
 ## `~upper` — ooRexx only
