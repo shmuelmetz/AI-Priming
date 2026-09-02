@@ -25,6 +25,15 @@ OBJREXX 6.00 (ArcaOS) may not support it — verify before use.
 TSO/E REXX uses `OUTTRAP` instead; Regina supports `address...with`
 in recent versions.
 
+```rexx
+call outtrap 'mystem.'     /* start trapping into mystem. */
+'LISTC LEVEL(MY.DATA)'
+call outtrap 'off'         /* stop trapping */
+do i = 1 to mystem.0
+    say mystem.i
+end
+```
+
 **Neither classic OS/2 REXX nor OREXX ever had `address...with` at
 all.** Checked directly against IBM's own OS/2 Procedures Language
 2/REXX Reference (CREXX.INF) and Object REXX Reference (REXX.INF,

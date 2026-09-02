@@ -547,6 +547,35 @@ variables empty if the pattern is not found.
 
 ---
 
+## `.RegularExpression` as an alternative to `PARSE` templates
+
+For pattern matching that outgrows what a `PARSE` template expresses
+cleanly -- optional pieces, repetition, character classes,
+alternatives -- ooRexx's `.RegularExpression` class is worth reaching
+for instead of contorting a template. It is **not preloaded**; a
+`::REQUIRES "rxregexp.cls"` is needed (placed after mainline code,
+per the mainline-cannot-resume-after-a-directive rule above). It uses
+its own pattern syntax, not POSIX or PCRE: `|` for alternation,
+`?`/`*`/`+`/`{n}` for single-char/repetition, `[...]` for character
+sets, `:alpha:`/`:digit:`/etc. for named classes.
+
+```rexx
+str = 'name=John'
+re = .RegularExpression~new('[:alpha:]+=[:alpha:]+')
+say re~match(str)      -- 1: the whole string matches (MAXIMAL, default)
+
+::requires "rxregexp.cls"
+```
+
+`match(string)` returns 1/0 for whether the whole string matches
+(under the default `MAXIMAL` option) or just a leading part (under
+`MINIMAL`); `pos(string)` locates a match's starting position instead
+of requiring a full-string match. Reserve it for genuine pattern
+matching -- plain fixed-position or delimiter-based extraction is
+still clearer with ordinary `PARSE`.
+
+---
+
 ## Prefer `parse var` over `parse value ... with`
 
 When the parse source is already a variable, use `parse var`:
@@ -749,18 +778,25 @@ say mystem.(i)         /* WRONG: Error 43, "routine not found" --
 `mystem[i]` and `mystem.[i]` are both valid *only* in ooRexx — `[]` is
 an ooRexx operator entirely absent from classic Rexx, which has no
 defined lexical meaning for `[`/`]` at all. In ooRexx, both parse and
-run, but do different things, and the difference is **not** a special
-"dot-then-bracket" tail-access syntax — it's the one general rule
-ooRexx applies everywhere: `[]` is an ordinary message send, and its
-meaning depends entirely on the class of whatever precedes it. On a
-`.String` it selects a character; on a `.Stem` it selects an element.
-`mystem` (no trailing dot) is a plain simple variable, evaluating to
-the String `"MYSTEM"` while dropped; `mystem.` (trailing dot, no
-tail) is *always already* a genuine Stem object -- the ooRexx Language
-Reference (S1.13.4) states this outright: "The value of a stem is
-always a Stem object." No `~new` is needed to get one; `mystem.~class`
-returns `The Stem class` even before any compound variable under it
-has been assigned. So:
+run: `[]` is genuinely one uniform mechanism -- bracket notation sends
+a message named `[]` to the receiver, with the bracket contents as its
+argument list -- but what that list *means* is entirely up to the
+receiving class's own `[]` method, and these two interpret it very
+differently, per the ooRexx Language Reference:
+
+- On a `.String` (§5.1.7.22), `[]` is position/substring extraction:
+  `"abc"[2]` is `"b"`; with a second, comma-separated argument,
+  `"abc"[2,4]` is a substring, `"bc"`.
+- On a `.Stem` (§1.13.5.1, "Evaluated Compound Variables"), `[]`
+  builds a compound-variable *tail*: each comma-separated expression
+  is evaluated to a string, and the results are joined with periods --
+  `a.[1+2, 3+4]` assigns `a.3.7`, exactly as if that dotted tail had
+  been written directly. It is not positional "element N" indexing the
+  way `.Array`'s `[]` is. `mystem.` (trailing dot, no tail) is
+  *always already* a genuine Stem object -- ooRexx Language Reference
+  §1.13.4: "The value of a stem is always a Stem object." No `~new` is
+  needed to get one; `mystem.~class` returns `The Stem class` even
+  before any compound variable under it has been assigned.
 
 ```rexx
 say mystem[i]           /* WRONG, but raises NO error: [] on the
@@ -769,9 +805,10 @@ say mystem[i]           /* WRONG, but raises NO error: [] on the
                            wrong */
 
 say mystem.[i]          /* CORRECT: 'three' -- [] on the Stem object
-                           mystem. already is selects an element,
-                           exactly like mystem[foo] below on an
-                           explicit .stem~new object */
+                           mystem. already is takes i, evaluates it,
+                           and uses the result as the tail directly --
+                           the single-expression case of the same
+                           tail-building mechanism as a.[1+2,3+4] */
 ```
 
 Reach for `mystem.[expr]` over bare-symbol substitution only when the
