@@ -441,6 +441,21 @@ variable references. Pitfalls:
 - If a dropped symbol is used to pass its own name, the second
   call will see the value set by the first call, not the name.
 
+**Prefer `VALUE()` to `INTERPRET` for reading/setting a variable by
+name.** `VALUE(name)` reads, `VALUE(name, newvalue)` sets and returns
+the old value; both touch exactly one variable and nothing else, even
+if `name` is malformed or attacker-controlled. `INTERPRET` executes
+whatever Rexx source text it is handed, not just an assignment.
+Verified directly: handing the same crafted string (an invalid
+variable name with a second clause hidden after a semicolon) to each
+-- `VALUE()` raised a `SYNTAX` condition on the bad name and ran
+nothing else; `INTERPRET` began executing the hidden second clause
+(visibly compiling and invoking the routine it named) before failing
+only because that call was missing a required argument, not because
+the injection was blocked. Reserve `INTERPRET` for genuinely dynamic
+code -- a whole statement or expression built at run time -- not as a
+substitute for a single indirect variable reference.
+
 Note: ooRexx and OREXX have `USE ARG` for pass-by-reference; classic
 REXX does not.
 
