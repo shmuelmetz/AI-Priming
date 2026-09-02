@@ -13,7 +13,30 @@ See also `../ooRexx/BIBLIOGRAPHY.md` for ooRexx-specific references.
 - **Title:** z/OS TSO/E REXX Reference (SA32-0972)
 - **URL:** https://www.ibm.com/docs/en/zos/latest?topic=rexx-tsoe-reference
 - **Notes:** IBM mainframe REXX reference. Authoritative for `rc`,
-  `address`, `outtrap`, and built-in functions.
+  `address`, `outtrap`, and built-in functions. TSO/E REXX is the only
+  REXX interpreter on z/OS -- TSO, ISPF, ISPF/PDF EDIT, the OMVS
+  shell, batch (`IRXJCL`), and System REXX are the same interpreter
+  run in different environments, not separate products. This session
+  saw this URL and the PDF variants below return 403; not fetched.
+
+### z/OS Using REXX and z/OS UNIX System Services
+- **Title:** z/OS Using REXX and z/OS UNIX System Services (SA23-2283)
+- **Notes:** Documents the same TSO/E REXX interpreter's behavior when
+  run from the OMVS shell -- a separate manual from the TSO/E REXX
+  Reference above, not a different REXX. Confirms `SH` as the initial
+  host command environment there.
+
+### z/VM REXX/VM Reference
+- **Title:** z/VM REXX/VM Reference (SC24-6314/SC24-5963, per release)
+- **URL:** https://www.vm.ibm.com/library/ (per-release PDFs, e.g.
+  https://www.vm.ibm.com/library/730pdfs/73631400.pdf)
+- **Notes:** Covers REXX/VM under CMS and, in Appendix E, under GCS
+  (Group Control System) -- a distinct z/VM guest environment from
+  CMS, with its own default `ADDRESS` environment (`GCS`) and lacking
+  the `selector` third argument to `VALUE()` entirely. Also documents
+  XEDIT macros defaulting to `ADDRESS XEDIT`, falling through to `CMS`
+  then `CP` automatically. Fetched directly and text-extracted this
+  session (unlike ibm.com, vm.ibm.com PDFs were reachable).
 
 ### REXX Reference Summary Handbook
 - **Author:** Richard K. Goran

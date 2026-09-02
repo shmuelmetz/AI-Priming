@@ -507,16 +507,21 @@ CMS's command line, GCS, and XEDIT:
 | TSO READY prompt | `TSO` | Whatever a running application has registered. |
 | ISPF (exec invoked as a command/from a panel, not editing) | `TSO` -- unchanged from bare TSO | `ISPEXEC` (ISPF services). |
 | ISPF/PDF EDIT macro | `TSO` -- **still TSO, not ISREDIT**, even inside an edit macro | `ISPEXEC`, `ISREDIT` -- both must be addressed explicitly; neither is ever the default. |
-| OMVS shell (z/OS UNIX System Services) | `SH` | `TSO`, `MVS`, `SYSCALL`. Per IBM's z/OS UNIX System Services REXX documentation ("SH is the initial host environment"). |
-| System REXX (z/OS, outside TSO/batch) | `MVS` (`TSO=NO`) | `ATTACH`, `ATTCHMVS`, `ATTCHPGM`, `LINK`, `LINKMVS`, `APPCMVS`, `BCPii`, `CPICOMM`, `LU62`; `TSO=YES` adds `TSO` + ISPF environments. |
+| OMVS shell (z/OS UNIX System Services) | `SH` | `TSO`, `MVS`, `SYSCALL`. Per IBM's *z/OS Using REXX and z/OS UNIX System Services* ("SH is the initial host environment") -- a manual distinct from the TSO/E REXX Reference. |
+| Batch, via `IRXJCL` (`EXEC PGM=IRXJCL`, no TSO or OMVS session) | `MVS` | TSO/E services, commands, and most TSO/E external functions are unavailable entirely, not just non-default. |
+| System REXX (an exec started via the `AXREXX` assembler interface or an operator command -- not TSO, batch, or OMVS) | `MVS` (`TSO=NO`) | `ATTACH`, `ATTCHMVS`, `ATTCHPGM`, `LINK`, `LINKMVS`, `APPCMVS`, `BCPii`, `CPICOMM`, `LU62`; `TSO=YES` adds `TSO` + ISPF environments. |
 | CMS command line | `CMS` | `COMMAND` (skips CMS's own EXEC search), `CP`. Per IBM's z/VM REXX/VM Reference. |
 | GCS (Group Control System, distinct from CMS) | `GCS` (full resolution: exec, then GCS module, then CP) | `COMMAND` (narrower). GCS's REXX drops `VALUE()`'s `selector` third argument entirely -- see above. Per IBM's z/VM REXX/VM Reference, Appendix E. |
 | XEDIT macro | `XEDIT` | Falls through automatically to `CMS`, then `CP`, with no `ADDRESS` needed. Per the same manual, including a documented `ADDRESS()` example returning `'XEDIT'`. |
 
-CMS/GCS/XEDIT/OMVS rows: primary IBM manuals, checked directly. TSO
-READY/ISPF/ISPF-EDIT and System REXX rows: standard, widely-documented
-IBM behavior, not checked against a primary manual for this entry
-(IBM's own TSO/E REXX Reference PDF returns 403 from this session).
+**TSO/E REXX is the only REXX interpreter on z/OS** -- TSO READY,
+ISPF, ISPF/PDF EDIT, the OMVS shell, batch (`IRXJCL`), and System REXX
+are all the *same* interpreter run in different environments, not
+different products. CMS/GCS/XEDIT/OMVS rows: primary IBM manuals,
+checked directly. TSO READY/ISPF/ISPF-EDIT, batch, and System REXX
+rows: standard, widely-documented IBM behavior, not checked against a
+primary manual for this entry (IBM's own TSO/E REXX Reference PDF
+returns 403 from this session).
 
 ---
 
