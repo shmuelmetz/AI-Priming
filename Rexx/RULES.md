@@ -513,12 +513,12 @@ none -- avoid vague filler like "whatever the host app registers".
 
 | Invocation context | Default | Other environments |
 |---|---|---|
-| OS/2 classic REXX and OREXX, run directly | `CMD` | |
-| ooRexx, run directly | `CMD` on Windows | `SYSTEM`, `PATH` |
-| Regina, run directly | `SYSTEM` | `COMMAND`, `REXX` |
+| OS/2 or Windows command prompt (classic REXX, OREXX, ooRexx) | `CMD` | `SYSTEM`, `PATH` on ooRexx |
+| Regina, from a command prompt | `SYSTEM` | `COMMAND`, `REXX` |
 | TSO/E READY prompt | `TSO` | `MVS`, `LINK`, `ATTACH` |
-| ISPF, on z/OS (TSO) | `TSO` | `MVS`, `LINK`, `ATTACH`, `ISPEXEC`, `ISREDIT` (edit session only) |
-| ISPF, on z/VM (CMS) | `CMS` | `ISPEXEC`, `ISREDIT` (edit session only) |
+| ISPF (a dialog/panel exec, not editing), on z/OS | `TSO` | `MVS`, `LINK`, `ATTACH`, `ISPEXEC` |
+| ISPF/PDF EDIT macro, on z/OS | `TSO` | `MVS`, `LINK`, `ATTACH`, `ISPEXEC`, `ISREDIT` |
+| ISPF (dialog or edit macro), on z/VM | `CMS` | `ISPEXEC`; `ISREDIT` in an edit macro |
 | OMVS shell (z/OS UNIX System Services) | `SH` | `TSO`, `MVS`, `SYSCALL` |
 | Batch, via `IRXJCL` (no TSO or OMVS session) | `MVS` | `LINK`, `ATTACH` |
 | System REXX (via `AXREXX` or an operator command) | `MVS` (`TSO=NO`) | `ATTACH`, `ATTCHMVS`, `ATTCHPGM`, `LINK`, `LINKMVS`, `APPCMVS`, `BCPii`, `CPICOMM`, `LU62`; `TSO=YES` adds `TSO`, `ISPEXEC`, `ISREDIT` |
@@ -531,6 +531,20 @@ ISPF, the OMVS shell, batch (`IRXJCL`), and System REXX are all the
 *same* interpreter run in different environments, not different
 products.
 
+**The TSO-family rows are illustrative, not exhaustive** -- they are
+the ones with a primary-source-confirmed environment name. The
+underlying pattern is general: any TSO-hosted facility registers its
+own additional host command environment for as long as it's running,
+the same way ISPF adds `ISPEXEC` (and `ISREDIT` while editing). The
+native TSO `EDIT` and `TEST` facilities add their own (`EDIT`, `TEST`)
+the same way; `IPCS` does too, while analyzing a dump.
+(LPEX, an OS/2 editor, was checked as a possible addition here --
+its macro language, per the actual LPEX Editor User's Guide
+(SC09-2795), is REXX-flavored but not documented anywhere in that
+guide as using an ADDRESS-based host command environment the way XEDIT
+and ISREDIT are; it appears to be LPEX's own scripting language, not
+genuine ADDRESS-dispatched Rexx. Not added pending clarification.)
+
 Sourcing: OS/2-family, ooRexx, and Regina rows rest on each
 implementation's own manual. TSO/E READY, ISPF-on-z/OS, and batch come
 from IBM's TSO Extensions Version 2 REXX Reference (SC28-1883-0,
@@ -538,7 +552,7 @@ Chapter 10) -- fetched via a non-ibm.com mirror since ibm.com/docs
 returns 403 from this session; it documents ISPF's environment list
 from TSO/E's own side, and the ISPF Dialog Developer's Guide
 (SC34-4821, also fetched via a non-ibm.com mirror) does not
-independently confirm that list, so the ISPF-on-z/OS row reflects
+independently confirm that list, so the ISPF-on-z/OS rows reflect
 TSO/E's documentation of ISPF, not ISPF's own. ISPF-on-z/VM is
 inferred by the same pattern (default unchanged from the underlying
 platform; `ISPEXEC`/`ISREDIT` added) since no VM-specific ISPF manual
