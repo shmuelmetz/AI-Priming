@@ -459,6 +459,20 @@ Do not assume the default host command environment. Set it explicitly:
 This allows a routine to be called from within editors and other
 environments that use REXX as their macro language.
 
+The default, and what else is available, varies by platform/dialect:
+
+| Platform / dialect | Default | Other environments |
+|---|---|---|
+| OS/2 classic REXX and OREXX | `CMD` | Whatever the host app registers (e.g. `EDIT`) -- `CMD` is the only OS/2-native built-in. Verified against IBM's own manuals. |
+| ooRexx | `CMD` (Windows) | `SYSTEM`, `PATH` -- verified live, ooRexx 5.2.0 on Windows; not checked on Linux. |
+| Regina | `SYSTEM` (aka `ENVIRONMENT`/`OS2ENVIRONMENT`) | `COMMAND` (aka `CMD`/`PATH`), `REXX` (aka `REGINA`, fresh interpreter instance). Per Regina's own manual. |
+| TSO/E REXX | `TSO` | `ISPEXEC` (ISPF only), `ISREDIT` (edit session only). |
+| CMS REXX | `CMS`/`COMMAND` | `CP`. |
+| System REXX (z/OS) | `MVS` (`TSO=NO`) | `ATTACH`, `ATTCHMVS`, `ATTCHPGM`, `LINK`, `LINKMVS`, `APPCMVS`, `BCPii`, `CPICOMM`, `LU62`; `TSO=YES` adds `TSO` + ISPF environments. |
+
+TSO/E, CMS, and System REXX rows: standard IBM documentation, not
+checked against a primary manual for this entry.
+
 ---
 
 ### Portability: character encoding
@@ -526,6 +540,22 @@ select
     end
 end
 ```
+
+`level` is the Rexx *language level* the interpreter targets, not the
+interpreter's own version number -- several implementations conflate
+the two. The `name`/`level` values actually seen in practice:
+
+| Implementation | `name` | `level` | Source |
+|---|---|---|---|
+| OS/2 classic REXX | `REXXSAA` | `4.00` | IBM's own reference manual, verified directly |
+| OREXX | `OBJREXX` | `6.00` | IBM's own reference manual, verified directly |
+| CMS / TSO/E REXX ("REXX370") | `REXX370` | `4.00` | Widely documented; not checked against a primary manual |
+| Regina | `REXX-Regina_<version>` | `5.00` | Regina's own manual + public examples; ANSI-compliant since 3.1 |
+| ooRexx | `REXX-ooRexx_<version>(MT)_<bits>-bit` | `6.06` | Verified live, ooRexx 5.2.0 |
+
+`REXXSAA` and `REXX370` share the same `level` (`4.00`) despite one
+being PC/workstation and the other mainframe -- neither was ever
+brought up to the ANSI-1996 level (`5.00`).
 
 ---
 
