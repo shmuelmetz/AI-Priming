@@ -914,6 +914,52 @@ mainline code anywhere in the file to call the routine that was defined.
 |------|-------|--------------|
 | 2026-08-31 | `::CLASS ... PUBLIC` required across `::REQUIRES`; `PUBLIC` not transitive; `::REQUIRES` relative paths resolve against CWD, use bare filename + `PATH`/`setenv` instead; mainline must precede all directives, and defining `::ROUTINE main` does not call it | Building `rexx-lint`'s first check against Josep Maria Blasco's Rexx Parser -- four separate silent/confusing failures in a row before the tool produced any output at all |
 
+## Reaching a directive at runtime terminates the program like `EXIT`, not `RETURN`
+
+[IMPORTANT]
+
+Distinct from the compile-time rule above (mainline code can't be
+*positioned* after a directive at all): this is about what happens
+when a `CALL`ed internal label's code has no explicit `RETURN` and
+execution *runs into* the `::` directive boundary that legally follows
+all mainline code. Verified directly, since it's easy to get wrong by
+analogy with classic Rexx's "falls off the end -> implicit RETURN"
+convention:
+
+```rexx
+say 'before call'
+call mySub
+say 'after call'        -- never reached
+exit 0
+
+mySub:
+  say 'in mySub'         -- prints
+  -- no RETURN here
+
+::routine dummy
+  return
+```
+
+Running this prints `before call` and `in mySub`, then the whole
+program terminates cleanly (`rc 0`, no condition raised, confirmed
+with `signal on any` armed and *not* firing) -- `after call` is never
+printed. This is implicit-`EXIT` behavior, not implicit-`RETURN`: the
+directive boundary ends the program outright rather than returning
+control to the caller.
+
+This is genuinely different from falling off the end of the same
+label into ordinary code with **no directive present** -- that case is
+plain sequential fall-through, executing whatever comes next as if it
+were still part of the same routine (also verified directly, by
+replacing the `::routine` above with an unrelated label and confirming
+execution fell into and ran its code). A directive boundary is what
+makes the difference between "keeps running" and "program ends" --
+not the mere absence of `RETURN` on its own.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-09-02 | Falling from a called label into a `::` directive boundary at runtime acts like `EXIT`, not `RETURN` | Cross-checked while drafting Safe-REXX-Merged-DRAFT.md in the (unrelated) Safe-REXX repo; user asked "exit or return?" rather than accepting an assumption |
+
 ---
 
 ## Debugging: reach for `TRACE` before guessing from black-box behavior
