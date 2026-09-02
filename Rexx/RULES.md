@@ -437,6 +437,9 @@ compound variables; enforce constraints explicitly:
   assigned to it, as opposed to a *variable*, §3.1.47/§3.1.52) evaluates
   to its own name in upper case and can be used as a compound index;
   this is a common source of silent bugs.
+- This untyped-variable behavior is unchanged in ooRexx. ooRexx
+  *objects* are a different matter -- see ooRexx/RULES.md's dynamic
+  typing note.
 
 ---
 

@@ -668,6 +668,26 @@ before any full-file write.
 
 ---
 
+## Dynamic typing at the object level
+
+Plain ooRexx variables are exactly as untyped as classic Rexx's --
+see Rexx/RULES.md's Type and range checking section, unchanged here.
+ooRexx *objects* are a different matter: every object knows its own
+class, and sending it a message that class doesn't define is a real,
+enforced error (`Error 97.1`, "does not understand message" -- the
+pattern behind most of this file's own examples), not silent
+misbehavior. It's late-bound (checked when the message is sent, not
+before the program runs) rather than static, but it is genuine type
+enforcement, absent a class deliberately opting out: defining an
+`UNKNOWN` method lets an object accept and handle any message that
+would otherwise be rejected, receiving the message name and its
+argument list. Verified live: `.Array~new~notAMethod('x')` raises a
+`SYNTAX` condition, "Object method not found"; a class defining
+`::method unknown` (`use arg msgname, args`) catches exactly what
+would otherwise be rejected.
+
+---
+
 ## `EXPOSE` means something different in a `::METHOD` than `PROCEDURE EXPOSE`
 
 `EXPOSE` has two genuinely different meanings depending on where it
@@ -781,7 +801,7 @@ defined lexical meaning for `[`/`]` at all. In ooRexx, both parse and
 run: `[]` is genuinely one uniform mechanism -- bracket notation sends
 a message named `[]` to the receiver, with the bracket contents as its
 argument list -- but what that list *means* is entirely up to the
-receiving class's own `[]` method, and these two interpret it very
+receiving object's own `[]` method, and these two interpret it very
 differently, per the ooRexx Language Reference:
 
 - On a `.String` (§5.1.7.22), `[]` is position/substring extraction:
@@ -799,10 +819,12 @@ differently, per the ooRexx Language Reference:
   before any compound variable under it has been assigned.
 
 ```rexx
-say mystem[i]           /* WRONG, but raises NO error: [] on the
-                           String "MYSTEM" selects character 3, "S" --
-                           a plausible-looking value that is simply
-                           wrong */
+say mystem[i]           /* NOT AN ERROR -- and that's the trap: this is
+                           a legitimate character selection, just not
+                           the one intended. [] on the String "MYSTEM"
+                           correctly selects character 3, "S". Nothing
+                           here is wrong except the programmer's
+                           expectation that it reaches a stem element */
 
 say mystem.[i]          /* CORRECT: 'three' -- [] on the Stem object
                            mystem. already is takes i, evaluates it,
@@ -873,6 +895,25 @@ index into a plain simple variable first, then use it as the tail —
 `n = orphans.0; orphans.n = value` — a bare simple-symbol tail like
 `n` needs no bracket at all; `.[expr]` is only for tails more complex
 than a single symbol.
+
+**A stem's own item count sidesteps maintaining a manual counter tail
+at all.** `orphans.` is always a genuine Stem object; `~items` reports
+how many of its compound variables are currently set, updating itself
+as a side effect of each assignment, with nothing to track by hand:
+
+```rexx
+orphans.[orphans.~items] = 'first'   -- items was 0; sets tail "0"
+orphans.[orphans.~items] = 'second'  -- items is now 1; sets tail "1"
+```
+
+Verified live, including the numbering: this starts at tail `"0"`, not
+`"1"` -- `~items` counts from zero, unlike the classic convention
+where tail `0` is a manually-maintained counter and data starts at
+`1`. The two schemes don't mix; pick one per stem. `~allIndexes`
+returns every tail actually populated, in no particular order --
+useful for iterating a stem built this way without assuming a
+contiguous numeric range: `do tail over orphans.~allIndexes; say
+orphans.[tail]; end`.
 
 **Related, easy to trip over while testing the above**: a quoted
 string literal can never BE a tail either, even when it contains no
