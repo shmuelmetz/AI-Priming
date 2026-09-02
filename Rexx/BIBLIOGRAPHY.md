@@ -18,14 +18,42 @@ See also `../ooRexx/BIBLIOGRAPHY.md` for ooRexx-specific references.
   a purchased ANSI copy.
 
 ### IBM TSO/E REXX Reference
-- **Title:** z/OS TSO/E REXX Reference (SA32-0972)
+- **Title:** z/OS TSO/E REXX Reference (current form SA32-0972); the
+  edition actually fetched and text-extracted this session was the
+  older *TSO Extensions Version 2 REXX Reference*, SC28-1883-0
+  (December 1988) -- same manual's lineage under an older form number
+  and product name (TSO Extensions predates the z/OS/TSO-E rebrand),
+  fetched via a non-ibm.com mirror
+  (vtda.org/docs/computing/IBM/Mainframe/SysSoft/TSO/) since
+  ibm.com/docs and ibm.com/docs PDF URLs return 403 from this session.
 - **URL:** https://www.ibm.com/docs/en/zos/latest?topic=rexx-tsoe-reference
+  (current, blocked here); working mirror of the 1988 edition at
+  https://vtda.org/docs/computing/IBM/Mainframe/SysSoft/TSO/SC28-1883-0_TSOExtensionsV2REXXReference_Dec88.pdf
 - **Notes:** IBM mainframe REXX reference. Authoritative for `rc`,
   `address`, `outtrap`, and built-in functions. TSO/E REXX is the only
   REXX interpreter on z/OS -- TSO, ISPF, ISPF/PDF EDIT, the OMVS
   shell, batch (`IRXJCL`), and System REXX are the same interpreter
-  run in different environments, not separate products. This session
-  saw this URL and the PDF variants below return 403; not fetched.
+  run in different environments, not separate products. Chapter 10
+  ("TSO/E REXX Commands") gives the exact host command environment
+  table per invocation context (TSO/E READY: TSO default + MVS, LINK,
+  ATTACH; non-TSO/E address space: MVS default + LINK, ATTACH; ISPF:
+  TSO default + MVS, LINK, ATTACH, ISPEXEC, ISREDIT) -- see
+  Rexx/RULES.md's ADDRESS environments table. This documents ISPF's
+  environment list from TSO/E's own side; see the ISPF Dialog
+  Developer's Guide entry below for why that distinction matters.
+
+### ISPF Dialog Developer's Guide and Reference
+- **Title:** z/OS ISPF Dialog Developer's Guide and Reference
+  (SC34-4821, edition checked: z/OS V1R6.0, SC34-4821-03)
+- **URL:** http://www.manmrk.net/tutorials/ISPF/ispzdg30.pdf (non-ibm.com
+  mirror; ibm.com/docs PDF variants return 403 from this session)
+- **Notes:** The authoritative ISPF-specific manual, distinct from the
+  TSO/E REXX Reference. Does **not** independently restate the REXX
+  host command environment list for ISPF -- that list, as used in
+  Rexx/RULES.md, rests on the TSO/E REXX Reference's own documentation
+  of the ISPF case, not on this manual. Worth re-checking here first
+  if a future session needs to settle any doubt about ISPF's REXX
+  environment behavior specifically.
 
 ### z/OS Using REXX and z/OS UNIX System Services
 - **Title:** z/OS Using REXX and z/OS UNIX System Services (SA23-2283)

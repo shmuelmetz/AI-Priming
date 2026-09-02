@@ -504,33 +504,48 @@ This allows a routine to be called from within editors and other
 environments that use REXX as their macro language.
 
 The default, and what else is available, varies not just by
-platform/dialect but by *invocation context* -- TSO READY, ISPF, and
-an ISPF/PDF EDIT macro all run under the same OS but differ; same for
-CMS's command line, GCS, and XEDIT:
+platform/dialect but by *invocation context*. Only environments
+actually documented for that context are listed; a blank cell means
+none -- avoid vague filler like "whatever the host app registers".
 
 | Invocation context | Default | Other environments |
 |---|---|---|
-| OS/2 classic REXX and OREXX, run directly | `CMD` | Whatever the host app registers (e.g. `EDIT`) -- `CMD` is the only OS/2-native built-in. Verified against IBM's own manuals. |
-| ooRexx, run directly | `CMD` (Windows) | `SYSTEM`, `PATH` -- verified live, ooRexx 5.2.0 on Windows; not checked on Linux. |
-| Regina, run directly | `SYSTEM` (aka `ENVIRONMENT`/`OS2ENVIRONMENT`) | `COMMAND` (aka `CMD`/`PATH`), `REXX` (aka `REGINA`, fresh interpreter instance). Per Regina's own manual. |
-| TSO READY prompt | `TSO` | Whatever a running application has registered. |
-| ISPF (exec invoked as a command/from a panel, not editing) | `TSO` -- unchanged from bare TSO | `ISPEXEC` (ISPF services). |
-| ISPF/PDF EDIT macro | `TSO` -- **still TSO, not ISREDIT**, even inside an edit macro | `ISPEXEC`, `ISREDIT` -- both must be addressed explicitly; neither is ever the default. |
-| OMVS shell (z/OS UNIX System Services) | `SH` | `TSO`, `MVS`, `SYSCALL`. Per IBM's *z/OS Using REXX and z/OS UNIX System Services* ("SH is the initial host environment") -- a manual distinct from the TSO/E REXX Reference. |
-| Batch, via `IRXJCL` (`EXEC PGM=IRXJCL`, no TSO or OMVS session) | `MVS` | TSO/E services, commands, and most TSO/E external functions are unavailable entirely, not just non-default. |
-| System REXX (an exec started via the `AXREXX` assembler interface or an operator command -- not TSO, batch, or OMVS) | `MVS` (`TSO=NO`) | `ATTACH`, `ATTCHMVS`, `ATTCHPGM`, `LINK`, `LINKMVS`, `APPCMVS`, `BCPii`, `CPICOMM`, `LU62`; `TSO=YES` adds `TSO` + ISPF environments. |
-| CMS command line | `CMS` | `COMMAND` (skips CMS's own EXEC search), `CP`. Per IBM's z/VM REXX/VM Reference. |
-| GCS (Group Control System, distinct from CMS) | `GCS` (full resolution: exec, then GCS module, then CP) | `COMMAND` (narrower). GCS's REXX drops `VALUE()`'s `selector` third argument entirely -- see above. Per IBM's z/VM REXX/VM Reference, Appendix E. |
-| XEDIT macro | `XEDIT` | Falls through automatically to `CMS`, then `CP`, with no `ADDRESS` needed. Per the same manual, including a documented `ADDRESS()` example returning `'XEDIT'`. |
+| OS/2 classic REXX and OREXX, run directly | `CMD` | |
+| ooRexx, run directly | `CMD` on Windows | `SYSTEM`, `PATH` |
+| Regina, run directly | `SYSTEM` | `COMMAND`, `REXX` |
+| TSO/E READY prompt | `TSO` | `MVS`, `LINK`, `ATTACH` |
+| ISPF, on z/OS (TSO) | `TSO` | `MVS`, `LINK`, `ATTACH`, `ISPEXEC`, `ISREDIT` (edit session only) |
+| ISPF, on z/VM (CMS) | `CMS` | `ISPEXEC`, `ISREDIT` (edit session only) |
+| OMVS shell (z/OS UNIX System Services) | `SH` | `TSO`, `MVS`, `SYSCALL` |
+| Batch, via `IRXJCL` (no TSO or OMVS session) | `MVS` | `LINK`, `ATTACH` |
+| System REXX (via `AXREXX` or an operator command) | `MVS` (`TSO=NO`) | `ATTACH`, `ATTCHMVS`, `ATTCHPGM`, `LINK`, `LINKMVS`, `APPCMVS`, `BCPii`, `CPICOMM`, `LU62`; `TSO=YES` adds `TSO`, `ISPEXEC`, `ISREDIT` |
+| CMS command line | `CMS` | `COMMAND`, `CP` |
+| GCS (a z/VM guest environment distinct from CMS) | `GCS` | `COMMAND` |
+| XEDIT macro (CMS's screen editor) | `XEDIT` | falls through to `CMS`, then `CP`, automatically |
 
 **TSO/E REXX is the only REXX interpreter on z/OS** -- TSO READY,
-ISPF, ISPF/PDF EDIT, the OMVS shell, batch (`IRXJCL`), and System REXX
-are all the *same* interpreter run in different environments, not
-different products. CMS/GCS/XEDIT/OMVS rows: primary IBM manuals,
-checked directly. TSO READY/ISPF/ISPF-EDIT, batch, and System REXX
-rows: standard, widely-documented IBM behavior, not checked against a
-primary manual for this entry (IBM's own TSO/E REXX Reference PDF
-returns 403 from this session).
+ISPF, the OMVS shell, batch (`IRXJCL`), and System REXX are all the
+*same* interpreter run in different environments, not different
+products.
+
+Sourcing: OS/2-family, ooRexx, and Regina rows rest on each
+implementation's own manual. TSO/E READY, ISPF-on-z/OS, and batch come
+from IBM's TSO Extensions Version 2 REXX Reference (SC28-1883-0,
+Chapter 10) -- fetched via a non-ibm.com mirror since ibm.com/docs
+returns 403 from this session; it documents ISPF's environment list
+from TSO/E's own side, and the ISPF Dialog Developer's Guide
+(SC34-4821, also fetched via a non-ibm.com mirror) does not
+independently confirm that list, so the ISPF-on-z/OS row reflects
+TSO/E's documentation of ISPF, not ISPF's own. ISPF-on-z/VM is
+inferred by the same pattern (default unchanged from the underlying
+platform; `ISPEXEC`/`ISREDIT` added) since no VM-specific ISPF manual
+confirms it independently. CMS, GCS, and XEDIT come from IBM's z/VM
+REXX/VM Reference (including a documented `ADDRESS()` example
+returning `'XEDIT'`); OMVS's `SH` default from IBM's *z/OS Using REXX
+and z/OS UNIX System Services* (a manual distinct from the TSO/E REXX
+Reference). `ISREDIT` requires an active edit session regardless of
+platform. GCS's REXX drops `VALUE()`'s `selector` third argument
+entirely -- see above; per the z/VM REXX/VM Reference, Appendix E.
 
 ---
 
