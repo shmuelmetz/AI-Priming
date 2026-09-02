@@ -667,14 +667,29 @@ ooRexx, and mixing up their access syntax produces bugs ranging from a
 hard error to a silent wrong answer.
 
 **1. Classic compound variable** (`mystem.1 = 'x'` style storage).
-Indirect/computed tail access is `mystem.[expr]` — dot, then bracket:
+When the tail is a single bare symbol, its current value substitutes
+directly — this is standard classic Rexx, no bracket needed at all,
+and it's the form to reach for first:
 
 ```rexx
 mystem.1 = 'one'
 mystem.2 = 'two'
 mystem.3 = 'three'
 i = 3
-say mystem.[i]        /* CORRECT: 'three' */
+say mystem.i          /* CORRECT: 'three' -- bare-symbol substitution */
+```
+
+`mystem.[expr]` — dot, then bracket — is a genuinely ooRexx-only
+extension, not a classic-Rexx construct: `[]` is the String class's
+own operator, absent from classic Rexx entirely. Reach for it only
+when the tail needs to be computed from a real *expression*, which
+bare-symbol substitution can't do in one step:
+
+```rexx
+j = 2
+say mystem.[j + 1]    /* CORRECT: 'three' -- ooRexx-only; classic Rexx
+                          would need a temp variable first, n = j + 1;
+                          say mystem.n */
 ```
 
 Two wrong forms for this case, verified by direct test:
@@ -920,13 +935,16 @@ mainline code anywhere in the file to call the routine that was defined.
 
 Distinct from the compile-time rule above (mainline code can't be
 *positioned* after a directive at all): this is about what happens
-when a `CALL`ed internal label's code has no explicit `RETURN` and
-execution *runs into* the `::` directive boundary that legally follows
-all mainline code. Verified directly, since it's easy to get wrong by
-analogy with classic Rexx's "falls off the end -> implicit RETURN"
-convention -- and it's a real pitfall, not just a fact worth knowing:
-code after the `CALL` simply never runs, with no error and no
-diagnostic pointing at why:
+when a `CALL`ed *classic-style internal label's* code has no explicit
+`RETURN` and execution *runs into* the `::` directive boundary that
+legally follows all mainline code. This does **not** describe a
+`::ROUTINE`/`::METHOD` body itself falling through without `RETURN`
+-- that's the ordinary, unrelated case of a routine/method simply
+returning nothing to its own caller. Verified directly, since it's
+easy to get wrong by analogy with classic Rexx's "falls off the end ->
+implicit RETURN" convention -- and it's a real pitfall, not just a
+fact worth knowing: code after the `CALL` simply never runs, with no
+error and no diagnostic pointing at why:
 
 ```rexx
 say 'before call'
@@ -957,6 +975,14 @@ replacing the `::routine` above with an unrelated label and confirming
 execution fell into and ran its code). A directive boundary is what
 makes the difference between "keeps running" and "program ends" --
 not the mere absence of `RETURN` on its own.
+
+True end-of-file (nothing at all after the label, not even a
+directive) behaves identically to a directive boundary -- also
+verified directly, both with and without `PROCEDURE` active on the
+called label: `rc 0`, no condition raised, `after call` never printed.
+A `::` directive and true EOF are functionally the same "no more
+executable code" boundary from the interpreter's point of view; it's
+specifically falling into *more ordinary code* that differs.
 
 | Date | Entry | Triggered by |
 |------|-------|--------------|
