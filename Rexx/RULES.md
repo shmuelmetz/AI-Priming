@@ -25,6 +25,14 @@ OBJREXX 6.00 (ArcaOS) may not support it — verify before use.
 TSO/E REXX uses `OUTTRAP` instead; Regina supports `address...with`
 in recent versions.
 
+**Neither classic OS/2 REXX nor OREXX ever had `address...with` at
+all.** Checked directly against IBM's own OS/2 Procedures Language
+2/REXX Reference (CREXX.INF) and Object REXX Reference (REXX.INF,
+c. 2001): the `ADDRESS` instruction's own syntax diagram in *both* is
+just `ADDRESS [environment] [expression]` -- no `WITH` clause, of any
+kind, in either. This isn't a missing sub-option; the whole I/O
+redirection clause postdates both.
+
 **`USING` is an ooRexx-only resource type, not part of the standard.**
 ANSI X3.274-1996's own `ADDRESS WITH` semantics define only `STREAM`
 and `STEM` as resource types (besides plain `NORMAL`); `input using
@@ -33,8 +41,8 @@ needed -- is an ooRexx extension beyond that, verified working in
 ooRexx 5.2.0. Regina does not have it: its own reference manual's
 `ADDRESS WITH` syntax diagram lists only `STREAM`, `STEM`, `LIFO`, and
 `FIFO` as resource types (`LIFO`/`FIFO` being Regina's own extensions
-beyond ANSI) -- `USING` appears nowhere in it. OREXX/OBJREXX not
-checked directly.
+beyond ANSI) -- `USING` appears nowhere in it. OREXX/classic OS/2 REXX
+moot -- neither has `address...with` at all, per the finding above.
 
 ---
 

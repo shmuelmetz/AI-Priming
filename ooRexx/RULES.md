@@ -394,7 +394,12 @@ not in the standard. Verified against ooRexx 5.2.0. Regina does not
 have it either: its reference manual's `ADDRESS WITH` syntax diagram
 lists only `STREAM`, `STEM`, `LIFO`, and `FIFO` (Regina's own
 extensions beyond ANSI are `LIFO`/`FIFO`, not `USING`) -- `USING`
-appears nowhere in the manual. OREXX/OBJREXX not checked directly.
+appears nowhere in the manual. Checked directly against IBM's own OS/2
+Procedures Language 2/REXX Reference and Object REXX Reference
+(CREXX.INF/REXX.INF, c. 2001): neither classic OS/2 REXX nor OREXX has
+`address...with` at all -- the `ADDRESS` instruction's syntax diagram
+in both is just `ADDRESS [environment] [expression]`, no `WITH` clause
+whatsoever, so the `USING` question doesn't even arise for either.
 
 To provide empty stdin (preventing interactive blocking):
 
@@ -406,20 +411,24 @@ address system cmd with output stem out. error stem err. input stem noIn.
 ## RexxUtil's own repertoire also varies by implementation
 
 The name `RexxUtil` does not denote one standardized function set, any
-more than `address...with`'s I/O types do. OS/2's original RexxUtil
-includes Workplace-Shell-specific functions -- `SysCreateObject`,
-`SysDestroyObject`, `SysSetObjectData`, `SysQueryClassList`, and the
-like -- with no counterpart outside OS/2/eComStation/ArcaOS, since they
-manipulate an object-oriented desktop shell those platforms don't
-have. Checked across two other implementations: ordinary file/system
-functions (`SysFileTree`, `SysMkDir`, `SysTempFileName`) are part of
-the common core, present in both ooRexx (verified via `RxFuncQuery`
-after `SysLoadFuncs`) and Regina's `RegUtil` package (per its own
-reference manual). The four Workplace-Shell-specific functions above
-are absent from both: `RxFuncQuery` reports them unregistered in
-ooRexx 5.2.0, and none appears anywhere in RegUtil's reference manual.
-OBJREXX 6.00 (ArcaOS)'s RexxUtil is documented as differing from
-ooRexx's, but not checked function-by-function.
+more than `address...with`'s I/O types do. Checked directly against
+IBM's own OS/2 reference documentation for both classic Rexx and
+OREXX (CREXX.INF/REXX.INF): both document the full
+Workplace-Shell-specific set -- `SysCreateObject`, `SysDestroyObject`,
+`SysSetObjectData`, `SysQueryClassList`, and the like -- confirming
+this was the original repertoire on OS/2 itself, where the Workplace
+Shell these functions manipulate actually exists. Checked across two
+later implementations: ordinary file/system functions (`SysFileTree`,
+`SysMkDir`, `SysTempFileName`) are part of the common core, present in
+both ooRexx (verified via `RxFuncQuery` after `SysLoadFuncs`) and
+Regina's `RegUtil` package (per its own reference manual). The four
+Workplace-Shell-specific functions above are absent from both:
+`RxFuncQuery` reports them unregistered in ooRexx 5.2.0, and none
+appears anywhere in RegUtil's reference manual -- neither reimplements
+the OS/2-shell-specific portion of the original repertoire, only the
+platform-independent core. OBJREXX 6.00 (ArcaOS)'s RexxUtil is
+documented as differing from ooRexx's, but not checked
+function-by-function.
 
 A package-level "did RexxUtil load?" check says nothing about whether
 a specific function is part of that implementation's repertoire --
