@@ -337,6 +337,19 @@ It is standard ANSI Rexx and is implemented by Regina.
 - Variable patterns (the `+(var)` form) are not supported in all
   implementations; MVS/XA REXX does not support them. Verify before use
   in multi-platform code.
+- A template variable in parentheses, `(name)`, is a *match pattern*,
+  not a receiver: Rexx scans for `name`'s *current value* as a literal
+  separator, rather than assigning the next token to it. Confusing the
+  two is a silent logic error, not a syntax error. Verified directly:
+  `parse var line (delim) rest` with `delim = ':'` scans for the
+  literal `:` and assigns everything after it to `rest` -- `delim`
+  itself is never written to, unlike a plain `parse var line delim
+  rest`, where `delim` would instead *receive* the first token.
+
+```rexx
+parse var line word rest     /* word RECEIVES the first token */
+parse var line (delim) rest  /* Rexx SCANS for delim's current value */
+```
 
 ---
 

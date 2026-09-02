@@ -639,6 +639,25 @@ before any full-file write.
 
 ---
 
+## `EXPOSE` means something different in a `::METHOD` than `PROCEDURE EXPOSE`
+
+`EXPOSE` has two genuinely different meanings depending on where it
+appears, and they are easy to conflate. `PROCEDURE EXPOSE` (classic
+internal subroutine) exposes the *caller's* local variables. `EXPOSE`
+used as the first statement of a `::METHOD` body exposes that object's
+own *instance* variables instead -- a completely separate variable
+pool, private to the object and persistent across calls to its other
+methods, with no connection to whatever called the method.
+
+Verified directly: a method's `expose instVar` sees the value another
+method on the *same object* set via its own `expose instVar` (proving
+it's the object's persistent instance pool), while `symbol('callerVar')`
+for a variable that exists in the *caller's* scope, of the same name a
+`PROCEDURE EXPOSE` would have exposed, comes back `'LIT'` inside the
+method -- the caller's locals are simply not there to expose. See
+below for the third case: `EXPOSE` is not legal at all in a
+`::ROUTINE`.
+
 ## `EXPOSE` inside `::ROUTINE` is a parse-time syntax error
 
 `EXPOSE` is not legal inside a `::ROUTINE` body — a routine has no
