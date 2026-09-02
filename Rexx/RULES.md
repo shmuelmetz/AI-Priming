@@ -392,19 +392,21 @@ compound variables; enforce constraints explicitly:
 - Use `DATATYPE(var, type)` to validate values before use.
 - Compound variable indexes are not range-checked and need not be
   integers. Code explicit bounds checks when array semantics are required.
-- An uninitialized variable evaluates to its own name in upper case and
-  can be used as a compound index; this is a common source of silent bugs.
+- A dropped symbol (ANSI X3.274-1996 §3.1.16: a symbol with no value
+  assigned to it, as opposed to a *variable*, §3.1.47/§3.1.52) evaluates
+  to its own name in upper case and can be used as a compound index;
+  this is a common source of silent bugs.
 
 ---
 
-### Uninitialized variables as constants
+### Dropped symbols as constants
 
-Using an uninitialized variable as a symbolic constant (its value is
-its own name in upper case) is a legitimate and readable idiom. However:
+Using a dropped symbol as a symbolic constant (its value is its own
+name in upper case) is a legitimate and readable idiom. However:
 
 - Choose names that cannot plausibly be reused as true variables.
 - If you choose not to rely on this behaviour, add `SIGNAL ON NOVALUE`
-  at program start to trap any uninitialized variable reference.
+  at program start to trap any reference to a dropped symbol.
 
 ---
 
@@ -417,7 +419,7 @@ variable references. Pitfalls:
 - A procedure with `PROCEDURE EXPOSE` can only access variables listed
   in the expose list; passing the name of an unlisted variable gives
   access only to a local copy.
-- If an uninitialized variable is used to pass its own name, the second
+- If a dropped symbol is used to pass its own name, the second
   call will see the value set by the first call, not the name.
 
 Note: ooRexx and OREXX have `USE ARG` for pass-by-reference; classic

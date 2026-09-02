@@ -63,10 +63,11 @@ value not assigned to anything -- is handled the same way a `call` to
 an internal routine is: if the invoked method has a real return value,
 `result` is set to it; if the method returns **nothing at all** (not
 even `.nil` -- some Collection methods, e.g. `~put`, are defined to
-return no result object), `result` is **dropped** (reverts to
-uninitialized, i.e. to its own name, `'RESULT'`, per ordinary Rexx
-uninitialized-variable semantics) exactly as if that had been a `call`
-to a routine with no `return expr`.
+return no result object), `result` is **dropped** (reverts to a bare
+symbol, i.e. to its own name, `'RESULT'`, per ordinary Rexx
+dropped-symbol semantics -- ANSI X3.274-1996 §3.1.16 defines "dropped"
+as a state of a *symbol*, not of a variable) exactly as if that had
+been a `call` to a routine with no `return expr`.
 
 This means naming your *own* local variable `result` -- inside a
 `::routine` or a `::method`, it makes no difference -- is a latent
@@ -85,7 +86,7 @@ the variable it was just sent to:
                                      ~put returns no result object,
                                      so immediately after this
                                      statement completes, `result`
-                                     itself reverts to uninitialized
+                                     itself reverts to dropped
   result~put('', 'DIALECT')      -- Error 97.1: Object "RESULT" does
                                      not understand message "PUT" --
                                      the *previous* line already
@@ -232,7 +233,7 @@ unambiguous.
 | 2026-05-03 | String concatenation | PowerShell command string failures |
 | 2026-05-03 | `~translate` vs `~upper` | OBJREXX compatibility |
 | 2026-05-03 | Stream close | `miktex-update.log` not flushing |
-| 2026-09-01 | Never name your own variable `result` -- a bare message send whose method returns nothing drops it, even one sent to `result` itself | Real `Error 97.1` in `rexx-lint`'s `ExtprocDialect.cls`: a `.Directory` named `result`, built up via consecutive bare `result~put(...)` calls, reverted to uninitialized (`"RESULT"`) after the very first one, since `~put` returns no result object at all -- the second call then failed trying to send `~put` to the string `"RESULT"` |
+| 2026-09-01 | Never name your own variable `result` -- a bare message send whose method returns nothing drops it, even one sent to `result` itself | Real `Error 97.1` in `rexx-lint`'s `ExtprocDialect.cls`: a `.Directory` named `result`, built up via consecutive bare `result~put(...)` calls, reverted to dropped (`"RESULT"`) after the very first one, since `~put` returns no result object at all -- the second call then failed trying to send `~put` to the string `"RESULT"` |
 
 ---
 
@@ -726,7 +727,7 @@ say mystem[foo]        /* CORRECT */
 real Stem object's bracket-indexed storage is a separate namespace
 from classic `mystem.tail` compound variables of the same base name —
 after `mystem = .stem~new; mystem[3] = 'bar'`, plain `mystem.3` does
-**not** see `'bar'`; it still shows the uninitialized
+**not** see `'bar'`; it still shows the dropped-symbol value
 `"MYSTEM.3"`.
 
 **3. Using another compound variable directly as a tail component**
@@ -740,7 +741,7 @@ orphans.orphans.0 = 'first'      /* WRONG: does not mean "orphans.1" */
 orphans.0 = orphans.0 + 1
 orphans.orphans.0 = 'second'     /* WRONG: silently overwrites the same slot */
 
-say orphans.1                     /* uninitialized: "ORPHANS.1" */
+say orphans.1                     /* dropped: "ORPHANS.1" */
 say orphans.orphans.0             /* 'second' -- 'first' is gone */
 ```
 
