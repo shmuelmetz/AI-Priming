@@ -88,8 +88,11 @@ See `../ooRexx/RULES.md` for the full keyword list.
 [CRITICAL]
 
 This is a property of all Rexx variants, not ooRexx-specific.
-See `../ooRexx/RULES.md` for the full treatment including wrong/correct
-patterns and the `signal on` vs `call on` distinction.
+See "CALL ON vs SIGNAL ON" below (in this same file) for the full
+treatment including wrong/correct patterns and the `signal on` vs
+`call on` distinction — corrected 2026-09-02, since this cross-
+reference previously pointed to `../ooRexx/RULES.md`, which has no
+such section at all.
 
 Key points for classic Rexx:
 
@@ -99,14 +102,18 @@ Key points for classic Rexx:
   to continue to the next loop iteration.
 - `signal on` is available in classic Rexx for non-resumable condition
   handling (error, syntax, halt, novalue, notready, failure).
-- `call on` (resumable condition handling) is **not** available in
-  classic ANSI Rexx (X3.274-1996), TSO/E REXX, or OBJREXX 6.00
-  (ArcaOS). It is an ooRexx extension. Do not generate `call on` for
-  classic Rexx targets.
+- `call on` (resumable condition handling) **is** standard ANSI Rexx
+  (X3.274-1996), implemented by Regina — it is not an ooRexx extension,
+  despite an earlier version of this bullet claiming otherwise. See
+  "CALL ON vs SIGNAL ON" below for the full treatment: which conditions
+  each form supports, and real platform gaps (e.g. TSO/E lacks
+  NOTREADY) that are worth checking instead of the retracted claim
+  above.
 
 | Date | Rule added | Triggered by |
 |------|-----------|--------------|
-| 2026-05-11 | `signal` is not `goto`; flushes stack; `call on` not in classic Rexx | Applies equally to classic Rexx |
+| 2026-05-11 | `signal` is not `goto`; flushes stack | Applies equally to classic Rexx |
+| 2026-09-02 | Removed the stale "`call on` not in classic Rexx" sub-claim from the row above (and the bullet it described) — it was wrong and had already been correctly retracted elsewhere in this file, under "CALL ON vs SIGNAL ON", since 2026-05-13; this file was asserting both the wrong claim and its own correction until now | Cross-checked while drafting Safe-REXX-Merged-DRAFT.md in the (unrelated) Safe-REXX repo |
 
 ---
 
