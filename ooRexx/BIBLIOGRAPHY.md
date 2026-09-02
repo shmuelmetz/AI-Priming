@@ -43,7 +43,9 @@ when their training contradicts the content here.
 - **URL:** https://www.ibm.com/docs/en/zos/latest?topic=rexx-tsoe-reference
 - **Notes:** IBM mainframe REXX. Relevant for `rc` semantics,
   `address` environments, and classic built-in functions.
-  The `address...with` clause is ooRexx-specific and not in TSO/E REXX.
+  The `address...with` clause is ANSI X3.274-1996 standard Rexx (see
+  Rexx/RULES.md), not ooRexx-specific -- but TSO/E REXX has not been
+  brought up to ANSI-1996 level and does not implement it.
 
 ### REXX Reference Summary Handbook
 - **Author:** Dick Goran (Richard K. Goran)

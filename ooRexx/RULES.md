@@ -386,6 +386,12 @@ outArr['rc'] = cmdRc      /* named index alongside numeric */
 
 Valid I/O redirect types in the `address...with` clause are:
 `NORMAL`, `STEM`, `STREAM`, and `USING`. `STRING` is not valid.
+`NORMAL`/`STEM`/`STREAM` are ANSI X3.274-1996 standard Rexx (its own
+`ADDRESS WITH` semantics define only `STREAM` and `STEM` as resource
+types, alongside plain `NORMAL`); `USING` -- supplying the input value
+directly, `input using (expr)`, with no stem or stream needed -- is
+not in the standard. Verified against ooRexx 5.2.0; not checked
+directly against OREXX or Regina.
 
 To provide empty stdin (preventing interactive blocking):
 
