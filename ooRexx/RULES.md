@@ -914,7 +914,7 @@ mainline code anywhere in the file to call the routine that was defined.
 |------|-------|--------------|
 | 2026-08-31 | `::CLASS ... PUBLIC` required across `::REQUIRES`; `PUBLIC` not transitive; `::REQUIRES` relative paths resolve against CWD, use bare filename + `PATH`/`setenv` instead; mainline must precede all directives, and defining `::ROUTINE main` does not call it | Building `rexx-lint`'s first check against Josep Maria Blasco's Rexx Parser -- four separate silent/confusing failures in a row before the tool produced any output at all |
 
-## Reaching a directive at runtime terminates the program like `EXIT`, not `RETURN`
+## Pitfall: reaching a directive at runtime silently terminates the program (like `EXIT`, not `RETURN`)
 
 [IMPORTANT]
 
@@ -924,7 +924,9 @@ when a `CALL`ed internal label's code has no explicit `RETURN` and
 execution *runs into* the `::` directive boundary that legally follows
 all mainline code. Verified directly, since it's easy to get wrong by
 analogy with classic Rexx's "falls off the end -> implicit RETURN"
-convention:
+convention -- and it's a real pitfall, not just a fact worth knowing:
+code after the `CALL` simply never runs, with no error and no
+diagnostic pointing at why:
 
 ```rexx
 say 'before call'

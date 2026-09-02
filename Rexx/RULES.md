@@ -364,6 +364,24 @@ putdata:
     return
 ```
 
+**Pitfall: falling through into a `PROCEDURE`-led label is a hard
+error, not silent misbehavior.** Verified directly: `PROCEDURE` must
+be the first instruction actually *executed* immediately after its
+own label is reached via `CALL` (or a function invocation) — reaching
+it any other way, by straight-line fall-through from the code above
+it, raises `Error 17: Unexpected PROCEDURE.` as a `SYNTAX` condition,
+at the `PROCEDURE` line itself. This is the concrete mechanism behind
+the "do not write code that both calls and falls through" rule above:
+an unguarded fall-through into a `PROCEDURE`-led subprocedure crashes
+outright rather than silently exposing the wrong variables — which is,
+if anything, easier to notice than the alternative failure mode of
+plain (non-`PROCEDURE`) code silently running with unintended variable
+scope.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-09-02 | Falling through into a `PROCEDURE`-led label raises Error 17 (SYNTAX), not silent misbehavior | Cross-checked while drafting Safe-REXX-Merged-DRAFT.md in the (unrelated) Safe-REXX repo |
+
 ---
 
 ### Type and range checking
