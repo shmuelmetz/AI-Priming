@@ -677,24 +677,16 @@ them clearly. Do not embed character codes inline in portable code.
 ### I/O portability
 
 - The original implementation of REX on CMS used `EXECIO`, later
-  inherited by TSO/E and other platforms; through at least VM/SP
-  Release 5 (1986) -- confirmed directly against the actual VM/SP
-  Interpreter Reference manuals for Releases 3 (Sep 1983, SC24-5239-0),
-  4 (Dec 1984, SC24-5239-1), and 5 (Dec 1986, SC24-5239-2), all fetched
-  from bitsavers and text-extracted this session -- it was CMS's only
-  file I/O mechanism, alongside the program stack. None of the three
-  editions contains `LINES`, `CHARS`, `LINEIN`, `LINEOUT`, `CHARIN`,
-  `CHAROUT`, or `STREAM` anywhere; confirmed by the alphabetical gap in
-  each edition's own built-in-function listing (`CENTER`/`CENTRE`
-  straight to `COMPARE`; `LENGTH` straight to `LINESIZE`), not just a
-  keyword-search miss. Stream I/O is part of the language as defined
-  in Cowlishaw's TRL-2 (1990) and later formalized by ANSI
-  X3.274-1996 -- both are language specifications, not descriptions of
-  any particular product's implementation, so neither pins down when a
-  given interpreter actually added it. When any real CMS/VM/SP
-  interpreter first shipped stream I/O is not established here --
-  only that it postdates Release 5 (1986); no edition between Release
-  5 and TRL-2's 1990 publication was checked.
+  inherited by TSO/E and other platforms. Stream I/O came later; it's
+  part of the language as defined in Cowlishaw's TRL-2 (1990) and
+  later formalized by ANSI X3.274-1996 -- both are language
+  specifications, not descriptions of any particular product's
+  implementation, so neither pins down when a given interpreter
+  actually added it. See the VM/SP System Product Interpreter
+  Reference entry in BIBLIOGRAPHY.md for the direct primary-source
+  check (three original manuals, 1983-1986) establishing that `EXECIO`
+  and the program stack were CMS's only I/O mechanisms at least that
+  far into its history.
 - CMS's `EXECIO` supports three destinations: the program stack
   (`FIFO`/`LIFO`), a stem (`STEM stem.`), or a single plain variable
   (`VAR name` -- but only for exactly one line at a time; the count
