@@ -692,15 +692,22 @@ them clearly. Do not embed character codes inline in portable code.
   check (three original manuals, 1983-1986) establishing that `EXECIO`
   and the program stack were CMS's only I/O mechanisms at least that
   far into its history.
-- CMS's `EXECIO` supports three destinations: the program stack
-  (`FIFO`/`LIFO`), a stem (`STEM stem.`), or a single plain variable
-  (`VAR name` -- but only for exactly one line at a time; the count
-  operand must be `1` with `VAR`). Verified directly against IBM's
-  z/VM 7.2.0 `EXECIO` command reference. Of these, TSO/E REXX in MVS
+- CMS's `EXECIO` supports three kinds of source or target: the
+  program stack (`FIFO`/`LIFO`), a stem (`STEM stem.`), or a single
+  plain variable (`VAR name` -- but only for exactly one line at a
+  time; the count operand must be `1` with `VAR`) -- the source for a
+  write, the target for a read. Verified directly against IBM's z/VM
+  7.2.0 `EXECIO` command reference. Of these, TSO/E REXX in MVS
   inherited only a subset: the stack and `STEM` forms, not `VAR`
   (confirmed against the TSO/E REXX Reference's own `EXECIO` syntax
   diagram, which lists only `FIFO`/`LIFO`/`STEM`). In CMS, prefer the
   STEM form regardless, for bulk data.
+- `LINEIN(file)` reads the next line from `file`; `LINEOUT(file,
+  string)` writes a line to it. `LINES(file)` and `CHARS(file)` report
+  whether more data remains, for use as a loop condition before the
+  next read. TSO/E does not support stream I/O at all outside the
+  UNIX System Services (OMVS) subsystem, where full stream I/O is
+  available.
 - Neither `CHARS()` nor `LINES()` is guaranteed to return an exact
   count anywhere, on any platform, once stream I/O is available at
   all: ANSI Rexx explicitly permits either to report only `0` or `1`
@@ -714,10 +721,8 @@ them clearly. Do not embed character codes inline in portable code.
   unconditionally); ooRexx's `CHARS()` returns an exact byte count for
   disk files (tested live: 24, then 12 after reading one line) but its
   own `LINES()` returned only `1` in the same test, both before and
-  after. TSO/E does not support stream I/O at all outside the UNIX
-  System Services (OMVS) subsystem, where full stream I/O is
-  available. On OS/2, both `CHARS()` and `LINES()` return only `0` or
-  `1`, for every stream kind. `= 0` is still a reliable, portable
+  after. On OS/2, both `CHARS()` and `LINES()` return only `0` or `1`,
+  for every stream kind. `= 0` is still a reliable, portable
   end-of-file test either way, in every dialect (ANSI Rexx and ooRexx
   included), unlike `STREAM(file,'State')` below. ooRexx additionally
   exposes this as `.Stream` methods (`aStream~lines`, `aStream~chars`)
