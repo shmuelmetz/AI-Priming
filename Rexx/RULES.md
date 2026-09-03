@@ -97,8 +97,8 @@ implementation and, for OREXX, by platform edition:
 
 | Function(s) | OREXX | ooRexx 5.2.0 | Regina (`RegUtil`) |
 |---|---|---|---|
-| `SysFileCopy`, `SysFileMove` | No -- absent from the Windows 2.1 Reference entirely | Yes | No -- `SysCopyObject`/`SysMoveObject` instead |
-| The `SysIsFileXxx` family (`SysIsFile`, `SysIsFileDirectory`, `SysIsFileLink`, and the Windows-only detail variants) | No | Yes | No |
+| `SysFileCopy`, `SysFileMove` | No on Windows -- absent from the Windows 2.1 Reference entirely; not checked on AIX | Yes | No -- `SysCopyObject`/`SysMoveObject` instead |
+| The `SysIsFileXxx` family (`SysIsFile`, `SysIsFileDirectory`, `SysIsFileLink`, and the Windows-only detail variants) | No on Windows; not checked on AIX | Yes | No |
 | The Workplace-Shell family (`SysCreateObject`, `SysDestroyObject`, `SysSetObjectData`, `SysQueryClassList`, and related) | Yes, but only in the OS/2 edition -- confirmed absent from the Windows and AIX editions | No | No |
 | The semaphore family (`SysCreateEventSem`, `SysCreateMutexSem`, and related) | Yes | Yes, but deprecated since (per Appendix B.2.1 of the current Reference) in favor of the `.EventSemaphore`/`.MutexSemaphore` classes | Yes |
 | Unix process functions (`SysFork`, `SysWait`, `SysCreatePipe`) and `SysGetMessage`/`SysGetMessageX` (Unix message catalogs) | Yes, in the AIX edition | Yes, on Unix-like platforms | No -- confirmed absent from RegUtil's reference |

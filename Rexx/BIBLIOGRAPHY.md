@@ -292,7 +292,11 @@ See also `../ooRexx/BIBLIOGRAPHY.md` for ooRexx-specific references.
   `SysGetMessage`/`SysGetMessageX` (Unix message catalogs) -- none of
   which appear in the Windows 2.1 Reference above, and (like the
   Windows edition) no Workplace-Shell functions, consistent with AIX
-  having no Workplace Shell either.
+  having no Workplace Shell either. Not checked against this
+  reference: whether `SysFileCopy`/`SysFileMove` or the `SysIsFileXxx`
+  family are present on AIX -- those absences are confirmed for the
+  Windows edition only (Rexx/RULES.md's RexxUtil table says so
+  explicitly now).
 
 ## IBM Docs navigation
 - ibm.com/docs returns 403 to direct HTTP requests (curl, WebFetch) in
