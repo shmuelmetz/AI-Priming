@@ -605,7 +605,21 @@ default from IBM's *z/OS Using REXX and z/OS UNIX System Services* (a
 manual distinct from the TSO/E REXX Reference). `ISREDIT` requires an
 active edit session regardless of platform. GCS's REXX drops
 `VALUE()`'s `selector` third argument entirely -- see above; per the
-z/VM REXX/VM Reference, Appendix E.
+z/VM REXX/VM Reference, Appendix E. Cross-checked (via the browser
+pane, since ibm.com/docs returns 403 to direct HTTP requests here)
+against the currently-maintained z/VM 7.4.0 online documentation,
+which confirms all three word for word: "Environment"
+(https://www.ibm.com/docs/en/SSB27U_7.4.0/com.ibm.zvm.v740.dmsb1/xenvir.htm)
+confirms CMS as the default when called from CMS; "z/VM REXX/VM
+Interpreter in the GCS Environment"
+(https://www.ibm.com/docs/en/SSB27U_7.4.0/com.ibm.zvm.v740.dmsb1/rexxgcs.htm)
+confirms GCS as REXX's default under GCS and the missing `selector`
+argument, in text identical to the older SC24-6314-73 PDF; "Entering
+Commands to GCS"
+(https://www.ibm.com/docs/en/SSB27U_7.4.0/com.ibm.zvm.v740.gcta0/icon.htm)
+confirms `ADDRESS COMMAND` under GCS behaves like CMS's (host commands
+only, no command files or implied CP commands). No corrections were
+needed to any of the above -- only this citation upgrade.
 
 ---
 

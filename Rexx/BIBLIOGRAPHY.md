@@ -128,14 +128,27 @@ See also `../ooRexx/BIBLIOGRAPHY.md` for ooRexx-specific references.
 ### z/VM REXX/VM Reference
 - **Title:** z/VM REXX/VM Reference (SC24-6314/SC24-5963, per release)
 - **URL:** https://www.vm.ibm.com/library/ (per-release PDFs, e.g.
-  https://www.vm.ibm.com/library/730pdfs/73631400.pdf)
+  https://www.vm.ibm.com/library/730pdfs/73631400.pdf); current z/VM
+  7.4.0 online equivalents (reachable via the browser pane; ibm.com/docs
+  returns 403 to direct HTTP requests here):
+  https://www.ibm.com/docs/en/SSB27U_7.4.0/com.ibm.zvm.v740.dmsb1/xenvir.htm
+  ("Environment," confirms the CMS default),
+  https://www.ibm.com/docs/en/SSB27U_7.4.0/com.ibm.zvm.v740.dmsb1/rexxgcs.htm
+  ("z/VM REXX/VM Interpreter in the GCS Environment," confirms the GCS
+  default and the missing `selector` argument), and
+  https://www.ibm.com/docs/en/SSB27U_7.4.0/com.ibm.zvm.v740.gcta0/icon.htm
+  ("Entering Commands to GCS," confirms `ADDRESS COMMAND` under GCS)
 - **Notes:** Covers REXX/VM under CMS and, in Appendix E, under GCS
   (Group Control System) -- a distinct z/VM guest environment from
   CMS, with its own default `ADDRESS` environment (`GCS`) and lacking
   the `selector` third argument to `VALUE()` entirely. Also documents
   XEDIT macros defaulting to `ADDRESS XEDIT`, falling through to `CMS`
   then `CP` automatically. Fetched directly and text-extracted this
-  session (unlike ibm.com, vm.ibm.com PDFs were reachable).
+  session (unlike ibm.com, vm.ibm.com PDFs were reachable). The three
+  current z/VM 7.4.0 online topics above were cross-checked
+  word-for-word against this PDF's content for CMS, GCS, and XEDIT,
+  confirming no drift between the archived edition and the
+  currently-maintained documentation.
 
 ### REXX Reference Summary Handbook
 - **Author:** Richard K. Goran
@@ -146,6 +159,24 @@ See also `../ooRexx/BIBLIOGRAPHY.md` for ooRexx-specific references.
 - **URL:** https://regina-rexx.sourceforge.io/
 - **Notes:** Open source classic Rexx interpreter. Documentation
   covers ANSI REXX compliance and extensions.
+
+## IBM Docs navigation
+- ibm.com/docs returns 403 to direct HTTP requests (curl, WebFetch) in
+  this environment, but is reachable via the Claude Code browser pane
+  tool -- use that for anything on this site.
+- Per-collection landing pages found useful for locating current
+  editions directly, without going through site search first:
+  https://www.ibm.com/docs/en/zos/3.2.0 (current z/OS manuals),
+  https://www.ibm.com/docs/en/zvm/7.4.0 (current z/VM manuals).
+- Broader site-wide entry points, not yet mined for REXX content:
+  https://www.ibm.com/docs/en/products (index of all product
+  documentation collections), https://www.ibm.com/docs/en/announcements
+  (what's new/changed per collection), https://www.ibm.com/docs/en/redbooks
+  (IBM Redbooks -- often has practical, example-driven REXX guidance
+  the reference manuals don't).
+- Site search: https://www.ibm.com/docs/en/search/<url-encoded-query>
+  works well for finding a specific topic page when the collection
+  landing page's own navigation doesn't turn it up directly.
 
 ## RexxLA
 - **URL:** https://www.rexxla.org/
