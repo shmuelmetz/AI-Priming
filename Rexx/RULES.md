@@ -702,13 +702,15 @@ them clearly. Do not embed character codes inline in portable code.
   (confirmed against the TSO/E REXX Reference's own `EXECIO` syntax
   diagram, which lists only `FIFO`/`LIFO`/`STEM`). In CMS, prefer the
   STEM form regardless, for bulk data.
-- `LINEIN(file)` reads the next line from `file`; `LINEOUT(file,
-  string)` writes a line to it. `LINES(file)` and `CHARS(file)` report
-  whether more data remain -- an exact count on some implementations,
-  just `0` or `1` on others (detail in the next bullet) -- for use as
-  a loop condition before the next read. TSO/E does not support stream
-  I/O at all outside the UNIX System Services (OMVS) subsystem, where
-  full stream I/O is available.
+- `LINEIN(file)`/`LINEOUT(file, string)` read and write whole lines;
+  `CHARIN(file)`/`CHAROUT(file, string)` do the same character by
+  character; `LINES(file)` and `CHARS(file)` report whether more data
+  remain -- an exact count on some implementations, just `0` or `1` on
+  others (detail in the next bullet) -- for use as a loop condition
+  before the next read; `STREAM(file, 'State')` reports the stream's
+  overall status. TSO/E does not support stream I/O at all outside the
+  UNIX System Services (OMVS) subsystem, where full stream I/O is
+  available.
 - Neither `CHARS()` nor `LINES()` is guaranteed to return an exact
   count anywhere, on any platform, once stream I/O is available at
   all: ANSI Rexx explicitly permits either to report only `0` or `1`
@@ -725,14 +727,26 @@ them clearly. Do not embed character codes inline in portable code.
   after. On OS/2, both `CHARS()` and `LINES()` return only `0` or `1`,
   for every stream kind. `= 0` is still a reliable, portable
   end-of-file test either way, in every dialect (ANSI Rexx and ooRexx
-  included), unlike `STREAM(file,'State')` below. ooRexx additionally
-  exposes this as `.Stream` methods (`aStream~lines`, `aStream~chars`)
-  for OO-style code, with identical end-of-file semantics. Never
-  assume a specific target gives an exact count from either function
-  without checking that target's own documented behavior. Some
-  interpreters still support `EXECIO` for compatibility with legacy
-  TSO/CMS code, but it is not the primary I/O model outside TSO/E and
-  CMS themselves.
+  included), unlike `STREAM(file,'State')` below. Never assume a
+  specific target gives an exact count from either function without
+  checking that target's own documented behavior. Some interpreters
+  still support `EXECIO` for compatibility with legacy TSO/CMS code,
+  but it is not the primary I/O model outside TSO/E and CMS
+  themselves.
+- **ooRexx note**: I/O object types. Alongside the bare functions
+  above, ooRexx models stream I/O as a small class family (per the
+  Language Reference §5.2-5.3): `.Stream` is the concrete class most
+  code uses, wrapping a file or other stream as an object --
+  `aStream~lines`, `aStream~chars`, `aStream~linein`, `aStream~lineout`,
+  `aStream~charin`, `aStream~charout`, and so on, with identical
+  semantics (the same `0`-or-`1`-vs-exact-count behavior included) as
+  their function-call equivalents. `.InputStream`, `.OutputStream`,
+  and `.InputOutputStream` are abstract mixin classes underneath it
+  (confirmed via their own method tables: `.OutputStream` inherits
+  `arrayOut`/`close`/`open`/`charIn`/`lineIn`/`position` and defines
+  `charOut`/`lineOut` as abstract; `.InputStream` is the mirror image),
+  meant for building custom stream implementations, not for direct use
+  on an ordinary file.
 - `STREAM(file,'State')` returning `NOTREADY` does not guarantee EOF;
   other conditions also produce NOTREADY, and it only appears after a
   read past the actual end -- prefer the `LINES()`/`CHARS()` test above.
