@@ -704,7 +704,7 @@ them clearly. Do not embed character codes inline in portable code.
   STEM form regardless, for bulk data.
 - `LINEIN(file)` reads the next line from `file`; `LINEOUT(file,
   string)` writes a line to it. `LINES(file)` and `CHARS(file)` report
-  whether more data remains, for use as a loop condition before the
+  whether more data remain, for use as a loop condition before the
   next read. TSO/E does not support stream I/O at all outside the
   UNIX System Services (OMVS) subsystem, where full stream I/O is
   available.
