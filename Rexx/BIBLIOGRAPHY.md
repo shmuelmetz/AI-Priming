@@ -31,38 +31,79 @@ See also `../ooRexx/BIBLIOGRAPHY.md` for ooRexx-specific references.
   CMD` passage (same DIR-STARTUP example, same wording).
 
 ### IBM TSO/E REXX Reference
-- **Title:** z/OS TSO/E REXX Reference (current form SA32-0972); two
-  older editions of the same manual's lineage were fetched and
-  text-extracted this session instead, since ibm.com/docs and its PDF
-  URLs return 403 here: *TSO Extensions Version 2 REXX Reference*
-  SC28-1883-0 (December 1988) and SC28-1883-4 (August 1991). (TSO
-  Extensions predates the z/OS/TSO-E rebrand.)
+- **Title:** z/OS TSO/E REXX Reference (current form SA32-0972); three
+  editions of this manual's lineage were fetched and text-extracted
+  this session, since ibm.com/docs and its PDF URLs return 403 to
+  direct HTTP requests here: *TSO Extensions Version 2 REXX Reference*
+  SC28-1883-0 (December 1988) and SC28-1883-4 (August 1991) (TSO
+  Extensions predates the z/OS/TSO-E rebrand), plus the current z/OS
+  2.5 edition, SA32-0972-50 (2021).
 - **URL:** https://www.ibm.com/docs/en/zos/latest?topic=rexx-tsoe-reference
-  (current, blocked here); working mirrors used instead:
+  (current, blocked here); working sources used instead:
   https://vtda.org/docs/computing/IBM/Mainframe/SysSoft/TSO/SC28-1883-0_TSOExtensionsV2REXXReference_Dec88.pdf
-  (1988) and
+  (1988),
   https://archive.org/stream/bitsavers_ibm370TSOESOExtensionsVersion2ProceduresLangageMVS_48315466/SC28-1883-4_TSO_Extensions_Version_2_Procedures_Langage_MVS_REXX_Reference_Aug1991_djvu.txt
-  (1991, full text)
+  (1991, full text), and
+  https://rexxinfo.org/reference/articles/tso_e_rexx_reference_v2r5.pdf
+  (current, 2021)
 - **Notes:** IBM mainframe REXX reference. Authoritative for `rc`,
   `address`, `outtrap`, and built-in functions. TSO/E REXX is the only
   REXX interpreter on z/OS -- TSO, ISPF, ISPF/PDF EDIT, the OMVS
   shell, batch (`IRXJCL`), and System REXX are the same interpreter
   run in different environments, not separate products. The host
-  command environment table grew noticeably between the two editions
-  above -- the 1988 edition's table (TSO/E READY: TSO default + MVS,
+  command environment table grew between 1988 and 1991, then stayed
+  frozen: the 1988 edition's table (TSO/E READY: TSO default + MVS,
   LINK, ATTACH; non-TSO/E address space: MVS default + LINK, ATTACH;
   ISPF: TSO default + MVS, LINK, ATTACH, ISPEXEC, ISREDIT) is missing
   CONSOLE, the APPC family (CPICOMM, LU62), and the
-  LINKMVS/LINKPGM/ATTCHMVS/ATTCHPGM forms that the 1991 edition
-  documents in full -- see Rexx/RULES.md's ADDRESS environments table
-  for the complete, current list and which environments are available
-  in which address spaces. Both editions document ISPF's environment
-  list from TSO/E's own side; see the ISPF Dialog Developer's Guide
-  entry below for why that distinction matters. Neither edition
-  documents EDIT, TEST, or IPCS as host command environments, despite
-  a full sweep of every `ADDRESS <name>` occurrence in both texts --
-  these are believed to exist by the same registration pattern (per
-  direct operator experience) but are not primary-sourced here.
+  LINKMVS/LINKPGM/ATTCHMVS/ATTCHPGM forms, but the 1991 and the current
+  2021 edition's SUBCOM sections are word for word identical -- see
+  Rexx/RULES.md's ADDRESS environments table for the complete, current
+  list and which environments are available in which address spaces.
+  All three editions document ISPF's environment list from TSO/E's own
+  side; see the ISPF Dialog Developer's Guide entry below for why that
+  distinction matters. None of the three documents EDIT, TEST, or IPCS
+  as SUBCOM-table host command environments, despite a full sweep of
+  every `ADDRESS <name>` occurrence in all three texts -- see the TSO/E
+  Command Reference and IPCS User's Guide entries below for where those
+  three are actually documented, and why EDIT/TEST work by a genuinely
+  different mechanism than a SUBCOM-table entry.
+
+### TSO/E Command Reference
+- **Title:** OS/390 IBM TSO/E Command Reference, SC28-1969-02 (Third
+  Edition, March 1999)
+- **URL:** https://www.informatik.uni-leipzig.de/cs/Literature/Textbooks/TSOreference.pdf
+  (non-ibm.com mirror; full text)
+- **Notes:** Documents `EDIT` and `TEST` as ordinary TSO commands with
+  their own extensive subcommand families -- but, notably, contains no
+  `SUBCOM` discussion at all (that's a REXX-specific concept, out of
+  this manual's scope). Each command's own `EXEC` subcommand entry
+  states the real host-command-routing mechanism directly and
+  identically for both: "Specify only REXX statements in the REXX
+  exec. Specify only EDIT [or TEST] subcommands and CLIST statements in
+  the CLIST. You cannot specify TSO/E commands in the CLIST or REXX
+  exec until you specify END [or RUN, for TEST] to terminate EDIT [or
+  TEST]." This is an invocation-time restriction on what a bare clause
+  can reach, not a registered `ADDRESS`-selectable environment in the
+  SUBCOM table the way ISPEXEC/ISREDIT are -- confirmed absent from
+  that table in all three TSO/E REXX Reference editions above.
+
+### z/OS MVS IPCS User's Guide
+- **Title:** z/OS MVS IPCS User's Guide, SA23-1384(-00, edition
+  checked)
+- **URL:** https://www.ibm.com/docs/en/SSLTBW_2.1.0/com.ibm.zos.v2r1.ieac600/iea3c6_ADDRESS_IPCS_Instruction.htm
+  and .../climde.htm ("Modes of IPCS Operation") -- reachable through
+  the browser pane even though ibm.com/docs returns 403 to direct HTTP
+  requests here
+- **Notes:** Confirms `IPCS` genuinely is a SUBCOM-table-style
+  environment, unlike `EDIT`/`TEST` above: "ADDRESS IPCS changes the
+  host command environment to IPCS. The IPCS host command environment
+  is available only when you run the EXEC from an IPCS session." An
+  IPCS session itself has multiple internal modes, and `ADDRESS IPCS`
+  support is explicit per mode -- it works in IPCS mode (the session's
+  normal mode) and during a trap stop, but "No ADDRESS IPCS support is
+  intended" for the session's own separate TSO/E mode, where ordinary
+  TSO commands and CLISTs run instead.
 
 ### ISPF Dialog Developer's Guide and Reference
 - **Title:** z/OS ISPF Dialog Developer's Guide and Reference

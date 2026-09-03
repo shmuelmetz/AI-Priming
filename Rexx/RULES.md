@@ -524,6 +524,9 @@ none -- avoid vague filler like "whatever the host app registers".
 | OMVS shell | `SH` | `TSO`, `MVS`, `SYSCALL` |
 | `IRXJCL` | `MVS` | the link/attach family, the APPC family |
 | System REXX | `MVS` (`TSO=NO`) | the link/attach family, `APPCMVS`, `BCPii`, the APPC family; `TSO=YES` adds `TSO`, `ISPEXEC`, `ISREDIT` |
+| CLIST/exec via TSO `EDIT`'s own `EXEC` subcommand | `EDIT` subcommands | none -- `TSO` unavailable until `END` terminates `EDIT` |
+| CLIST/exec via TSO `TEST`'s own `EXEC` subcommand | `TEST` subcommands | none -- `TSO` unavailable until `END`/`RUN` terminates `TEST` |
+| Exec in an active IPCS session, IPCS mode | `TSO` | `IPCS` -- not available at all in the session's own separate TSO/E mode |
 | CMS command line | `CMS` | `COMMAND`, `CP` |
 | GCS | `GCS` | `COMMAND` |
 | XEDIT macro | `XEDIT` | falls through to `CMS`, then `CP`, automatically |
@@ -550,14 +553,29 @@ products. `APPCMVS`/`BCPii` do not appear anywhere in the TSO/E REXX
 Reference, so they look genuinely specific to System REXX, unlike the
 link/attach and APPC families it shares with everything else.
 
-**The TSO-family rows are still not exhaustive** -- any TSO-hosted
-facility can register its own additional host command environment for
-as long as it's running, the same way ISPF adds `ISPEXEC`/`ISREDIT`.
-The native TSO `EDIT` and `TEST` facilities add their own (`EDIT`,
-`TEST`) the same way; `IPCS` does too, while analyzing a dump -- none
-of the three appears in the TSO/E REXX Reference itself (checked
-across both editions below), so none is in the table pending a
-primary source.
+**`EDIT` and `TEST` work by a genuinely different mechanism than
+`ISPEXEC`/`ISREDIT`**, not a variant of the same one -- they are not
+entries in the SUBCOM host command environment table at all, absent
+from it across every edition of the TSO/E REXX Reference from 1988
+through the current (2021) one. Their own `EXEC` subcommand's
+documentation, in the *TSO/E Command Reference* (SC28-1969, a separate
+manual), states the real mechanism: inside a CLIST or exec launched
+via `EDIT`'s or `TEST`'s own `EXEC` subcommand, non-REXX clauses
+default to `EDIT`/`TEST` subcommands, and `TSO` commands are flatly
+unavailable until `END` (or `RUN`, for `TEST`) terminates the facility
+-- an invocation-time restriction, not a registered `ADDRESS`-
+selectable environment the way every other row in this table is.
+`IPCS` genuinely is such an environment, much like `ISPEXEC` --
+confirmed directly (ibm.com/docs returns 403 to direct HTTP requests
+here, but was reachable through the browser) in the *z/OS MVS IPCS
+User's Guide* (SA23-1384): `ADDRESS IPCS` changes the host command
+environment to `IPCS`, available only when the exec runs from an IPCS
+session. An IPCS session itself has multiple internal modes, and
+`ADDRESS IPCS` support is explicit per mode -- it works in IPCS mode
+(the session's normal mode) and during a trap stop, but the manual
+states plainly that "No ADDRESS IPCS support is intended" for the
+session's own separate TSO/E mode, where ordinary TSO commands and
+CLISTs run instead.
 (LPEX, an OS/2 editor, was checked as a possible addition here --
 its macro language, per the actual LPEX Editor User's Guide
 (SC09-2795), is REXX-flavored but not documented anywhere in that
