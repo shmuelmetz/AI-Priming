@@ -930,11 +930,16 @@ orphans.[orphans.~items] = 'first'   -- items was 0; sets tail "0"
 orphans.[orphans.~items] = 'second'  -- items is now 1; sets tail "1"
 ```
 
-Verified live, including the numbering: this starts at tail `"0"`, not
-`"1"` -- `~items` counts from zero, unlike the classic convention
-where tail `0` is a manually-maintained counter and data starts at
-`1`. The two schemes don't mix; pick one per stem. Add `+1` for
-classic 1-based numbering instead:
+The stem starts out empty, with `~items` equal to `0` -- so the first
+element written this way lands in tail `"0"`, not tail `"1"`: the
+bracket expression evaluates `~items` first, *then* the assignment
+runs and is what makes that tail exist, bumping the count for next
+time.
+
+Verified live, including the numbering: this differs from the classic
+convention, where tail `0` is a manually-maintained counter and data
+starts at `1`. The two schemes don't mix; pick one per stem. Add `+1`
+for classic 1-based numbering instead:
 
 ```rexx
 orphans.[orphans.~items+1] = 'first'   -- items was 0; sets tail "1"
@@ -962,8 +967,13 @@ the next position, in either numbering) is actually wanted, use a real
 method Stem does not have, and it needs none of the discipline the
 `~items`/`~items+1` idioms depend on; `orphans.[orphans.~items] =
 value` only imitates the effect for a Stem built consistently one way
-or the other. Unless the data genuinely needs a Stem's string-keyed
-lookup, prefer the array.
+or the other. `.Array` also has `~first`/`~last` (index of the
+first/last item, or `.nil` if empty, per §5.3.6.14/§5.3.6.22) and
+`~firstItem`/`~lastItem` (the item itself, per §5.3.6.15/§5.3.6.23) --
+no bracket arithmetic or assumption about how the collection was
+populated needed, unlike tail `"0"` or `orphans.~items - 1` on a Stem.
+Unless the data genuinely needs a Stem's string-keyed lookup, prefer
+the array.
 
 **Related, easy to trip over while testing the above**: a quoted
 string literal can never BE a tail either, even when it contains no
