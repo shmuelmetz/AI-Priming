@@ -687,10 +687,14 @@ them clearly. Do not embed character codes inline in portable code.
   `CHAROUT`, or `STREAM` anywhere; confirmed by the alphabetical gap in
   each edition's own built-in-function listing (`CENTER`/`CENTRE`
   straight to `COMPARE`; `LENGTH` straight to `LINESIZE`), not just a
-  keyword-search miss. Stream I/O is documented as standard by the
-  time of Cowlishaw's TRL-2 (1990) and later ANSI X3.274-1996, so it
-  was added to the language sometime in the 1986-1990 window -- not
-  narrowed further this session.
+  keyword-search miss. Stream I/O is part of the language as defined
+  in Cowlishaw's TRL-2 (1990) and later formalized by ANSI
+  X3.274-1996 -- both are language specifications, not descriptions of
+  any particular product's implementation, so neither pins down when a
+  given interpreter actually added it. When any real CMS/VM/SP
+  interpreter first shipped stream I/O is not established here --
+  only that it postdates Release 5 (1986); no edition between Release
+  5 and TRL-2's 1990 publication was checked.
 - CMS's `EXECIO` supports three destinations: the program stack
   (`FIFO`/`LIFO`), a stem (`STEM stem.`), or a single plain variable
   (`VAR name` -- but only for exactly one line at a time; the count

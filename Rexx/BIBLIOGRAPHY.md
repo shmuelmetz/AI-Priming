@@ -195,10 +195,13 @@ See also `../ooRexx/BIBLIOGRAPHY.md` for ooRexx-specific references.
   to `LINESIZE`, exactly where `CHARS` and `LINES` would sort if
   present. `EXECIO` and the program stack (`PUSH`/`QUEUE`/`PULL`,
   `QUEUED()`) were the only file I/O mechanisms available through at
-  least Release 5 (1986). Stream I/O is standard by TRL-2 (1990), so
-  the addition happened in the 1986-1990 window -- not narrowed
-  further; no VM/SP edition between Release 5 and TRL-2's publication
-  was checked.
+  least Release 5 (1986). Stream I/O is part of the language as
+  defined in TRL-2 (1990) -- a language specification, not a
+  description of any particular product's implementation, so it does
+  not by itself establish when any real CMS/VM/SP interpreter actually
+  added stream I/O. Only that it postdates Release 5 (1986) is
+  established here; no VM/SP edition between Release 5 and TRL-2's
+  1990 publication was checked.
 
 ### z/VM EXECIO Command Reference
 - **Title:** EXECIO (CMS command), part of z/VM CMS Commands and
