@@ -875,7 +875,11 @@ say mystem[foo]        /* CORRECT */
 genuinely distinct from the Stem object automatically bound to a
 compound-variable stem of the same name — assigning the new object to
 a simple variable doesn't connect the two, even though both are
-ordinary Stem objects supporting the same bracket notation. After
+ordinary Stem objects supporting the same bracket notation. `mystem`
+(no trailing dot) and `mystem.` (trailing dot, no tail) have always
+been different variables, even in classic Rexx with no ooRexx
+involved at all; what's new here is only that `mystem.` is bound to a
+genuine Stem *object*, not just a plain default value. After
 `mystem = .stem~new; mystem[3] = 'bar'`, plain `mystem.3` does **not**
 see `'bar'`; it still shows the dropped-symbol value `"MYSTEM.3"`, and
 `(mystem. == mystem)` is `0` — confirming they're genuinely different
@@ -938,7 +942,7 @@ time.
 
 Verified live, including the numbering: this differs from the classic
 convention, where tail `0` is a manually-maintained counter and data
-starts at `1`. The two schemes don't mix; pick one per stem. Add `+1`
+start at `1`. The two schemes don't mix; pick one per stem. Add `+1`
 for classic 1-based numbering instead:
 
 ```rexx
@@ -951,19 +955,20 @@ the exact same discipline as the 0-based form: every tail from this
 one idiom, nothing added or removed out of band, or the numbering
 stops meaning what it looks like it means.
 
-**No guarantee tails stay contiguous or even numeric.** A Stem is a
-string-indexed map, not an array -- nothing stops `orphans.foo` or
-`orphans.17` from being set directly alongside the sequence above.
-`do i = 1 to orphans.~items` as a loop bound is only safe in the
-narrow case where every tail came from exactly this idiom with no
-out-of-band add/remove. The general, safe iteration is `do tail over
-orphans.~allIndexes` (tail names) or `do value over orphans.~allItems`
-(values directly, per Collection Class's abstract `allIndexes`/
-`allItems`/`items` methods, all inherited by Stem as a MapCollection
-subclass): `do tail over orphans.~allIndexes; say orphans.[tail]; end`.
-If genuine array-style append (add an element, let the collection pick
-the next position, in either numbering) is actually wanted, use a real
-`.Array` and its own `append` method -- an OrderedCollection-mixin
+No guarantee tails stay contiguous or even numeric: a Stem is
+fundamentally a string-indexed map, and it only behaves like a
+simulated array when every tail is a contiguous integer -- nothing
+stops `orphans.foo` or `orphans.17` from being set directly alongside
+the sequence above. `do i = 1 to orphans.~items` as a loop bound is
+only safe in the narrow case where every tail came from exactly this
+idiom with no out-of-band add/remove. The general, safe iteration is
+`do tail over orphans.~allIndexes` (tail names) or `do value over
+orphans.~allItems` (values directly, per Collection Class's abstract
+`allIndexes`/`allItems`/`items` methods, all inherited by Stem as a
+MapCollection subclass): `do tail over orphans.~allIndexes; say
+orphans.[tail]; end`. If genuine array-style append (add an element,
+let the collection pick the next position) is actually wanted, use a
+real `.Array` and its own `append` method -- an OrderedCollection-mixin
 method Stem does not have, and it needs none of the discipline the
 `~items`/`~items+1` idioms depend on; `orphans.[orphans.~items] =
 value` only imitates the effect for a Stem built consistently one way

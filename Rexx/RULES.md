@@ -559,8 +559,8 @@ none -- avoid vague filler like "whatever the host app registers".
 | OMVS shell | `SH` | `TSO`, `MVS`, `SYSCALL` |
 | `IRXJCL` | `MVS` | the link/attach family, the APPC family |
 | System REXX | `MVS` (`TSO=NO`) | the link/attach family, `APPCMVS`, `BCPii`, the APPC family; `TSO=YES` adds `TSO`, `ISPEXEC`, `ISREDIT` |
-| CLIST/exec via TSO `EDIT`'s own `EXEC` subcommand | `EDIT` subcommands | none -- `TSO` unavailable until `END` terminates `EDIT` |
-| CLIST/exec via TSO `TEST`'s own `EXEC` subcommand | `TEST` subcommands | none -- `TSO` unavailable until `END`/`RUN` terminates `TEST` |
+| Exec via TSO `EDIT`'s own `EXEC` subcommand | `EDIT` subcommands | none -- `TSO` unavailable until `END` terminates `EDIT` |
+| Exec via TSO `TEST`'s own `EXEC` subcommand | `TEST` subcommands | none -- `TSO` unavailable until `END`/`RUN` terminates `TEST` |
 | Exec in an active IPCS session, IPCS mode | `TSO` | `IPCS` -- not available at all in the session's own separate TSO/E mode |
 | CMS command line | `CMS` | `COMMAND`, `CP` |
 | GCS | `GCS` | `COMMAND` |
