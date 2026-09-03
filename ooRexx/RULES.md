@@ -934,6 +934,11 @@ Verified live, including the numbering: this starts at tail `"0"`, not
 `"1"` -- `~items` counts from zero, unlike the classic convention
 where tail `0` is a manually-maintained counter and data starts at
 `1`. The two schemes don't mix; pick one per stem.
+`orphans.[orphans.~items+1] = value` gets classic 1-based numbering
+instead (verified live: tails come out `1`, `2`, `3`, ...) -- but it
+depends on the exact same discipline as the 0-based form: every tail
+from this one idiom, nothing added or removed out of band, or the
+numbering stops meaning what it looks like it means.
 
 **No guarantee tails stay contiguous or even numeric.** A Stem is a
 string-indexed map, not an array -- nothing stops `orphans.foo` or
@@ -946,10 +951,13 @@ orphans.~allIndexes` (tail names) or `do value over orphans.~allItems`
 `allItems`/`items` methods, all inherited by Stem as a MapCollection
 subclass): `do tail over orphans.~allIndexes; say orphans.[tail]; end`.
 If genuine array-style append (add an element, let the collection pick
-the next position) is actually wanted, use a real `.Array` and its own
-`append` method -- an OrderedCollection-mixin method Stem does not
-have; `orphans.[orphans.~items] = value` only imitates the effect for
-a Stem built consistently this way.
+the next position, in either numbering) is actually wanted, use a real
+`.Array` and its own `append` method -- an OrderedCollection-mixin
+method Stem does not have, and it needs none of the discipline the
+`~items`/`~items+1` idioms depend on; `orphans.[orphans.~items] =
+value` only imitates the effect for a Stem built consistently one way
+or the other. Unless the data genuinely needs a Stem's string-keyed
+lookup, prefer the array.
 
 **Related, easy to trip over while testing the above**: a quoted
 string literal can never BE a tail either, even when it contains no
