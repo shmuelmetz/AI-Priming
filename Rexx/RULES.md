@@ -515,12 +515,13 @@ none -- avoid vague filler like "whatever the host app registers".
 |---|---|---|
 | OS/2 command prompt (classic REXX) | `CMD` | |
 | PC-DOS command prompt (classic REXX) | `COMMAND` | |
-| Windows/OS/2 command prompt (OREXX, ooRexx) | `CMD` | `SYSTEM`, `PATH` on ooRexx |
+| Command prompt (OREXX, ooRexx) | `CMD` | `SYSTEM`, `PATH` on ooRexx |
 | Regina command prompt | `SYSTEM` | `COMMAND`, `REXX` |
 | TSO/E READY | `TSO` | `MVS`, `CONSOLE`†, the link/attach family, the APPC family |
 | ISPF on z/OS | `TSO` | `MVS`, `CONSOLE`†, the link/attach family, the APPC family, `ISPEXEC` |
 | ISPF/PDF EDIT on z/OS | `TSO` | `MVS`, `CONSOLE`†, the link/attach family, the APPC family, `ISPEXEC`, `ISREDIT` |
-| ISPF on z/VM | `CMS` | `ISPEXEC`; `ISREDIT` in an edit macro |
+| ISPF on z/VM | `CMS` | `ISPEXEC` |
+| ISPF/PDF EDIT on z/VM | `CMS` | `ISPEXEC`, `ISREDIT` |
 | OMVS shell | `SH` | `TSO`, `MVS`, `SYSCALL` |
 | `IRXJCL` | `MVS` | the link/attach family, the APPC family |
 | System REXX | `MVS` (`TSO=NO`) | the link/attach family, `APPCMVS`, `BCPii`, the APPC family; `TSO=YES` adds `TSO`, `ISPEXEC`, `ISREDIT` |
