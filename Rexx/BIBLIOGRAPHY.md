@@ -291,8 +291,17 @@ See also `../ooRexx/BIBLIOGRAPHY.md` for ooRexx-specific references.
   `SysAddFuncPkg`, `SysDropCmdPkg`, `SysDropFuncPkg`, and
   `SysGetMessage`/`SysGetMessageX` (Unix message catalogs) -- none of
   which appear in the Windows 2.1 Reference above, and (like the
-  Windows edition) no Workplace-Shell functions, consistent with AIX
-  having no Workplace Shell either. Not checked against this
+  Windows edition) no Workplace-Shell functions -- confirmed via a
+  full-text search of all 414 pages: zero hits for `SysCreateObject`
+  and the rest of that family, and, notably, zero mentions anywhere of
+  a desktop environment, windowing system, CDE, or Motif at all. This
+  is NOT evidence AIX lacks a desktop -- it has one (CDE, Common
+  Desktop Environment, jointly developed by HP/IBM/Sun/Novell in 1993
+  on X11 and OSF/Motif 1.2, later folded into OSF itself in 1994). The
+  Workplace-Shell family is bound to OS/2's WPS/SOM object model
+  specifically; Object REXX for AIX simply never implemented an
+  equivalent binding into CDE/Motif -- an implementation gap, not a
+  missing desktop. Not checked against this
   reference: whether `SysFileCopy`/`SysFileMove` or the `SysIsFileXxx`
   family are present on AIX -- those absences are confirmed for the
   Windows edition only (Rexx/RULES.md's RexxUtil table says so
