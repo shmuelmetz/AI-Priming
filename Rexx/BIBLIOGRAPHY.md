@@ -173,6 +173,33 @@ See also `../ooRexx/BIBLIOGRAPHY.md` for ooRexx-specific references.
   `LINES`, which explicitly does distinguish persistent files from the
   default/console stream. See Rexx/RULES.md's I/O portability section.
 
+### VM/SP System Product Interpreter Reference (original REXX manuals)
+- **Title:** VM/SP System Product Interpreter Reference, three editions
+  consulted: SC24-5239-0 (Release 3, September 1983 -- the manual for
+  REXX's first shipped release), SC24-5239-1 (Release 4, December
+  1984), SC24-5239-2 (Release 5, December 1986)
+- **URL:** https://bitsavers.trailing-edge.com/pdf/ibm/370/VM/SP/Release_3.0_Jul83/SC24-5239-0_VM_SP_Interpreter_Reference_Rel_3_Sep83.pdf ,
+  http://www.bitsavers.org/pdf/ibm/370/VM/SP/Release_4_Dec84/SC24-5239-1_VM_SP_System_Product_Interpreter_Reference_Release_4_Dec84.pdf ,
+  https://bitsavers.trailing-edge.com/pdf/ibm/370/VM/SP/Release_5_Dec86/SC24-5239-2_VM_SP_Release_5_System_Product_Interpreter_Reference_Dec1986.pdf
+  (all fetched directly and text-extracted this session -- scanned
+  documents with an OCR text layer, readable via PyMuPDF though not
+  via WebFetch's own text extraction)
+- **Notes:** Ground truth for what the original, as-shipped REXX
+  actually had, requested explicitly by the Safe REXX paper's author
+  rather than relying on the current z/VM 7.x reference (which
+  reflects decades of accumulated additions). All three editions
+  confirmed to lack `LINES`, `CHARS`, `LINEIN`, `LINEOUT`, `CHARIN`,
+  `CHAROUT`, and `STREAM` entirely -- not just a keyword-search miss:
+  each edition's own alphabetically-ordered built-in-function listing
+  jumps `CENTER`/`CENTRE` straight to `COMPARE`, and `LENGTH` straight
+  to `LINESIZE`, exactly where `CHARS` and `LINES` would sort if
+  present. `EXECIO` and the program stack (`PUSH`/`QUEUE`/`PULL`,
+  `QUEUED()`) were the only file I/O mechanisms available through at
+  least Release 5 (1986). Stream I/O is standard by TRL-2 (1990), so
+  the addition happened in the 1986-1990 window -- not narrowed
+  further; no VM/SP edition between Release 5 and TRL-2's publication
+  was checked.
+
 ### z/VM EXECIO Command Reference
 - **Title:** EXECIO (CMS command), part of z/VM CMS Commands and
   Utilities Reference
