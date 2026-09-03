@@ -25,6 +25,13 @@ See also `../ooRexx/BIBLIOGRAPHY.md` for ooRexx-specific references.
   2nd ed.) to check that half independently; it's a copyrighted
   Prentice-Hall book, not a freely hosted primary source the way this
   ANSI draft and the IBM manuals cited elsewhere in this file are.
+  Also checked directly for `CHARS()`/`LINES()` exactness: the
+  standard's own text describes `CHARS` as indicating "whether there
+  are characters remaining" and *optionally* returning a count, and
+  `LINES` similarly via a shared `Config_Stream_Count` abstraction --
+  an exact count is implementation-permitted, not required, for
+  either function, on any stream. See the z/VM REXX/VM Reference entry
+  below for what CMS specifically chose.
 
 ### PC DOS 7 REXX User's Guide and Reference
 - **Title:** PC DOS 7 REXX User's Guide and Reference, IBM Corp.,
@@ -157,7 +164,14 @@ See also `../ooRexx/BIBLIOGRAPHY.md` for ooRexx-specific references.
   current z/VM 7.4.0 online topics above were cross-checked
   word-for-word against this PDF's content for CMS, GCS, and XEDIT,
   confirming no drift between the archived edition and the
-  currently-maintained documentation.
+  currently-maintained documentation. Also documents `LINES()` and
+  `CHARS()` exactness on CMS specifically: `LINES(myfile) -> 7 /* 7
+  lines remain */` for a disk file (an exact count), but `CHARS` is
+  defined unconditionally as "returns either 0 or 1 depending on
+  whether there are characters available... 0 otherwise" -- no
+  file-vs-transient-stream distinction for `CHARS` at all, unlike
+  `LINES`, which explicitly does distinguish persistent files from the
+  default/console stream. See Rexx/RULES.md's I/O portability section.
 
 ### z/VM EXECIO Command Reference
 - **Title:** EXECIO (CMS command), part of z/VM CMS Commands and
