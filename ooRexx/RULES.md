@@ -933,12 +933,18 @@ orphans.[orphans.~items] = 'second'  -- items is now 1; sets tail "1"
 Verified live, including the numbering: this starts at tail `"0"`, not
 `"1"` -- `~items` counts from zero, unlike the classic convention
 where tail `0` is a manually-maintained counter and data starts at
-`1`. The two schemes don't mix; pick one per stem.
-`orphans.[orphans.~items+1] = value` gets classic 1-based numbering
-instead (verified live: tails come out `1`, `2`, `3`, ...) -- but it
-depends on the exact same discipline as the 0-based form: every tail
-from this one idiom, nothing added or removed out of band, or the
-numbering stops meaning what it looks like it means.
+`1`. The two schemes don't mix; pick one per stem. Add `+1` for
+classic 1-based numbering instead:
+
+```rexx
+orphans.[orphans.~items+1] = 'first'   -- items was 0; sets tail "1"
+orphans.[orphans.~items+1] = 'second'  -- items is now 1; sets tail "2"
+```
+
+Verified live (tails come out `1`, `2`, `3`, ...), but this depends on
+the exact same discipline as the 0-based form: every tail from this
+one idiom, nothing added or removed out of band, or the numbering
+stops meaning what it looks like it means.
 
 **No guarantee tails stay contiguous or even numeric.** A Stem is a
 string-indexed map, not an array -- nothing stops `orphans.foo` or
