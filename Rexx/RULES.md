@@ -704,10 +704,11 @@ them clearly. Do not embed character codes inline in portable code.
   STEM form regardless, for bulk data.
 - `LINEIN(file)` reads the next line from `file`; `LINEOUT(file,
   string)` writes a line to it. `LINES(file)` and `CHARS(file)` report
-  whether more data remain, for use as a loop condition before the
-  next read. TSO/E does not support stream I/O at all outside the
-  UNIX System Services (OMVS) subsystem, where full stream I/O is
-  available.
+  whether more data remain -- an exact count on some implementations,
+  just `0` or `1` on others (detail in the next bullet) -- for use as
+  a loop condition before the next read. TSO/E does not support stream
+  I/O at all outside the UNIX System Services (OMVS) subsystem, where
+  full stream I/O is available.
 - Neither `CHARS()` nor `LINES()` is guaranteed to return an exact
   count anywhere, on any platform, once stream I/O is available at
   all: ANSI Rexx explicitly permits either to report only `0` or `1`
