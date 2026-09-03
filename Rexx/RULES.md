@@ -707,10 +707,11 @@ them clearly. Do not embed character codes inline in portable code.
   character; `LINES(file)` and `CHARS(file)` report whether more data
   remain -- an exact count on some implementations, just `0` or `1` on
   others (detail in the next bullet) -- for use as a loop condition
-  before the next read; `STREAM(file, 'State')` reports the stream's
-  overall status. TSO/E does not support stream I/O at all outside the
-  UNIX System Services (OMVS) subsystem, where full stream I/O is
-  available.
+  before the next read; `STREAM(file, option)` queries or acts on a
+  stream -- `'State'` reports its overall status, `'Description'` a
+  fuller status string, `'Command'` executes an operation on it. TSO/E
+  does not support stream I/O at all outside the UNIX System Services
+  (OMVS) subsystem, where full stream I/O is available.
 - Neither `CHARS()` nor `LINES()` is guaranteed to return an exact
   count anywhere, on any platform, once stream I/O is available at
   all: ANSI Rexx explicitly permits either to report only `0` or `1`
@@ -769,6 +770,31 @@ do i = 1 to mystem.0
     ...
 end
 ```
+
+- **`LINEOUT` opens in append mode by default; a full-file overwrite
+  needs an explicit replace first.** Standard Rexx behavior, not an
+  ooRexx quirk. A script that deletes a file and rewrites it with
+  repeated `LINEOUT` calls will silently duplicate content the moment
+  the delete step ever fails (locked file, permission issue), since
+  `LINEOUT` has no way to know a delete was supposed to have happened:
+
+```rexx
+/* WRONG -- if the delete silently fails, this appends instead of
+   replacing, duplicating old content underneath the new */
+call SysFileDelete path
+call lineout path, newContent
+
+/* CORRECT -- explicit replace, independent of whether a prior
+   delete succeeded */
+call stream path, 'C', 'OPEN WRITE REPLACE'
+call lineout path, newContent
+call stream path, 'C', 'CLOSE'
+```
+
+  ooRexx also offers stream *methods* on a `.Stream` object as an
+  alternative, preferred in new ooRexx code: `s = .Stream~new(path)`,
+  `s~command('OPEN WRITE REPLACE')`, `s~lineout(newContent)`,
+  `s~close()`.
 
 ---
 
