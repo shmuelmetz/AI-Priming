@@ -956,12 +956,13 @@ classic-Rexx habit reaches for nested BIF calls instead:
 
 ```rexx
 /* WRONG -- classic-Rexx nested-function style */
-result = translate(substr(str, 1, 5))
-result = strip(space(translate(str)))
+text = translate(substr(str, 1, 5))
+text = strip(space(translate(str)))
 
-/* CORRECT -- ooRexx: chain methods on the string object */
-result = str~substr(1, 5)~translate
-result = str~translate~space~strip
+/* CORRECT -- ooRexx: chain methods on the string object
+   (never name a variable `result` -- see the RESULT pitfall above) */
+text = str~substr(1, 5)~translate
+text = str~translate~space~strip
 ```
 
 Nested function calls read inside-out (evaluate the innermost call

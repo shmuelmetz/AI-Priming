@@ -604,9 +604,7 @@ and XEDIT come from IBM's z/VM REXX/VM Reference (including a
 documented `ADDRESS()` example returning `'XEDIT'`); OMVS's `SH`
 default from IBM's *z/OS Using REXX and z/OS UNIX System Services* (a
 manual distinct from the TSO/E REXX Reference). `ISREDIT` requires an
-active edit session regardless of platform. GCS's REXX drops
-`VALUE()`'s `selector` third argument entirely -- see above; per the
-z/VM REXX/VM Reference, Appendix E. Cross-checked (via the browser
+active edit session regardless of platform. Cross-checked (via the browser
 pane, since ibm.com/docs returns 403 to direct HTTP requests here)
 against the currently-maintained z/VM 7.4.0 online documentation,
 which confirms all three word for word: "Environment"
@@ -640,13 +638,19 @@ them clearly. Do not embed character codes inline in portable code.
 ### I/O portability
 
 - `CHARS()` and `LINES()` return exact counts only on CMS; on OS/2,
-  Linux, Windows they return only 0 or 1.
+  Linux, Windows they return only 0 or 1 -- but `= 0` is still a
+  reliable, portable end-of-file test in every dialect (ANSI Rexx and
+  ooRexx included; verified empirically against ooRexx 5.2.0), unlike
+  `STREAM(file,'State')` below. ooRexx additionally exposes this as
+  `.Stream` methods (`aStream~lines`, `aStream~chars`) for OO-style
+  code, with identical end-of-file semantics.
 - TSO/E REXX in MVS does not support stream I/O outside UNIX System
   Services; use `EXECIO` with the STEM option instead.
 - `EXECIO` in TSO/E supports only the STEM and stack forms; the variable
   name form is not supported. In CMS, prefer the STEM form.
 - `STREAM(file,'State')` returning `NOTREADY` does not guarantee EOF;
-  other conditions also produce NOTREADY.
+  other conditions also produce NOTREADY, and it only appears after a
+  read past the actual end -- prefer the `LINES()`/`CHARS()` test above.
 - Encapsulate I/O code and provide platform-specific implementations
   (e.g., EXECIO for TSO/CMS, stream I/O for OS/2/Linux). Document all
   such code thoroughly.
