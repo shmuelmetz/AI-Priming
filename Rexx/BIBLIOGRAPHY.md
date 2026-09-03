@@ -18,29 +18,38 @@ See also `../ooRexx/BIBLIOGRAPHY.md` for ooRexx-specific references.
   a purchased ANSI copy.
 
 ### IBM TSO/E REXX Reference
-- **Title:** z/OS TSO/E REXX Reference (current form SA32-0972); the
-  edition actually fetched and text-extracted this session was the
-  older *TSO Extensions Version 2 REXX Reference*, SC28-1883-0
-  (December 1988) -- same manual's lineage under an older form number
-  and product name (TSO Extensions predates the z/OS/TSO-E rebrand),
-  fetched via a non-ibm.com mirror
-  (vtda.org/docs/computing/IBM/Mainframe/SysSoft/TSO/) since
-  ibm.com/docs and ibm.com/docs PDF URLs return 403 from this session.
+- **Title:** z/OS TSO/E REXX Reference (current form SA32-0972); two
+  older editions of the same manual's lineage were fetched and
+  text-extracted this session instead, since ibm.com/docs and its PDF
+  URLs return 403 here: *TSO Extensions Version 2 REXX Reference*
+  SC28-1883-0 (December 1988) and SC28-1883-4 (August 1991). (TSO
+  Extensions predates the z/OS/TSO-E rebrand.)
 - **URL:** https://www.ibm.com/docs/en/zos/latest?topic=rexx-tsoe-reference
-  (current, blocked here); working mirror of the 1988 edition at
+  (current, blocked here); working mirrors used instead:
   https://vtda.org/docs/computing/IBM/Mainframe/SysSoft/TSO/SC28-1883-0_TSOExtensionsV2REXXReference_Dec88.pdf
+  (1988) and
+  https://archive.org/stream/bitsavers_ibm370TSOESOExtensionsVersion2ProceduresLangageMVS_48315466/SC28-1883-4_TSO_Extensions_Version_2_Procedures_Langage_MVS_REXX_Reference_Aug1991_djvu.txt
+  (1991, full text)
 - **Notes:** IBM mainframe REXX reference. Authoritative for `rc`,
   `address`, `outtrap`, and built-in functions. TSO/E REXX is the only
   REXX interpreter on z/OS -- TSO, ISPF, ISPF/PDF EDIT, the OMVS
   shell, batch (`IRXJCL`), and System REXX are the same interpreter
-  run in different environments, not separate products. Chapter 10
-  ("TSO/E REXX Commands") gives the exact host command environment
-  table per invocation context (TSO/E READY: TSO default + MVS, LINK,
-  ATTACH; non-TSO/E address space: MVS default + LINK, ATTACH; ISPF:
-  TSO default + MVS, LINK, ATTACH, ISPEXEC, ISREDIT) -- see
-  Rexx/RULES.md's ADDRESS environments table. This documents ISPF's
-  environment list from TSO/E's own side; see the ISPF Dialog
-  Developer's Guide entry below for why that distinction matters.
+  run in different environments, not separate products. The host
+  command environment table grew noticeably between the two editions
+  above -- the 1988 edition's table (TSO/E READY: TSO default + MVS,
+  LINK, ATTACH; non-TSO/E address space: MVS default + LINK, ATTACH;
+  ISPF: TSO default + MVS, LINK, ATTACH, ISPEXEC, ISREDIT) is missing
+  CONSOLE, the APPC family (CPICOMM, LU62), and the
+  LINKMVS/LINKPGM/ATTCHMVS/ATTCHPGM forms that the 1991 edition
+  documents in full -- see Rexx/RULES.md's ADDRESS environments table
+  for the complete, current list and which environments are available
+  in which address spaces. Both editions document ISPF's environment
+  list from TSO/E's own side; see the ISPF Dialog Developer's Guide
+  entry below for why that distinction matters. Neither edition
+  documents EDIT, TEST, or IPCS as host command environments, despite
+  a full sweep of every `ADDRESS <name>` occurrence in both texts --
+  these are believed to exist by the same registration pattern (per
+  direct operator experience) but are not primary-sourced here.
 
 ### ISPF Dialog Developer's Guide and Reference
 - **Title:** z/OS ISPF Dialog Developer's Guide and Reference

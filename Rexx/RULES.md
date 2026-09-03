@@ -513,31 +513,43 @@ none -- avoid vague filler like "whatever the host app registers".
 
 | Invocation context | Default | Other environments |
 |---|---|---|
-| OS/2 or Windows command prompt (classic REXX, OREXX, ooRexx) | `CMD` | `SYSTEM`, `PATH` on ooRexx |
+| OS/2 command prompt (classic REXX) | `CMD` | |
+| Command prompt, Windows or OS/2 (OREXX, ooRexx) | `CMD` | `SYSTEM`, `PATH` on ooRexx |
 | Regina, from a command prompt | `SYSTEM` | `COMMAND`, `REXX` |
-| TSO/E READY prompt | `TSO` | `MVS`, `LINK`, `ATTACH` |
-| ISPF (a dialog/panel exec, not editing), on z/OS | `TSO` | `MVS`, `LINK`, `ATTACH`, `ISPEXEC` |
-| ISPF/PDF EDIT macro, on z/OS | `TSO` | `MVS`, `LINK`, `ATTACH`, `ISPEXEC`, `ISREDIT` |
+| TSO/E READY prompt | `TSO` | `MVS`, `CONSOLE`†, the link/attach family, the APPC family |
+| ISPF (a dialog/panel exec, not editing), on z/OS | `TSO` | `MVS`, `CONSOLE`†, the link/attach family, the APPC family, `ISPEXEC` |
+| ISPF/PDF EDIT macro, on z/OS | `TSO` | `MVS`, `CONSOLE`†, the link/attach family, the APPC family, `ISPEXEC`, `ISREDIT` |
 | ISPF (dialog or edit macro), on z/VM | `CMS` | `ISPEXEC`; `ISREDIT` in an edit macro |
 | OMVS shell (z/OS UNIX System Services) | `SH` | `TSO`, `MVS`, `SYSCALL` |
-| Batch, via `IRXJCL` (no TSO or OMVS session) | `MVS` | `LINK`, `ATTACH` |
-| System REXX (via `AXREXX` or an operator command) | `MVS` (`TSO=NO`) | `ATTACH`, `ATTCHMVS`, `ATTCHPGM`, `LINK`, `LINKMVS`, `APPCMVS`, `BCPii`, `CPICOMM`, `LU62`; `TSO=YES` adds `TSO`, `ISPEXEC`, `ISREDIT` |
+| Batch, via `IRXJCL` (no TSO or OMVS session) | `MVS` | the link/attach family, the APPC family |
+| System REXX (via `AXREXX` or an operator command) | `MVS` (`TSO=NO`) | the link/attach family, `APPCMVS`, `BCPii`, the APPC family; `TSO=YES` adds `TSO`, `ISPEXEC`, `ISREDIT` |
 | CMS command line | `CMS` | `COMMAND`, `CP` |
 | GCS (a z/VM guest environment distinct from CMS) | `GCS` | `COMMAND` |
 | XEDIT macro (CMS's screen editor) | `XEDIT` | falls through to `CMS`, then `CP`, automatically |
 
+Link/attach family: `LINK`, `LINKMVS`, `LINKPGM` (link, same task
+level), `ATTACH`, `ATTCHMVS`, `ATTCHPGM` (attach, different task
+level) -- available in *any* address space, TSO/E or not. APPC family:
+`CPICOMM` (SAA CPI Communications), `LU62` (APPC/MVS, SNA LU 6.2) --
+available in any MVS address space. † `CONSOLE` needs an active
+extended MCS console session (the TSO/E `CONSOLE` command) plus
+console command authority; TSO/E address space only, not batch.
+
 **TSO/E REXX is the only REXX interpreter on z/OS** -- TSO READY,
 ISPF, the OMVS shell, batch (`IRXJCL`), and System REXX are all the
 *same* interpreter run in different environments, not different
-products.
+products. `APPCMVS`/`BCPii` do not appear anywhere in the TSO/E REXX
+Reference, so they look genuinely specific to System REXX, unlike the
+link/attach and APPC families it shares with everything else.
 
-**The TSO-family rows are illustrative, not exhaustive** -- they are
-the ones with a primary-source-confirmed environment name. The
-underlying pattern is general: any TSO-hosted facility registers its
-own additional host command environment for as long as it's running,
-the same way ISPF adds `ISPEXEC` (and `ISREDIT` while editing). The
-native TSO `EDIT` and `TEST` facilities add their own (`EDIT`, `TEST`)
-the same way; `IPCS` does too, while analyzing a dump.
+**The TSO-family rows are still not exhaustive** -- any TSO-hosted
+facility can register its own additional host command environment for
+as long as it's running, the same way ISPF adds `ISPEXEC`/`ISREDIT`.
+The native TSO `EDIT` and `TEST` facilities add their own (`EDIT`,
+`TEST`) the same way; `IPCS` does too, while analyzing a dump -- none
+of the three appears in the TSO/E REXX Reference itself (checked
+across both editions below), so none is in the table pending a
+primary source.
 (LPEX, an OS/2 editor, was checked as a possible addition here --
 its macro language, per the actual LPEX Editor User's Guide
 (SC09-2795), is REXX-flavored but not documented anywhere in that
@@ -546,23 +558,28 @@ and ISREDIT are; it appears to be LPEX's own scripting language, not
 genuine ADDRESS-dispatched Rexx. Not added pending clarification.)
 
 Sourcing: OS/2-family, ooRexx, and Regina rows rest on each
-implementation's own manual. TSO/E READY, ISPF-on-z/OS, and batch come
-from IBM's TSO Extensions Version 2 REXX Reference (SC28-1883-0,
-Chapter 10) -- fetched via a non-ibm.com mirror since ibm.com/docs
-returns 403 from this session; it documents ISPF's environment list
-from TSO/E's own side, and the ISPF Dialog Developer's Guide
-(SC34-4821, also fetched via a non-ibm.com mirror) does not
-independently confirm that list, so the ISPF-on-z/OS rows reflect
-TSO/E's documentation of ISPF, not ISPF's own. ISPF-on-z/VM is
-inferred by the same pattern (default unchanged from the underlying
-platform; `ISPEXEC`/`ISREDIT` added) since no VM-specific ISPF manual
-confirms it independently. CMS, GCS, and XEDIT come from IBM's z/VM
-REXX/VM Reference (including a documented `ADDRESS()` example
-returning `'XEDIT'`); OMVS's `SH` default from IBM's *z/OS Using REXX
-and z/OS UNIX System Services* (a manual distinct from the TSO/E REXX
-Reference). `ISREDIT` requires an active edit session regardless of
-platform. GCS's REXX drops `VALUE()`'s `selector` third argument
-entirely -- see above; per the z/VM REXX/VM Reference, Appendix E.
+implementation's own manual. The TSO-family rows come from IBM's TSO
+Extensions Version 2 REXX Reference -- its host command environment
+table grew between editions: SC28-1883-0 (1988, fetched via a
+non-ibm.com mirror since ibm.com/docs returns 403 here) documents a
+noticeably smaller set, missing `CONSOLE`, the APPC family, and the
+`LINKMVS`/`LINKPGM`/`ATTCHMVS`/`ATTCHPGM` forms entirely; SC28-1883-4
+(1991, archive.org full text) documents the fuller list reflected
+above -- a real difference between TSO/E releases, not an error in
+either edition. It documents ISPF's environment list from TSO/E's own
+side, and the ISPF Dialog Developer's Guide (SC34-4821, also fetched
+via a non-ibm.com mirror) does not independently confirm that list, so
+the ISPF-on-z/OS rows reflect TSO/E's documentation of ISPF, not
+ISPF's own. ISPF-on-z/VM is inferred by the same pattern (default
+unchanged from the underlying platform; `ISPEXEC`/`ISREDIT` added)
+since no VM-specific ISPF manual confirms it independently. CMS, GCS,
+and XEDIT come from IBM's z/VM REXX/VM Reference (including a
+documented `ADDRESS()` example returning `'XEDIT'`); OMVS's `SH`
+default from IBM's *z/OS Using REXX and z/OS UNIX System Services* (a
+manual distinct from the TSO/E REXX Reference). `ISREDIT` requires an
+active edit session regardless of platform. GCS's REXX drops
+`VALUE()`'s `selector` third argument entirely -- see above; per the
+z/VM REXX/VM Reference, Appendix E.
 
 ---
 
