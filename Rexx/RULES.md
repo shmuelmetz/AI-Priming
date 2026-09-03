@@ -514,18 +514,26 @@ none -- avoid vague filler like "whatever the host app registers".
 | Invocation context | Default | Other environments |
 |---|---|---|
 | OS/2 command prompt (classic REXX) | `CMD` | |
-| Command prompt, Windows or OS/2 (OREXX, ooRexx) | `CMD` | `SYSTEM`, `PATH` on ooRexx |
-| Regina, from a command prompt | `SYSTEM` | `COMMAND`, `REXX` |
-| TSO/E READY prompt | `TSO` | `MVS`, `CONSOLE`†, the link/attach family, the APPC family |
-| ISPF (a dialog/panel exec, not editing), on z/OS | `TSO` | `MVS`, `CONSOLE`†, the link/attach family, the APPC family, `ISPEXEC` |
-| ISPF/PDF EDIT macro, on z/OS | `TSO` | `MVS`, `CONSOLE`†, the link/attach family, the APPC family, `ISPEXEC`, `ISREDIT` |
-| ISPF (dialog or edit macro), on z/VM | `CMS` | `ISPEXEC`; `ISREDIT` in an edit macro |
-| OMVS shell (z/OS UNIX System Services) | `SH` | `TSO`, `MVS`, `SYSCALL` |
-| Batch, via `IRXJCL` (no TSO or OMVS session) | `MVS` | the link/attach family, the APPC family |
-| System REXX (via `AXREXX` or an operator command) | `MVS` (`TSO=NO`) | the link/attach family, `APPCMVS`, `BCPii`, the APPC family; `TSO=YES` adds `TSO`, `ISPEXEC`, `ISREDIT` |
+| PC-DOS command prompt (classic REXX) | `COMMAND` | |
+| Windows/OS/2 command prompt (OREXX, ooRexx) | `CMD` | `SYSTEM`, `PATH` on ooRexx |
+| Regina command prompt | `SYSTEM` | `COMMAND`, `REXX` |
+| TSO/E READY | `TSO` | `MVS`, `CONSOLE`†, the link/attach family, the APPC family |
+| ISPF on z/OS | `TSO` | `MVS`, `CONSOLE`†, the link/attach family, the APPC family, `ISPEXEC` |
+| ISPF/PDF EDIT on z/OS | `TSO` | `MVS`, `CONSOLE`†, the link/attach family, the APPC family, `ISPEXEC`, `ISREDIT` |
+| ISPF on z/VM | `CMS` | `ISPEXEC`; `ISREDIT` in an edit macro |
+| OMVS shell | `SH` | `TSO`, `MVS`, `SYSCALL` |
+| `IRXJCL` | `MVS` | the link/attach family, the APPC family |
+| System REXX | `MVS` (`TSO=NO`) | the link/attach family, `APPCMVS`, `BCPii`, the APPC family; `TSO=YES` adds `TSO`, `ISPEXEC`, `ISREDIT` |
 | CMS command line | `CMS` | `COMMAND`, `CP` |
-| GCS (a z/VM guest environment distinct from CMS) | `GCS` | `COMMAND` |
-| XEDIT macro (CMS's screen editor) | `XEDIT` | falls through to `CMS`, then `CP`, automatically |
+| GCS | `GCS` | `COMMAND` |
+| XEDIT macro | `XEDIT` | falls through to `CMS`, then `CP`, automatically |
+
+PC-DOS's classic REXX is IBM's own, bundled with PC DOS 7 -- distinct
+from the third-party Personal REXX (Quercus Systems) also available
+for DOS. Its ADDRESS discussion uses `ADDRESS COMMAND` throughout
+(same structure as OS/2's manual's own `ADDRESS CMD` passage, down to
+the identical DIR-STARTUP example) -- PC-DOS's native environment is
+`COMMAND`, not `CMD` like OS/2's; don't assume they match.
 
 Link/attach family: `LINK`, `LINKMVS`, `LINKPGM` (link, same task
 level), `ATTACH`, `ATTCHMVS`, `ATTCHPGM` (attach, different task

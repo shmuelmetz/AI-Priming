@@ -17,6 +17,19 @@ See also `../ooRexx/BIBLIOGRAPHY.md` for ooRexx-specific references.
   worth knowing if a specific citation is ever double-checked against
   a purchased ANSI copy.
 
+### PC DOS 7 REXX User's Guide and Reference
+- **Title:** PC DOS 7 REXX User's Guide and Reference, IBM Corp.,
+  S83G-9228
+- **URL:** https://raw.githubusercontent.com/knorrie/rexx-asm-archive/master/extra/PC_DOS_7_REXX_Reference.txt
+  (full text; ibm.com has no working copy found)
+- **Notes:** IBM's own classic REXX bundled with PC DOS 7 (1995) --
+  distinct from the third-party Personal REXX (Quercus Systems) also
+  available for DOS. Confirms PC-DOS's native host command environment
+  is `COMMAND`, not `CMD` like OS/2's classic REXX -- the ADDRESS
+  instruction discussion uses `ADDRESS COMMAND` throughout, in a
+  passage structurally identical to the OS/2 manual's own `ADDRESS
+  CMD` passage (same DIR-STARTUP example, same wording).
+
 ### IBM TSO/E REXX Reference
 - **Title:** z/OS TSO/E REXX Reference (current form SA32-0972); two
   older editions of the same manual's lineage were fetched and
