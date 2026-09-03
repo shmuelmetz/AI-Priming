@@ -559,9 +559,9 @@ none -- avoid vague filler like "whatever the host app registers".
 | OMVS shell | `SH` | `TSO`, `MVS`, `SYSCALL` |
 | `IRXJCL` | `MVS` | the link/attach family, the APPC family |
 | System REXX | `MVS` (`TSO=NO`) | the link/attach family, `APPCMVS`, `BCPii`, the APPC family; `TSO=YES` adds `TSO`, `ISPEXEC`, `ISREDIT` |
-| Exec via TSO `EDIT`'s own `EXEC` subcommand | `EDIT` subcommands | none -- `TSO` unavailable until `END` terminates `EDIT` |
-| Exec via TSO `TEST`'s own `EXEC` subcommand | `TEST` subcommands | none -- `TSO` unavailable until `END`/`RUN` terminates `TEST` |
-| Exec in an active IPCS session, IPCS mode | `TSO` | `IPCS` -- not available at all in the session's own separate TSO/E mode |
+| EDIT macro | `EDIT` | none -- `TSO` unavailable until `END` terminates `EDIT` |
+| TEST macro | `TEST` | none -- `TSO` unavailable until `END`/`RUN` terminates `TEST` |
+| IPCS macro | `TSO` | `IPCS` -- not available at all in the session's own separate TSO/E mode |
 | CMS command line | `CMS` | `COMMAND`, `CP` |
 | GCS | `GCS` | `COMMAND` |
 | XEDIT macro | `XEDIT` | falls through to `CMS`, then `CP`, automatically |
@@ -661,7 +661,12 @@ needed to any of the above -- only this citation upgrade.
 Binary and hex constants for character data are platform-dependent:
 
 - CMS and TSO use EBCDIC (`'C1'X` = 'A')
-- DOS, OS/2, Linux, Windows use ASCII (`'41'X` = 'A')
+- DOS, OS/2, Linux, Windows: not just plain ASCII -- some combination
+  of 7-bit ASCII, an 8-bit code page extending ASCII (Latin-1,
+  Windows-1252, etc. -- these disagree above code point 127), and
+  Unicode (typically UTF-8/UTF-16), depending on the system, its
+  locale/code-page config, and the specific file/stream (`'41'X` = 'A'
+  in all of these, since ASCII/UTF-8 agree in the 7-bit range)
 - Code page and national language affect even EBCDIC systems
 
 Segregate system-dependent and code-page-dependent values. Document

@@ -160,6 +160,23 @@ ooRexx variable names and labels are case-insensitive. However:
 - The `value()` built-in for environment variables is case-sensitive
   on Linux, case-insensitive on Windows.
 
+For case-insensitive comparisons generally, ooRexx's `.String` class
+provides a `caseless`-prefixed method family directly (verified
+against the Language Reference §5.1.7): `caselessEquals`,
+`caselessCompare`, `caselessCompareTo`, `caselessPos`,
+`caselessLastPos`, `caselessCountStr`, `caselessChangeStr`,
+`caselessAbbrev`, `caselessMatch`, `caselessMatchChar`,
+`caselessStartsWith`/`caselessEndsWith`, `caselessWordPos`,
+`caselessContains`/`caselessContainsWord` -- prefer these over calling
+`TRANSLATE()`/`~upper` on both sides before every comparison. There
+are also `Caseless`-prefixed Comparator classes for sorting
+(`CaselessComparator`, `CaselessColumnComparator`,
+`CaselessDescendingComparator`). `PARSE` itself has a `CASELESS`
+modifier (alongside `UPPER`/`LOWER`) for case-independent template
+matching -- this one is standard across classic Rexx and ooRexx, not
+an ooRexx-only extension (confirmed present in Regina's own manual
+too).
+
 ---
 
 ## `~translate` vs `~upper`
@@ -955,11 +972,14 @@ the exact same discipline as the 0-based form: every tail from this
 one idiom, nothing added or removed out of band, or the numbering
 stops meaning what it looks like it means.
 
-No guarantee tails stay contiguous or even numeric: a Stem is
-fundamentally a string-indexed map, and it only behaves like a
-simulated array when every tail is a contiguous integer -- nothing
-stops `orphans.foo` or `orphans.17` from being set directly alongside
-the sequence above. `do i = 1 to orphans.~items` as a loop bound is
+No guarantee tails stay contiguous or even numeric: a Stem is an
+associative array -- a string-indexed map -- which is not the same
+thing as an array, even when every tail happens to be a contiguous
+integer; that's a simulated, conventional usage on top of a
+fundamentally different structure (a flight simulator imitates flying
+without being an airplane). Nothing stops `orphans.foo` or
+`orphans.17` from being set directly alongside the sequence above.
+`do i = 1 to orphans.~items` as a loop bound is
 only safe in the narrow case where every tail came from exactly this
 idiom with no out-of-band add/remove. The general, safe iteration is
 `do tail over orphans.~allIndexes` (tail names) or `do value over
