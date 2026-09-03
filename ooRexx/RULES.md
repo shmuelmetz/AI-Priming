@@ -672,19 +672,40 @@ before any full-file write.
 
 Plain ooRexx variables are exactly as untyped as classic Rexx's --
 see Rexx/RULES.md's Type and range checking section, unchanged here.
-ooRexx *objects* are a different matter: every object knows its own
-class, and sending it a message that class doesn't define is a real,
-enforced error (`Error 97.1`, "does not understand message" -- the
-pattern behind most of this file's own examples), not silent
-misbehavior. It's late-bound (checked when the message is sent, not
-before the program runs) rather than static, but it is genuine type
-enforcement, absent a class deliberately opting out: defining an
-`UNKNOWN` method lets an object accept and handle any message that
-would otherwise be rejected, receiving the message name and its
-argument list. Verified live: `.Array~new~notAMethod('x')` raises a
-`SYNTAX` condition, "Object method not found"; a class defining
-`::method unknown` (`use arg msgname, args`) catches exactly what
-would otherwise be rejected.
+ooRexx *objects* are a different matter: sending an object a message
+it doesn't recognize is a real, enforced error (`Error 97.1`, "does
+not understand message" -- the pattern behind most of this file's own
+examples), not silent misbehavior. It's late-bound (checked when the
+message is sent, not before the program runs) rather than static, but
+it is genuine type enforcement, absent a couple of low-level but
+documented escape hatches -- deliberately say "the object recognizes"
+rather than "the class defines" here, because the two are not always
+the same thing:
+
+- A class can define an `UNKNOWN` method to accept and handle any
+  message that would otherwise be rejected, receiving the message
+  name and its argument list.
+- An individual *object's* own recognized-message set is not fixed by
+  its class alone. `~setMethod` attaches a method to one specific
+  instance -- but it's a private method (per the Language Reference's
+  §4.2.3/§5.1.4.22): it can only be called from an instance method of
+  the receiving object itself, or from a class method in its
+  inheritance chain, not from arbitrary outside code. `Class~enhanced`
+  is the externally-usable path: it creates a new instance with extra
+  methods attached at creation, taking a collection (e.g. a
+  `.Directory`) mapping method names to method source.
+
+Verified live: `.Array~new~notAMethod('x')` raises a `SYNTAX`
+condition, "Object method not found"; a class defining `::method
+unknown` (`use arg msgname, args`) catches exactly what would
+otherwise be rejected. Also verified live: `a = .object~new;
+a~setMethod('greet', ...)` fails from mainline code with Error 97.2,
+"cannot accept private message SETMETHOD from this context"; but
+`methods = .directory~new; methods["GREET"] = "return 'hi'"; a =
+.object~enhanced(methods)` succeeds, and a plain `b = .object~new`
+still raises "does not understand message GREET" for the same
+message -- `a~class == b~class` is true, so this is a genuine
+per-object difference, not a class-level one.
 
 ---
 
@@ -897,9 +918,12 @@ index into a plain simple variable first, then use it as the tail —
 than a single symbol.
 
 **A stem's own item count sidesteps maintaining a manual counter tail
-at all.** `orphans.` is always a genuine Stem object; `~items` reports
-how many of its compound variables are currently set, updating itself
-as a side effect of each assignment, with nothing to track by hand:
+at all -- but `~items` does NOT add elements; it is a read-only
+query.** `orphans.` is always a genuine Stem object; `~items` reports
+how many of its compound variables are currently set. `~items` itself
+adds/removes/changes nothing -- the tail *assignment* is what changes
+the count, and `~items` just reports whatever that count happens to
+be when called, with nothing to track by hand:
 
 ```rexx
 orphans.[orphans.~items] = 'first'   -- items was 0; sets tail "0"
@@ -909,11 +933,23 @@ orphans.[orphans.~items] = 'second'  -- items is now 1; sets tail "1"
 Verified live, including the numbering: this starts at tail `"0"`, not
 `"1"` -- `~items` counts from zero, unlike the classic convention
 where tail `0` is a manually-maintained counter and data starts at
-`1`. The two schemes don't mix; pick one per stem. `~allIndexes`
-returns every tail actually populated, in no particular order --
-useful for iterating a stem built this way without assuming a
-contiguous numeric range: `do tail over orphans.~allIndexes; say
-orphans.[tail]; end`.
+`1`. The two schemes don't mix; pick one per stem.
+
+**No guarantee tails stay contiguous or even numeric.** A Stem is a
+string-indexed map, not an array -- nothing stops `orphans.foo` or
+`orphans.17` from being set directly alongside the sequence above.
+`do i = 1 to orphans.~items` as a loop bound is only safe in the
+narrow case where every tail came from exactly this idiom with no
+out-of-band add/remove. The general, safe iteration is `do tail over
+orphans.~allIndexes` (tail names) or `do value over orphans.~allItems`
+(values directly, per Collection Class's abstract `allIndexes`/
+`allItems`/`items` methods, all inherited by Stem as a MapCollection
+subclass): `do tail over orphans.~allIndexes; say orphans.[tail]; end`.
+If genuine array-style append (add an element, let the collection pick
+the next position) is actually wanted, use a real `.Array` and its own
+`append` method -- an OrderedCollection-mixin method Stem does not
+have; `orphans.[orphans.~items] = value` only imitates the effect for
+a Stem built consistently this way.
 
 **Related, easy to trip over while testing the above**: a quoted
 string literal can never BE a tail either, even when it contains no

@@ -16,7 +16,19 @@ when their training contradicts the content here.
   built-in functions, special variables (`rc`, `result`, `sigl`),
   and `address...with` semantics are defined here. §1.13.4 ("Stems")
   confirms every stem symbol is always bound to a genuine Stem
-  object -- see RULES.md's indirect-stem-access section.
+  object -- see RULES.md's indirect-stem-access section. §4.2.3
+  ("Defining Instance Methods with SETMETHOD or ENHANCED") and
+  §4.2.5 ("Default Search Order for Method Selection") confirm an
+  individual object's recognized-message set is not fixed by its
+  class alone -- a method the object itself defines via `setMethod`
+  or `enhanced` is checked before the class hierarchy. §5.1.4.22
+  (`setMethod`, a private method) and §5.1.1.10 (`enhanced`, on the
+  Class class) give the exact mechanics; verified live per RULES.md's
+  Dynamic typing section. §5.3.2 (Collection Class) and §5.3.4
+  (OrderedCollection Class) confirm `allIndexes`/`allItems`/`items`
+  are Collection-level abstract methods (inherited by Stem as a
+  MapCollection subclass), while `append` is an OrderedCollection-only
+  method Stem does not have -- see RULES.md's Stem `~items` section.
 
 ### ooRexx Programming Guide
 - **Title:** Open Object Rexx Programming Guide (Version 5.1.0)
