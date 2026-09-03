@@ -18,9 +18,13 @@ See also `../ooRexx/BIBLIOGRAPHY.md` for ooRexx-specific references.
   a purchased ANSI copy. Directly checked for `PARSE LOWER`/`PARSE
   CASELESS`: neither appears anywhere in the text, confirming only
   `PARSE UPPER` is genuine ANSI syntax -- `LOWER` and `CASELESS` are
-  ooRexx/Regina extensions, not ANSI-standard, and absent from TRL-2
-  as well. No abbreviated form of `UPPER` is documented anywhere in
-  the standard either.
+  ooRexx/Regina extensions, not ANSI-standard. No abbreviated form of
+  `UPPER` is documented anywhere in the standard either. Separately
+  stated absent from TRL-2 as well, per the Safe REXX paper's author
+  directly -- no access here to TRL-2 (Cowlishaw's *The REXX Language*,
+  2nd ed.) to check that half independently; it's a copyrighted
+  Prentice-Hall book, not a freely hosted primary source the way this
+  ANSI draft and the IBM manuals cited elsewhere in this file are.
 
 ### PC DOS 7 REXX User's Guide and Reference
 - **Title:** PC DOS 7 REXX User's Guide and Reference, IBM Corp.,
@@ -170,6 +174,15 @@ See also `../ooRexx/BIBLIOGRAPHY.md` for ooRexx-specific references.
   only `FIFO`/`LIFO`/`STEM` -- no `VAR` option at all -- confirming
   TSO/E's `EXECIO` is genuinely a subset of CMS's, not just narrower
   documentation of the same options.
+
+### Rexx brief history
+- **Author:** Michael F. Cowlishaw
+- **URL:** https://speleotrove.com/rexxhist/rexxhistory.html
+- **Notes:** Cowlishaw's own history page. Confirms the language was
+  conceived 1979-03-20 and initially named REX ("the name sounded
+  nice"); it gained its second X by 1982 "to avoid any confusion with
+  other products," becoming REXX before shipping in VM/SP Release 3
+  (1983).
 
 ### REXX Reference Summary Handbook
 - **Author:** Richard K. Goran
