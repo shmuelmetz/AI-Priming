@@ -676,9 +676,8 @@ them clearly. Do not embed character codes inline in portable code.
 
 ### I/O portability
 
-- The original implementation of REX on CMS used `EXECIO`, later
-  inherited by TSO/E and other platforms -- but with different option
-  subsets. CMS's `EXECIO` supports three destinations: the program
+- `EXECIO` is CMS's native file I/O command. CMS and TSO/E support
+  different option subsets. CMS's `EXECIO` supports three destinations: the program
   stack (`FIFO`/`LIFO`), a stem (`STEM stem.`), or a single plain
   variable (`VAR name` -- but only for exactly one line at a time; the
   count operand must be `1` with `VAR`). Verified directly against

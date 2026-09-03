@@ -182,7 +182,25 @@ See also `../ooRexx/BIBLIOGRAPHY.md` for ooRexx-specific references.
   conceived 1979-03-20 and initially named REX ("the name sounded
   nice"); it gained its second X by 1982 "to avoid any confusion with
   other products," becoming REXX before shipping in VM/SP Release 3
-  (1983).
+  (dated 1983 here).
+
+### VM/370 Interfaces for REXX (RexxLA presentation)
+- **URL:** https://www.rexxla.org/presentations/2020/VM%20Interfaces%20for%20REXX.pdf
+  (fetched and text-extracted this session)
+- **Notes:** Gives VM/SP Release 3 as REXX's first shipped release too,
+  but dates it 1982 (the presentation itself hedges: "1982 (or 3?)")
+  -- a minor discrepancy against the Cowlishaw history page's 1983,
+  unresolved; cite the release number (VM/SP R3) rather than a specific
+  year unless this gets pinned down further. Also states EXEC2 was
+  introduced earlier, in VM/SP Release 1 (1980), with its own
+  EXECCOMM variable interface, and that "the EXEC2 variable interface
+  was first used by the new EXECIO" -- suggesting `EXECIO` itself
+  arrived together with REXX in VM/SP R3, built on EXEC2's
+  already-existing interface, rather than substantially predating
+  REXX. Left out of Safe-REXX's own text per the author's explicit
+  instruction (2026-09-03) to keep EXEC/EXEC2 mentioned only as what
+  REXX replaced, not entangled with `EXECIO`'s own history -- recorded
+  here as background in case a future session needs it.
 
 ### REXX Reference Summary Handbook
 - **Author:** Richard K. Goran
