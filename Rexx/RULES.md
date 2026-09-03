@@ -79,11 +79,45 @@ Key limitations:
 
 - No `address...with` clause
 - No `~upper` method
-- RexxUtil function set differs from ooRexx RexxUtil
+- RexxUtil function set differs from ooRexx RexxUtil (see table below)
 - `SysGetFileDateTime` may not be available
 
 Write scripts targeting OBJREXX 6.00 using only classic Rexx
 syntax and the OBJREXX RexxUtil subset.
+
+### RexxUtil availability: OREXX vs ooRexx vs Regina
+
+Confirmed against three primary sources: IBM's *Object REXX for
+Windows Reference* (Version 2.1, SH12-6725-00) and *Object REXX for
+AIX Reference* (Version 1.1.3, SH12-6386-01) for OREXX; the current
+ooRexx Language Reference §8 ("Rexx Utilities (RexxUtil)") for ooRexx
+5.2.0; and Regina's own RegUtil reference manual. The `RexxUtil`
+repertoire is not standardized and genuinely differs by
+implementation and, for OREXX, by platform edition:
+
+| Function(s) | OREXX | ooRexx 5.2.0 | Regina (`RegUtil`) |
+|---|---|---|---|
+| `SysFileCopy`, `SysFileMove` | No -- absent from the Windows 2.1 Reference entirely | Yes | No -- `SysCopyObject`/`SysMoveObject` instead |
+| The `SysIsFileXxx` family (`SysIsFile`, `SysIsFileDirectory`, `SysIsFileLink`, and the Windows-only detail variants) | No | Yes | No |
+| The Workplace-Shell family (`SysCreateObject`, `SysDestroyObject`, `SysSetObjectData`, `SysQueryClassList`, and related) | Yes, but only in the OS/2 edition -- confirmed absent from the Windows and AIX editions | No | No |
+| The semaphore family (`SysCreateEventSem`, `SysCreateMutexSem`, and related) | Yes | Yes, but deprecated since (per Appendix B.2.1 of the current Reference) in favor of the `.EventSemaphore`/`.MutexSemaphore` classes | Yes |
+| Unix process functions (`SysFork`, `SysWait`, `SysCreatePipe`) and `SysGetMessage`/`SysGetMessageX` (Unix message catalogs) | Yes, in the AIX edition | Yes, on Unix-like platforms | No -- confirmed absent from RegUtil's reference |
+| `SysWinGetPrinters`, `SysWinGetDefaultPrinter`, `SysWinSetDefaultPrinter`, `SysFormatMessage`, `SysGetLongPathName`, `SysGetShortPathName`, `SysShutdownSystem` | No | Yes -- later ooRexx-only additions, marked `*NEW*` in its own changelog | No |
+| `SysLoadFuncs`/`SysDropFuncs` | Required, to register the package | Deprecated no-ops since ooRexx 4.0.0 (per Appendix B.2.2) -- the package is auto-registered | Required, to register the package |
+
+Ordinary file/directory operations (`SysFileTree`, `SysMkDir`,
+`SysRmDir`, `SysSearchPath`, `SysTempFileName`, `SysGetFileDateTime`,
+`SysSetFileDateTime`, `SysDriveInfo`, `SysDriveMap`, `SysVolumeLabel`,
+`SysWaitNamedPipe`), the macro-space family (`SysAddRexxMacro` and
+related), console I/O (`SysCls`, `SysGetKey`, `RxMessageBox`, and
+related -- Windows-only in all three), and `SysQueryProcess` are
+present in all three implementations; ooRexx's own reference notes
+that `SysFileTree` and `SysQueryProcess` each "work differently"
+across platforms, so their exact behavior should be verified on each
+target rather than assumed identical. Note also a spelling drift with
+no functional consequence (Rexx symbols are case-insensitive):
+OREXX's manuals spell it `SysGetErrortext`; the current ooRexx
+Reference and Regina's RegUtil manual both spell it `SysGetErrorText`.
 
 ---
 

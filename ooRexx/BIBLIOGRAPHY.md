@@ -32,7 +32,16 @@ when their training contradicts the content here.
 - **Notes:** Documents `SysFileCopy`, `SysFileDelete`, `SysFileExists`,
   `SysFileTree`, `SysGetFileDateTime`, `SysMkDir`, `SysTempFileName`,
   and all other RexxUtil functions. Return value conventions differ
-  from classic Rexx built-ins; see RULES.md.
+  from classic Rexx built-ins; see RULES.md. The ooRexx 5.2.0 Language
+  Reference's own §8.2 ("List of Rexx Utility Functions") gives the
+  full, current 69-function table with Windows/Unix availability per
+  function; its Appendix B.2 ("Deprecated Rexx features") confirms the
+  semaphore family (`SysCreateEventSem`, `SysCreateMutexSem`, and
+  related) is deprecated in favor of the `.EventSemaphore`/
+  `.MutexSemaphore` classes, and that `SysLoadFuncs`/`SysDropFuncs`
+  have been no-ops since ooRexx 4.0.0 -- see Rexx/RULES.md's OBJREXX
+  section for the full OREXX/ooRexx/Regina RexxUtil comparison table
+  built from this and the Object REXX/RegUtil references there.
 
 ## Classic Rexx references
 

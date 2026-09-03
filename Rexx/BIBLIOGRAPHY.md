@@ -158,7 +158,45 @@ See also `../ooRexx/BIBLIOGRAPHY.md` for ooRexx-specific references.
 ### Regina REXX
 - **URL:** https://regina-rexx.sourceforge.io/
 - **Notes:** Open source classic Rexx interpreter. Documentation
-  covers ANSI REXX compliance and extensions.
+  covers ANSI REXX compliance and extensions. Its `RegUtil` package
+  (the RexxUtil equivalent) was fetched and text-extracted this
+  session -- confirmed it lacks `SysFileCopy`/`SysFileMove` (uses
+  `SysCopyObject`/`SysMoveObject` instead), the entire `SysIsFileXxx`
+  family, the Workplace-Shell family, and the Unix process functions
+  (`SysFork`/`SysWait`/`SysCreatePipe`), while it does have the
+  semaphore family, the macro-space family, and the ordinary
+  file/directory core -- see Rexx/RULES.md's OBJREXX section for the
+  full OREXX/ooRexx/Regina RexxUtil comparison table.
+
+### Object REXX for Windows Reference
+- **Title:** Object REXX for Windows Reference, Version 2.1,
+  SH12-6725-00 (IBM Object REXX for Windows Interpreter Edition
+  5639-M69 and Development Edition 5639-M68)
+- **URL:** https://public.dhe.ibm.com/ps/products/ad/obj-xx/rexxref.pdf
+  (fetched and text-extracted this session)
+- **Notes:** The Windows edition of IBM's original (pre-open-source)
+  Object REXX, distinct from ooRexx. Its RexxUtil chapter (Chapter 9)
+  lists exactly 63 functions -- confirmed it lacks `SysFileCopy`,
+  `SysFileMove`, the entire `SysIsFileXxx` family, and the entire
+  Workplace-Shell family (`SysCreateObject` and related): the last is
+  consistent with Windows having no Workplace Shell, but the absence
+  of `SysFileCopy`/`SysFileMove` specifically was not expected going
+  in. Used as the "OREXX" column baseline in Rexx/RULES.md's RexxUtil
+  comparison table, alongside the AIX edition below for the
+  Unix-specific functions.
+
+### Object REXX for AIX Reference
+- **Title:** Object REXX for AIX Reference, Version 1.1.3,
+  SH12-6386-01
+- **URL:** https://publibfi.dhe.ibm.com/epubs/pdf/rxor9a00.pdf
+  (fetched and text-extracted this session)
+- **Notes:** Confirms the AIX edition additionally documents
+  `SysFork`, `SysWait`, `SysCreatePipe`, `SysGetpid`, `SysAddCmdPkg`,
+  `SysAddFuncPkg`, `SysDropCmdPkg`, `SysDropFuncPkg`, and
+  `SysGetMessage`/`SysGetMessageX` (Unix message catalogs) -- none of
+  which appear in the Windows 2.1 Reference above, and (like the
+  Windows edition) no Workplace-Shell functions, consistent with AIX
+  having no Workplace Shell either.
 
 ## IBM Docs navigation
 - ibm.com/docs returns 403 to direct HTTP requests (curl, WebFetch) in
