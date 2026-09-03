@@ -627,13 +627,19 @@ was present in the source.
 | Stack Exchange | https://stackexchange.com/users/110591/shmuel |
 | LinkedIn | https://www.linkedin.com/in/seymour-metz-a89915152 |
 | ORCID | https://orcid.org/0000-0002-6358-8257 |
-| Hebrew name | שמואל בן ל״ביש |
+| Hebrew name | שְׁמוּאֵל בֵּן לייביש ולאה |
 
 Name handling:
 - Replace middle names with initials where appropriate.
-- The Hebrew patronymic may be dropped.
-- Do not add alternate typography or Yiddish equivalents for Hebrew
-  names without permission.
+- The Hebrew patronymic/matronymic (בן לייביש ולאה) may be dropped
+  for brevity.
+- לייביש (tsvey yudn), not ל״ביש (a gershayim/abbreviation mark, not
+  a name) -- this is the settled spelling, researched and confirmed
+  2026-08-28 with the user's explicit request; see the
+  pygments-extensions and rexx-lint READMEs (commits 5cb0d65,
+  fc9c208) for the precedent. Don't reintroduce ל״ביש.
+- Do not add further alternate typography or additional Yiddish
+  equivalents beyond this settled form without permission.
 - Render contact information in a style appropriate to the document
   context.
 
