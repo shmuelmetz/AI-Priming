@@ -676,26 +676,26 @@ them clearly. Do not embed character codes inline in portable code.
 
 ### I/O portability
 
-- Historical note: the original source papers (1993-95, revised 1998)
-  predate ANSI Rexx (1996) entirely and never addressed the stream I/O
-  it standardized. As of 2026, full stream I/O (`LINEIN`/`LINEOUT`/
-  `STREAM`, with `LINES()`/`CHARS()` returning accurate counts) is the
-  norm everywhere except z/OS's TSO/E and OS/2 -- those two still keep
-  the older, more limited model. `CHARS()` and `LINES()` return exact
-  counts on CMS and (as of this edition) on Linux/Windows too; on
-  TSO/E and OS/2 they return only 0 or 1 -- but `= 0` is still a
-  reliable, portable end-of-file test in every dialect either way
-  (ANSI Rexx and ooRexx included; verified empirically against ooRexx
-  5.2.0), unlike `STREAM(file,'State')` below. ooRexx additionally
-  exposes this as `.Stream` methods (`aStream~lines`, `aStream~chars`)
-  for OO-style code, with identical end-of-file semantics.
-- TSO/E REXX in MVS does not support stream I/O outside UNIX System
-  Services; use `EXECIO` with the STEM option instead. Some
+- `EXECIO` is CMS's native file I/O mechanism, working through stems
+  or the program stack rather than individual `LINEIN`/`LINEOUT`
+  calls. TSO/E REXX in MVS supports only a subset of it -- the STEM
+  and stack forms, not the variable-name form; in CMS, prefer the
+  STEM form too.
+- TSO/E does not support stream I/O (`LINEIN`/`LINEOUT`/`STREAM`,
+  with `LINES()`/`CHARS()` returning accurate counts -- the model
+  ANSI Rexx standardized) at all outside the UNIX System Services
+  (OMVS) subsystem, where full stream I/O is available. `CHARS()` and
+  `LINES()` return exact counts on CMS and, outside TSO/E and OS/2,
+  everywhere else too; on TSO/E and OS/2 they return only 0 or 1 --
+  but `= 0` is still a reliable, portable end-of-file test in every
+  dialect either way (ANSI Rexx and ooRexx included; verified
+  empirically against ooRexx 5.2.0), unlike `STREAM(file,'State')`
+  below. ooRexx additionally exposes this as `.Stream` methods
+  (`aStream~lines`, `aStream~chars`) for OO-style code, with identical
+  end-of-file semantics.
+- Outside TSO/E and OS/2, full stream I/O is the norm; some
   interpreters still support `EXECIO` for compatibility with legacy
-  TSO/CMS code, but outside TSO/E and CMS themselves it is no longer
-  the primary I/O model.
-- `EXECIO` in TSO/E supports only the STEM and stack forms; the variable
-  name form is not supported. In CMS, prefer the STEM form.
+  TSO/CMS code, but it is not the primary I/O model there.
 - `STREAM(file,'State')` returning `NOTREADY` does not guarantee EOF;
   other conditions also produce NOTREADY, and it only appears after a
   read past the actual end -- prefer the `LINES()`/`CHARS()` test above.
