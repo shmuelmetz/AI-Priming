@@ -172,10 +172,14 @@ against the Language Reference §5.1.7): `caselessEquals`,
 are also `Caseless`-prefixed Comparator classes for sorting
 (`CaselessComparator`, `CaselessColumnComparator`,
 `CaselessDescendingComparator`). `PARSE` itself has a `CASELESS`
-modifier (alongside `UPPER`/`LOWER`) for case-independent template
-matching -- this one is standard across classic Rexx and ooRexx, not
-an ooRexx-only extension (confirmed present in Regina's own manual
-too).
+modifier too (alongside `LOWER`) for case-independent template
+matching -- but checked directly against the ANSI X3.274-1996 text:
+only `PARSE UPPER` is genuine ANSI syntax (spelled out in full; no
+abbreviated form is documented for it anywhere in the standard).
+Neither `LOWER` nor `CASELESS` appears in the ANSI text at all --
+both are extensions, present in ooRexx and Regina alike (confirmed in
+Regina's own manual too) but absent from TRL-2-level classic Rexx and
+from the ANSI standard itself.
 
 ---
 

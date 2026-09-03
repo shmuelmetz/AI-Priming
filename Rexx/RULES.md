@@ -676,11 +676,17 @@ them clearly. Do not embed character codes inline in portable code.
 
 ### I/O portability
 
-- `EXECIO` is CMS's native file I/O mechanism, working through stems
-  or the program stack rather than individual `LINEIN`/`LINEOUT`
-  calls. TSO/E REXX in MVS supports only a subset of it -- the STEM
-  and stack forms, not the variable-name form; in CMS, prefer the
-  STEM form too.
+- The original implementation of REX on CMS used `EXECIO`, later
+  inherited by TSO/E and other platforms -- but with different option
+  subsets. CMS's `EXECIO` supports three destinations: the program
+  stack (`FIFO`/`LIFO`), a stem (`STEM stem.`), or a single plain
+  variable (`VAR name` -- but only for exactly one line at a time; the
+  count operand must be `1` with `VAR`). Verified directly against
+  IBM's z/VM 7.2.0 `EXECIO` command reference. TSO/E REXX in MVS
+  supports only the stack and `STEM` forms -- `VAR` is not part of its
+  `EXECIO` syntax at all (confirmed against the TSO/E REXX Reference's
+  own `EXECIO` syntax diagram, which lists only `FIFO`/`LIFO`/`STEM`).
+  In CMS, prefer the STEM form regardless, for bulk data.
 - TSO/E does not support stream I/O (`LINEIN`/`LINEOUT`/`STREAM`,
   with `LINES()`/`CHARS()` returning accurate counts -- the model
   ANSI Rexx standardized) at all outside the UNIX System Services

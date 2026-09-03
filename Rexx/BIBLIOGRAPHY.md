@@ -15,7 +15,12 @@ See also `../ooRexx/BIBLIOGRAPHY.md` for ooRexx-specific references.
   final published ANSI text itself. Same content lineage (same
   committee, ratified with no known section-numbering changes), but
   worth knowing if a specific citation is ever double-checked against
-  a purchased ANSI copy.
+  a purchased ANSI copy. Directly checked for `PARSE LOWER`/`PARSE
+  CASELESS`: neither appears anywhere in the text, confirming only
+  `PARSE UPPER` is genuine ANSI syntax -- `LOWER` and `CASELESS` are
+  ooRexx/Regina extensions, not ANSI-standard, and absent from TRL-2
+  as well. No abbreviated form of `UPPER` is documented anywhere in
+  the standard either.
 
 ### PC DOS 7 REXX User's Guide and Reference
 - **Title:** PC DOS 7 REXX User's Guide and Reference, IBM Corp.,
@@ -149,6 +154,22 @@ See also `../ooRexx/BIBLIOGRAPHY.md` for ooRexx-specific references.
   word-for-word against this PDF's content for CMS, GCS, and XEDIT,
   confirming no drift between the archived edition and the
   currently-maintained documentation.
+
+### z/VM EXECIO Command Reference
+- **Title:** EXECIO (CMS command), part of z/VM CMS Commands and
+  Utilities Reference
+- **URL:** https://www.ibm.com/docs/en/zvm/7.2.0?topic=commands-execio
+  (reachable via the browser pane; ibm.com/docs returns 403 to direct
+  HTTP requests here)
+- **Notes:** Confirms CMS's `EXECIO` supports three destinations:
+  the program stack (`FIFO`/`LIFO`), a stem (`STEM stem.`), or a
+  single plain variable (`VAR name` -- restricted to exactly one line;
+  the `lines` operand must be `1` with `VAR`, and combining `VAR` with
+  `*` is explicitly disallowed). Cross-checked against the TSO/E REXX
+  Reference's own `EXECIO` syntax diagram (Chapter 10), which lists
+  only `FIFO`/`LIFO`/`STEM` -- no `VAR` option at all -- confirming
+  TSO/E's `EXECIO` is genuinely a subset of CMS's, not just narrower
+  documentation of the same options.
 
 ### REXX Reference Summary Handbook
 - **Author:** Richard K. Goran
