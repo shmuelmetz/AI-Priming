@@ -627,7 +627,7 @@ was present in the source.
 | Stack Exchange | https://stackexchange.com/users/110591/shmuel |
 | LinkedIn | https://www.linkedin.com/in/seymour-metz-a89915152 |
 | ORCID | https://orcid.org/0000-0002-6358-8257 |
-| Hebrew name | שְׁמוּאֵל בֵּן לייביש ולאה |
+| Hebrew name | שמואל בן לייביש ולאה |
 
 Name handling:
 - Replace middle names with initials where appropriate.
