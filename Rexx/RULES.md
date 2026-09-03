@@ -676,8 +676,13 @@ them clearly. Do not embed character codes inline in portable code.
 
 ### I/O portability
 
-- The original implementation of REX on CMS used `EXECIO`, later
-  inherited by TSO/E and other platforms. Stream I/O came later; it's
+- REXX's first shipped implementation, on CMS in VM/SP Release 3,
+  used `EXECIO`, later inherited by TSO/E and other platforms --
+  attributed to REXX specifically, not REX: no evidence exists here
+  about what Cowlishaw's original 1979-82 internal-use REX (before the
+  rename, before any public VM/SP release) actually used for I/O; the
+  primary sources checked (see BIBLIOGRAPHY.md) are all post-rename,
+  shipped-product manuals. Stream I/O came later; it's
   part of the language as defined in Cowlishaw's TRL-2 (1990) and
   later formalized by ANSI X3.274-1996 -- both are language
   specifications, not descriptions of any particular product's
