@@ -826,8 +826,8 @@ the two. The `name`/`level` values actually seen in practice:
 
 | Implementation | `name` | `level` | Source |
 |---|---|---|---|
-| OS/2 classic REXX | `REXXSAA` | `4.00` | IBM's own reference manual, verified directly |
-| OREXX | `OBJREXX` | `6.00` | IBM's own reference manual, verified directly |
+| OS/2 classic REXX | `REXXSAA` | `4.00` | *OS/2 Procedures Language 2/REXX Reference*, S10G-6268, verified directly |
+| OREXX | `OBJREXX` | `6.00` | *Object REXX Reference* (REXX.INF), OS/2 edition, c. 2001, verified directly |
 | CMS / TSO/E REXX ("REXX370") | `REXX370` | `4.00` | Widely documented; not checked against a primary manual |
 | Regina | `REXX-Regina_<version>` | `5.00` | Regina's own manual + public examples; ANSI-compliant since 3.1 |
 | ooRexx | `REXX-ooRexx_<version>(MT)_<bits>-bit` | `6.06` | Verified live, ooRexx 5.2.0 |
