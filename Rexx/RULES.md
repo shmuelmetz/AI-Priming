@@ -575,7 +575,7 @@ the identical DIR-STARTUP example) -- PC-DOS's native environment is
 
 Link/attach family: `LINK`, `LINKMVS`, `LINKPGM` (link, same task
 level), `ATTACH`, `ATTCHMVS`, `ATTCHPGM` (attach, different task
-level) -- available in *any* address space, TSO/E or not. APPC family:
+level) -- available in *any* address space, TSO or not. APPC family:
 `CPICOMM` (SAA CPI Communications), `LU62` (APPC/MVS, SNA LU 6.2) --
 available in any MVS address space. † `CONSOLE` needs an active
 extended MCS console session (the TSO/E `CONSOLE` command) plus
