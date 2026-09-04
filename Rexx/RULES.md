@@ -97,7 +97,7 @@ implementation and, for OREXX, by platform edition:
 
 | Function(s) | OREXX | ooRexx 5.2.0 | Regina (`RegUtil`) |
 |---|---|---|---|
-| `SysFileCopy`, `SysFileMove` | No on Windows -- absent from the Windows 2.1 Reference entirely; not checked on AIX | Yes | No -- `SysCopyObject`/`SysMoveObject` instead |
+| `SysFileCopy`, `SysFileMove` | No on Windows -- absent from the Windows 2.1 Reference entirely; not checked on AIX | Yes | No -- `SysCopyObject`/`SysMoveObject` instead. Verified against Regina's own regutil.pdf: despite the "Object" name, these copy/move ordinary files on any platform ("Copies the file named by from to a new name to... Obviously, that doesn't work on other systems" -- referring specifically to the WPS-object-copying bonus, which is OS/2-only; the file-copy behavior itself is universal) |
 | The `SysIsFileXxx` family (`SysIsFile`, `SysIsFileDirectory`, `SysIsFileLink`, and the Windows-only detail variants) | No on Windows; not checked on AIX | Yes | No |
 | The Workplace-Shell family (`SysCreateObject`, `SysDestroyObject`, `SysSetObjectData`, `SysQueryClassList`, and related) | Yes, but only in the OS/2 edition -- confirmed absent from the Windows and AIX editions | No | No |
 | The semaphore family (`SysCreateEventSem`, `SysCreateMutexSem`, and related) | Yes | Yes, but deprecated since (per Appendix B.2.1 of the current Reference) in favor of the `.EventSemaphore`/`.MutexSemaphore` classes | Yes |
