@@ -256,17 +256,10 @@ that must also run on either mainframe dialect should not rely on `--`
 being recognized as a comment, and should avoid adjacent minus signs
 regardless of dialect.
 
-**REXX has no ternary conditional operator.** `cond ? a : b` (C/Java/
-JavaScript syntax) is not REXX syntax at all — the parser reads `?`
-and `:` as part of the surrounding expression and fails with a syntax
-error (ooRexx: "Incorrect expression detected at ':'") rather than
-doing anything resembling a conditional selection. Write out
-`IF`/`THEN`/`ELSE` instead, or compute both branches into a plain
-variable beforehand for a single assignment.
-
 | Date | Entry | Triggered by |
 |------|-------|--------------|
-| 2026-09-04 | Comment nesting, `--` line comment (not ooRexx-only, absent on TSO/E-CMS), no ternary operator | Real bugs hit while writing/debugging unrelated scripts the same session (a nested-comment parse failure in `sync-bin.rex`, a ternary-operator syntax error in `convert-song.rex`); cross-verified against Regina 3.9.7 after installing it |
+| 2026-09-04 | Comment nesting, `--` line comment (not ooRexx-only, absent on TSO/E-CMS) | Real bug hit while writing/debugging `sync-bin.rex` the same session (a nested-comment parse failure); cross-verified against Regina 3.9.7 after installing it |
+| 2026-09-04 | Removed: a "REXX has no ternary operator" note previously added here | User pushback -- it wasn't a real landmine (the syntax error is immediate and self-explanatory, no priming needed) and it didn't belong under "Comments" in the first place; equivalent in kind to documenting that REXX lacks backtracking |
 
 ---
 

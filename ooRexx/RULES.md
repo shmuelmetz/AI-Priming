@@ -112,7 +112,7 @@ line.
 
 ---
 
-## `PARSE ARG` (and every `PARSE` form) silently stringifies object arguments — `USE ARG` only fixes it at that one boundary
+## `PARSE` coerces its source to a string — not a `PARSE ARG` defect, inherent to any string instruction fed an object
 
 [CRITICAL]
 
@@ -123,12 +123,14 @@ Directory"` instead of the real object -- no error at the `parse`
 statement itself, just a confusing `Error 97.1` later when a method
 got sent to what looked like the right variable.
 
-`PARSE` (in every form -- `PARSE ARG`, `PARSE VAR`, `PARSE PULL`,
-`PARSE VALUE`) does template-based string matching, full stop; it has
-no branch for "already an object, pass it through." Handed anything
-that isn't already a string, it unconditionally forces the argument
-through that object's default `STRING` representation before matching
-begins:
+This is not a `PARSE ARG` defect, or even a defect specific to
+argument-passing -- it's what any `PARSE` form does whenever its
+source isn't already a string, because `PARSE` (`ARG`, `VAR`, `PULL`,
+`VALUE`) does template-based string matching, full stop, with no
+branch for "already an object, pass it through." `PARSE VAR` reading a
+plain variable has the identical problem the moment that variable
+holds an object instead of a string -- there is nothing about `ARG`
+specifically that causes this:
 
 ```rexx
 call PassAnObject .directory~new
@@ -143,7 +145,15 @@ PassAnObject: procedure
                         understand message "PUT"
 ```
 
-Verified directly against ooRexx 5.2.0, exact wording included above.
+```rexx
+d = .directory~new
+parse var d x           -- reading a plain variable, not an argument
+say x~class             -- "The String class" -- identical failure,
+                            nothing to do with ARG specifically
+```
+
+Verified directly against ooRexx 5.2.0, both forms, exact wording
+included above.
 `USE ARG` (or `USE STRICT ARG`) avoids the coercion -- it binds the
 argument directly with no string conversion (see the existing
 `USE ARG` / by-reference note in `Rexx/RULES.md`'s Variable
@@ -181,8 +191,9 @@ just the first one.
 
 | Date | Entry | Triggered by |
 |------|-------|--------------|
-| 2026-09-04 | `PARSE ARG`/`PARSE VAR`/etc. silently stringify object arguments; use `USE ARG` for objects | Real bug in `deploy-web.rex`'s `SaveDeployState` routine, found while implementing an incremental-deploy cache |
+| 2026-09-04 | `PARSE` (any form) silently stringifies object sources; use `USE ARG` for objects | Real bug in `deploy-web.rex`'s `SaveDeployState` routine, found while implementing an incremental-deploy cache |
 | 2026-09-04 | Corrected: `USE ARG` only fixes the immediate call boundary, not the object itself -- it stringifies again the moment it crosses a `PARSE ARG` boundary one hop further down the call chain | User pushback ("use arg doesn't resolve the parse arg issue, it just kicks the can down the road") -- verified with a two-routine repro before rewriting the entry |
+| 2026-09-04 | Corrected: this isn't a `PARSE ARG` pitfall specifically -- `PARSE VAR` on an object-valued variable has the identical failure; generalized the entry away from singling out `ARG` | User pushback ("parse arg isn't a pitfall; parse var would have the same issue") -- verified `parse var` against a Directory-valued variable before rewriting |
 
 ---
 
