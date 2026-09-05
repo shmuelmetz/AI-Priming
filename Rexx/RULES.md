@@ -205,6 +205,71 @@ Note: the published desktop version was split across two issues.
 
 ---
 
+### Comments
+
+[IMPORTANT]
+
+REXX comments (`/* */`) **nest**, unlike most C-family languages: a
+`/*` encountered while already inside a comment opens an additional
+level, and it takes an equal number of `*/` to close back out to real
+code. Standard Rexx behavior since TRL-2, not an ooRexx extension —
+verified identical on ooRexx 5.2.0 and Regina 3.9.7 (an unbalanced
+`/* outer /* inner still-in-outer */` raises the same "unmatched
+comment delimiter" error on both).
+
+The trap: ordinary prose *inside* a comment can contain the two-char
+sequence `/*` with no intent to nest anything, e.g. documenting file
+extensions as `*.rex/*.ps1/*.lua` — each `rex/*.ps1` and `ps1/*.lua`
+opens an unintended extra level. With only one `*/` actually written,
+the remaining levels stay open and everything after is silently
+absorbed as comment text until end of file — reported as "unmatched
+comment" anchored at the *original*, outermost `/*`, not at whatever
+text actually broke the pairing. Write "`.rex`, `.ps1`, and `.lua`"
+instead, or avoid `/` immediately before a literal `*` in comment
+prose.
+
+**`--` as a line comment (to end of line) is NOT ooRexx-specific** —
+verified present on both ooRexx 5.2.0 and Regina 3.9.7 (a
+non-object-oriented, ANSI-1996-level classic interpreter). **It has a
+real silent-corruption trap in both**: `--` is recognized as a comment
+start unconditionally, even where two adjacent minus signs were meant
+as double-negation:
+
+```rexx
+a = 5
+b = 3
+say a - -b      /* 8 -- real double-negation, spaces keep the "-"s separate */
+say a-- b       /* 5 on BOTH interpreters -- "-- b" read as a comment
+                   and discarded; this is NOT "a minus negative b" */
+```
+
+No error is raised on either interpreter — the expression silently
+evaluates to the wrong number. Subtracting a negative needs a space
+between the two signs whenever they could end up adjacent (including
+via variable substitution, not just literal source text).
+
+**Confirmed absent on TSO/E REXX and CMS REXX** (the pre-ANSI,
+level-4.00 dialects), from the paper's own author's direct experience:
+neither supports `--` as a comment, and neither supports UTF-8 source
+at all — source there is EBCDIC text, not Unicode of any kind. Code
+that must also run on either mainframe dialect should not rely on `--`
+being recognized as a comment, and should avoid adjacent minus signs
+regardless of dialect.
+
+**REXX has no ternary conditional operator.** `cond ? a : b` (C/Java/
+JavaScript syntax) is not REXX syntax at all — the parser reads `?`
+and `:` as part of the surrounding expression and fails with a syntax
+error (ooRexx: "Incorrect expression detected at ':'") rather than
+doing anything resembling a conditional selection. Write out
+`IF`/`THEN`/`ELSE` instead, or compute both branches into a plain
+variable beforehand for a single assignment.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-09-04 | Comment nesting, `--` line comment (not ooRexx-only, absent on TSO/E-CMS), no ternary operator | Real bugs hit while writing/debugging unrelated scripts the same session (a nested-comment parse failure in `sync-bin.rex`, a ternary-operator syntax error in `convert-song.rex`); cross-verified against Regina 3.9.7 after installing it |
+
+---
+
 ### Abutment
 
 [IMPORTANT]
@@ -338,6 +403,30 @@ do forever
     BELL:
     end       /* ERROR: DO was flushed by SIGNAL */
 ```
+
+**This example genuinely diverges by implementation — checked
+directly, and it's a three-way split, not two-way.** All three
+interpreters reject the pattern, but for different reasons at
+different points:
+
+- **TSO/E REXX**: `SIGNAL` and the label are both accepted; the error
+  surfaces later, at the `END` statement, exactly as shown above.
+- **Regina 3.9.7**: rejected immediately at the `SIGNAL BELL`
+  statement itself — `Error 16.2: Cannot SIGNAL to label "BELL"
+  because it is inside an IF, SELECT or DO group` — objecting to the
+  target label's location, not to a stray `END` later.
+- **ooRexx 5.2.0**: rejected even earlier, at the label *declaration*
+  itself, regardless of `SIGNAL` — `Error 47.2: Labels are not
+  allowed within a DO/LOOP block` — a static structural rule with
+  nothing to do with control-stack flushing.
+
+Don't assume a specific diagnostic, or even a specific *point of
+failure*, is portable across dialects for this pattern — only that
+some form of rejection is universal.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-09-04 | This example fails three different ways across TSO/E REXX, Regina, and ooRexx | Cross-checked while drafting Safe-REXX-Merged-DRAFT.md, after installing Regina 3.9.7 specifically for dual-dialect verification |
 
 Use `LEAVE`, `ITERATE`, and `RETURN` for normal flow control.
 
@@ -486,6 +575,49 @@ name in upper case) is a legitimate and readable idiom. However:
 - If you choose not to rely on this behaviour, add `SIGNAL ON NOVALUE`
   at program start to trap any reference to a dropped symbol.
 
+**`a. = b.` (bare stem assigned to bare stem) is not "copy the array"
+— it wipes the whole target stem to one scalar value.** `a.` and `b.`
+used bare (no tail) are each simply the name of one ordinary
+variable — the same "default value" variable the `a. = ''` idiom
+initializes. `a. = b.` reads `b.`'s current value as that bare
+variable, and assigning to a bare stem name resets the *entire* stem
+as an ordinary consequence of how that assignment is defined,
+replacing every previously-set tail (`a.1`, `a.2`, ...), not merely
+supplying a default for tails not yet set. If `b.`'s bare form was
+never itself explicitly assigned (only individual tails like `b.1`
+were), it is still a dropped symbol and evaluates to its own name — so
+every tail of `a.` ends up holding the literal string `"B."`, not any
+value `b` actually holds anywhere. Verified against Regina 3.9.7:
+
+```rexx
+a.1 = 'a-one'
+a.2 = 'a-two'
+b.1 = 'b-one'          /* b.'s bare form itself was never set */
+
+a. = b.
+
+say a.1                /* 'B.' -- not 'a-one', not 'b-one' */
+say a.2                /* 'B.' -- a.'s own prior data is gone too */
+
+b.1 = 'CHANGED'
+say a.1                /* still 'B.' -- a. and b. are fully
+                           independent after the assignment */
+```
+
+`a.`/`b.` remain fully independent afterward regardless of whether
+`b.`'s bare form was pre-set to something meaningful. **ooRexx does
+something different for the identical line — genuine object aliasing,
+not a stem-wide wipe: `a.` and `b.` become the literal same Stem
+object (`a. == b.` is true), so mutating either name afterward mutates
+both.** See `../ooRexx/RULES.md`'s stem-access section, case 4, for
+the full ooRexx-side treatment. Code written assuming one dialect's
+behavior here is simply wrong under the other — not broken, just
+running that dialect's own well-defined (and different) semantics.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-09-04 | `a. = b.` wipes the whole target stem to a scalar in classic Rexx (opposite of ooRexx's object-aliasing) | User asked "what does `a. = b.` mean" while drafting Safe-REXX-Merged-DRAFT.md; verified on Regina 3.9.7 |
+
 ---
 
 ### Variable references (passing by name)
@@ -505,15 +637,48 @@ name.** `VALUE(name)` reads, `VALUE(name, newvalue)` sets and returns
 the old value; both touch exactly one variable and nothing else, even
 if `name` is malformed or attacker-controlled. `INTERPRET` executes
 whatever Rexx source text it is handed, not just an assignment.
-Verified directly: handing the same crafted string (an invalid
-variable name with a second clause hidden after a semicolon) to each
--- `VALUE()` raised a `SYNTAX` condition on the bad name and ran
-nothing else; `INTERPRET` began executing the hidden second clause
-(visibly compiling and invoking the routine it named) before failing
-only because that call was missing a required argument, not because
-the injection was blocked. Reserve `INTERPRET` for genuinely dynamic
-code -- a whole statement or expression built at run time -- not as a
-substitute for a single indirect variable reference.
+
+**Corrected 2026-09-04**: the previous version of this rule compared
+`VALUE(name)` (one argument, read) against `INTERPRET name` with an
+unrelated crafted string -- not a fair comparison, since the two
+weren't being asked to do the same task. Redone as a genuine
+same-task comparison, per direct feedback: both should perform
+indirect assignment by name, using `foo = 'bar=1; call SomeRoutine;
+x'` as a malicious name, verified identically on ooRexx 5.2.0 and
+Regina 3.9.7:
+
+```rexx
+foo = 'bar=1; call SomeRoutine; x'
+
+/* Way 1: build a string and INTERPRET it -- foo'=7' abuts (concate-
+   nates) foo's value with the literal "=7" first, THEN runs the
+   result as source: */
+interpret foo'=7'
+say bar        /* 1 */
+say x          /* 7 -- absorbs the trailing "=7" harmlessly */
+               /* but along the way, "call SomeRoutine" -- the clause
+                  hidden in the middle of foo's value -- also ran */
+
+/* Way 2: VALUE(name, newvalue) -- foo's value is used ONLY as a
+   variable name, never as source text to execute: */
+baz = value(foo, 7)   /* raises a SYNTAX condition immediately --
+                          "bar=1; call SomeRoutine; x" is not a legal
+                          variable name -- nothing executes at all,
+                          not even the harmless-looking bar=1 part */
+```
+
+Both lines are asked to do the identical job: set the variable named
+by `foo` to `7`. `INTERPRET` gets there by building a whole clause and
+running it -- three clauses, actually, since `foo`'s value already
+contained two semicolons -- and has no way to tell "the part of this
+string that's supposed to be a name" from "the part that's supposed to
+be code," because after concatenation there's only ever one string,
+containing all of it. `VALUE()` never blurs that line: its first
+argument is always and only a name, checked as one, so a string that
+isn't a legal name is refused outright rather than executed. Reserve
+`INTERPRET` for genuinely dynamic code -- a whole statement or
+expression built at run time -- not as a substitute for a single
+indirect variable reference.
 
 `VALUE` also takes an optional third argument, `selector`, naming a
 variable pool other than the program's own -- `VALUE(name, newvalue,
@@ -725,7 +890,10 @@ them clearly. Do not embed character codes inline in portable code.
   unconditionally); ooRexx's `CHARS()` returns an exact byte count for
   disk files (tested live: 24, then 12 after reading one line) but its
   own `LINES()` returned only `1` in the same test, both before and
-  after. On OS/2, both `CHARS()` and `LINES()` return only `0` or `1`,
+  after. Regina 3.9.7 matches ooRexx's pattern exactly, not CMS's:
+  verified against a real 29-byte, 3-line disk file, `chars()` reports
+  exactly `29` but `lines()` reports `1`, not the real line count. On
+  OS/2, both `CHARS()` and `LINES()` return only `0` or `1`,
   for every stream kind. `= 0` is still a reliable, portable
   end-of-file test either way, in every dialect (ANSI Rexx and ooRexx
   included), unlike `STREAM(file,'State')` below. Never assume a

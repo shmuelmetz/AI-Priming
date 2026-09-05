@@ -112,6 +112,56 @@ line.
 
 ---
 
+## `PARSE ARG` (and every `PARSE` form) silently stringifies object arguments — use `USE ARG` for objects
+
+[CRITICAL]
+
+Real bug hit 2026-09-04 in `deploy-web.rex`: a `.Directory` object
+passed via `call SaveDeployState StateFile, stateMtime` and read back
+with `parse arg path, state` silently became the string `"a
+Directory"` instead of the real object -- no error at the `parse`
+statement itself, just a confusing `Error 97.1` later when a method
+got sent to what looked like the right variable.
+
+`PARSE` (in every form -- `PARSE ARG`, `PARSE VAR`, `PARSE PULL`,
+`PARSE VALUE`) does template-based string matching, full stop; it has
+no branch for "already an object, pass it through." Handed anything
+that isn't already a string, it unconditionally forces the argument
+through that object's default `STRING` representation before matching
+begins:
+
+```rexx
+call PassAnObject .directory~new
+exit
+
+PassAnObject: procedure
+    parse arg d
+    say d~class     -- "The String class" -- NOT Directory
+    say d           -- "a Directory" -- the placeholder text itself,
+                        not the object's contents
+    d~put('x', 'k') -- Error 97.1: Object "a Directory" does not
+                        understand message "PUT"
+```
+
+Verified directly against ooRexx 5.2.0, exact wording included above.
+`USE ARG` (or `USE STRICT ARG`) is the fix whenever an argument is a
+genuine object rather than plain text -- it binds the argument
+directly with no string coercion (see the existing `USE ARG` /
+by-reference note in `Rexx/RULES.md`'s Variable References section).
+This is an easy bug to introduce by accident: `PARSE ARG` is the
+classic-Rexx habit for plain-string arguments, correct in that case,
+and the failure only surfaces the moment a routine written that way
+receives something that isn't already a string -- exactly what
+happened here, since every *other* routine in the same file took
+plain string paths and `parse arg` had been copy-pasted as the house
+style without noticing this one call passed an object instead.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-09-04 | `PARSE ARG`/`PARSE VAR`/etc. silently stringify object arguments; use `USE ARG` for objects | Real bug in `deploy-web.rex`'s `SaveDeployState` routine, found while implementing an incremental-deploy cache |
+
+---
+
 ## `address...with` — capturing child process output (standard Rexx)
 
 ooRexx supports capturing child process stdout and stderr directly
@@ -752,27 +802,47 @@ method -- the caller's locals are simply not there to expose. See
 below for the third case: `EXPOSE` is not legal at all in a
 `::ROUTINE`.
 
-## `EXPOSE` inside `::ROUTINE` is a parse-time syntax error
+## `EXPOSE` inside `::ROUTINE` is a RUNTIME error, not parse-time
 
-`EXPOSE` is not legal inside a `::ROUTINE` body — a routine has no
-access to a caller's variable pool the way an internal subroutine
-does. Attempting it raises **Error 27.1** at *parse time*, before any
-instruction in the calling scope executes.
+**Corrected 2026-09-04** — every specific claim in the previous
+version of this entry was wrong, and it had never actually been run
+before being written down. `EXPOSE` is not legal inside a `::ROUTINE`
+body — a routine has no access to a caller's variable pool the way an
+internal subroutine does — but the failure happens at **runtime**,
+the moment the routine is *called*, not at parse time:
 
-The parse-time timing is the trap: a `signal on syntax` trap (or any
-other error handler) set up in the caller **will not fire**, because
-the whole program fails to parse before execution ever begins. A
-script invoking such a routine via `address system ... with output
-stem ... error stem ...` will show a non-zero `rc`, empty output, and
-the real error only in the captured stderr stem — not in any
-in-process trap. Symptom in practice: a launched window opens and
-closes immediately with no log file written at all, because the trap
-that was supposed to write the log never ran.
+```rexx
+say 'before call'      -- this really does print
+call myroutine          -- fails HERE, not at parse time
+say 'after call'        -- never reached
+exit
 
-To test for this class of error, don't rely on a `signal on syntax`
-trap in the same process — invoke the suspect code as a genuinely
-separate process (`address system` with output/error stems, or
-equivalent) and inspect its captured stderr and `rc`.
+::routine myroutine
+  expose foo            -- Error 98.992: "The EXPOSE instruction may
+  say foo                  only be used from method invocations."
+```
+
+Verified directly against ooRexx 5.2.0: the program parses and starts
+running normally; `before call` prints; the actual error is `Error
+98.992`, not `Error 27.1`; and it **is** catchable in-process, exactly
+like any other runtime condition — `signal on syntax` set in the
+caller fires normally, and `condition('C')` reports `SYNTAX`. None of
+the previous claims (parse-time failure, trap can't fire, symptom is
+only visible in a child process's captured stderr) held up once
+actually tested. If code invoking such a routine is launched as a
+child process with no trap set up, the ordinary consequence of any
+uncaught error applies (non-zero `rc`, diagnostic on stderr) — nothing
+special about this particular error in that respect either.
+
+**Lesson for this file itself**: this entry was written with specific
+error numbers and confident claims about parse-time-vs-runtime timing
+that were never checked against a live interpreter. Treat any
+un-cited specific error number/timing claim in this file with the
+same suspicion until it's been run.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-09-04 | Corrected: `EXPOSE` in `::ROUTINE` is a runtime error (98.992), not parse-time (27.1); IS catchable via `signal on syntax` | Verified while cross-checking Safe-REXX-Merged-DRAFT.md against a live ooRexx 5.2.0 interpreter -- the original claim had never been tested |
 
 ---
 
@@ -945,6 +1015,53 @@ index into a plain simple variable first, then use it as the tail —
 `n` needs no bracket at all; `.[expr]` is only for tails more complex
 than a single symbol.
 
+**4. `a. = b.` (bare stem assigned to bare stem) is not portable
+between classic Rexx and ooRexx — it's a correct, ordinary assignment
+in each, just not the *same* assignment.** By analogy with arrays,
+`a. = b.` reads as "copy all of b's compound variables into a."
+Neither dialect does that. In ooRexx specifically, `a.` and `b.` are
+each a bare symbol naming one particular Stem object (per case 1's
+note above); `a. = b.` is an ordinary single-variable assignment — it
+points the name `a.` at whatever object `b.` currently names,
+replacing `a.`'s previous binding entirely. Verified directly against
+ooRexx 5.2.0:
+
+```rexx
+a.1 = 'a-one'
+a.2 = 'a-two'
+b.1 = 'b-one'
+
+a. = b.
+
+say a.1     -- 'b-one'  -- a.'s own prior data is gone
+say a.2     -- 'B.2'    -- b.2's own dropped-symbol default, because
+                            a. now IS b.
+say (a. == b.)   -- 1  -- the same object, not a copy
+
+b.1 = 'CHANGED'
+say a.1     -- 'CHANGED' -- mutating b. mutates a. too, since they're
+                             one object under two names
+```
+
+Classic Rexx does something else entirely for the same line: `a.`/`b.`
+there are each just the ordinary "default value" variable the `a. =
+''` idiom sets, and assigning to that bare name resets the *entire*
+stem — every previously-set tail (`a.1`, `a.2`, ...) gets replaced,
+not just tails not yet set — with `b.`'s current value as that bare
+variable (its own dropped-symbol name, `"B."`, if `b.`'s bare form was
+never itself explicitly assigned). Verified against Regina 3.9.7 with
+the identical starting data above: `a.1` and `a.2` both come out
+`"B."` (not `'a-one'`/`'a-two'`, not `'b-one'`), and `a.`/`b.` stay
+fully independent afterward — mutating `b.1` never affects `a.1`. See
+`Rexx/RULES.md`'s own stem section for the classic-Rexx side in full.
+The two dialects fail in opposite ways (aliased-together vs.
+wiped-and-independent), and code written assuming either dialect's
+behavior will simply be wrong under the other — not broken, just
+running a different well-defined semantics than the author had in
+mind. If an independent copy is actually wanted, copy tails
+individually (or via `~allIndexes`/`~allItems`) into a fresh
+`.stem~new` rather than assigning one bare stem to another.
+
 **A stem's own item count sidesteps maintaining a manual counter tail
 at all -- but `~items` does NOT add elements; it is a read-only
 query.** `orphans.` is always a genuine Stem object; `~items` reports
@@ -1034,6 +1151,7 @@ collection objects over stem simulation.
 | 2026-08-26 | Indirect stem access: three forms | User reported "lots of stem.(expression) errors" despite the collection-object rule already being documented above |
 | 2026-08-27 | Added case 3: nested compound reference as a tail component is valid but silently wrong | Real bug in `remote-orphan-cleanup.rex` (`orphans.orphans.0 = remRel`), caught by mock-data test before running live; my own first fix comment mischaracterized it as "invalid" until the user corrected it |
 | 2026-08-27 | Added: a quoted string literal can never be a tail | Debugging a retest of the case-3 fix above -- a mock test written with `stem.'literal'` produced a silently wrong, non-crashing result |
+| 2026-09-04 | Added case 4: `a. = b.` aliases the two Stem objects in ooRexx (not a copy), wipes the whole stem to a scalar in classic Rexx instead -- cross-dialect incompatible, not "destructive" | User asked "what does `a. = b.` mean" while drafting Safe-REXX-Merged-DRAFT.md; verified on both ooRexx 5.2.0 and Regina 3.9.7 after installing the latter specifically for this kind of cross-check |
 
 ---
 
