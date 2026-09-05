@@ -112,25 +112,29 @@ line.
 
 ---
 
-## `PARSE` coerces its source to a string — not a `PARSE ARG` defect, inherent to any string instruction fed an object
+## `PARSE` coercing its source to a string is correct behavior, not a defect — pick `USE ARG` yourself when the source is an object
 
 [CRITICAL]
 
 Real bug hit 2026-09-04 in `deploy-web.rex`: a `.Directory` object
 passed via `call SaveDeployState StateFile, stateMtime` and read back
-with `parse arg path, state` silently became the string `"a
-Directory"` instead of the real object -- no error at the `parse`
-statement itself, just a confusing `Error 97.1` later when a method
-got sent to what looked like the right variable.
+with `parse arg path, state` became the string `"a Directory"` instead
+of the real object -- no error at the `parse` statement itself, just a
+confusing `Error 97.1` later when a method got sent to what looked
+like the right variable.
 
-This is not a `PARSE ARG` defect, or even a defect specific to
-argument-passing -- it's what any `PARSE` form does whenever its
-source isn't already a string, because `PARSE` (`ARG`, `VAR`, `PULL`,
-`VALUE`) does template-based string matching, full stop, with no
-branch for "already an object, pass it through." `PARSE VAR` reading a
-plain variable has the identical problem the moment that variable
-holds an object instead of a string -- there is nothing about `ARG`
-specifically that causes this:
+`PARSE` (`ARG`, `VAR`, `PULL`, `VALUE`) is a string-matching
+instruction; converting its source to a string before matching is
+exactly its documented contract, not a malfunction. It did what it was
+told to do. The actual bug was upstream of `PARSE` entirely: the
+calling code handed a string-matching instruction a value that was
+never a string, when `USE ARG` -- which binds without any conversion
+-- was the instruction that fit the data. Blaming `PARSE` for stringifying an
+object is blaming the tool for doing its job; the fix is choosing the
+right instruction for what the value actually is, not treating `PARSE`
+as broken. `PARSE VAR` reading a plain variable makes the same correct
+choice the moment that variable holds an object -- there is nothing
+`ARG`-specific here:
 
 ```rexx
 call PassAnObject .directory~new
@@ -148,20 +152,18 @@ PassAnObject: procedure
 ```rexx
 d = .directory~new
 parse var d x           -- reading a plain variable, not an argument
-say x~class             -- "The String class" -- identical failure,
-                            nothing to do with ARG specifically
+say x~class             -- "The String class" -- same correct
+                            behavior, nothing to do with ARG
 ```
 
 Verified directly against ooRexx 5.2.0, both forms, exact wording
-included above.
-`USE ARG` (or `USE STRICT ARG`) avoids the coercion -- it binds the
-argument directly with no string conversion (see the existing
-`USE ARG` / by-reference note in `Rexx/RULES.md`'s Variable
-References section) -- but **it is not a fix for the object, only for
-that one call boundary**. The safety is a property of how the
-*receiving* routine parses its arguments, not of the object itself, so
-it has to be re-applied at every single routine boundary the object
-crosses. Passing it on doesn't propagate any protection:
+included above. Whenever a value might be an object rather than plain
+text, use `USE ARG` (or `USE STRICT ARG`) instead of `PARSE ARG` (see
+the existing `USE ARG` / by-reference note in `Rexx/RULES.md`'s
+Variable References section) -- but recognizing that a value is an
+object is a judgment call made fresh at *every* routine boundary it
+crosses, not a property that sticks to the value once decided
+correctly somewhere upstream:
 
 ```rexx
 call RoutineA .directory~new
@@ -169,31 +171,31 @@ exit
 
 RoutineA: procedure
     use arg d
-    say 'in A:' d~class    -- "The Directory class" -- fine so far
+    say 'in A:' d~class    -- "The Directory class" -- correct choice
     call RoutineB d
     return
 
 RoutineB: procedure
     parse arg d
-    say 'in B:' d~class    -- "The String class" -- stringified again,
-                              one hop later, despite A doing it right
+    say 'in B:' d~class    -- "The String class" -- PARSE ARG was the
+                              wrong choice here too, made independently
     return
 ```
 
 Verified directly: `RoutineA` reports the real class; `RoutineB`,
-receiving the exact same value one call deeper, reports `String`.
-`USE ARG` at the first hop bought nothing for the second. There is no
-single-point fix -- every routine anywhere in a call chain that might
-receive this value as an object must use `USE ARG`/`USE STRICT ARG`
-itself. `PARSE ARG` is only safe to use, anywhere in the chain, for
-arguments that are guaranteed to be plain strings at every hop, not
-just the first one.
+receiving the exact same value one call deeper, reports `String`
+because it picked `PARSE ARG` for an argument that wasn't a string.
+`RoutineA` choosing correctly bought `RoutineB` nothing -- there is no
+single point where the object can be made "safe" once and for all;
+every routine anywhere in a call chain has to look at what it's
+actually being handed and choose `USE ARG` or `PARSE ARG` accordingly.
 
 | Date | Entry | Triggered by |
 |------|-------|--------------|
-| 2026-09-04 | `PARSE` (any form) silently stringifies object sources; use `USE ARG` for objects | Real bug in `deploy-web.rex`'s `SaveDeployState` routine, found while implementing an incremental-deploy cache |
-| 2026-09-04 | Corrected: `USE ARG` only fixes the immediate call boundary, not the object itself -- it stringifies again the moment it crosses a `PARSE ARG` boundary one hop further down the call chain | User pushback ("use arg doesn't resolve the parse arg issue, it just kicks the can down the road") -- verified with a two-routine repro before rewriting the entry |
-| 2026-09-04 | Corrected: this isn't a `PARSE ARG` pitfall specifically -- `PARSE VAR` on an object-valued variable has the identical failure; generalized the entry away from singling out `ARG` | User pushback ("parse arg isn't a pitfall; parse var would have the same issue") -- verified `parse var` against a Directory-valued variable before rewriting |
+| 2026-09-04 | `PARSE` (any form) coerces a non-string source to a string; use `USE ARG` when the source is an object | Real bug in `deploy-web.rex`'s `SaveDeployState` routine, found while implementing an incremental-deploy cache |
+| 2026-09-04 | Corrected: `USE ARG` chosen correctly at one routine boundary doesn't carry forward -- the next routine down the call chain still has to choose `USE ARG` over `PARSE ARG` for itself | User pushback ("use arg doesn't resolve the parse arg issue, it just kicks the can down the road") -- verified with a two-routine repro before rewriting the entry |
+| 2026-09-04 | Corrected: this isn't a `PARSE ARG` pitfall specifically -- `PARSE VAR` on an object-valued variable behaves identically; generalized the entry away from singling out `ARG` | User pushback ("parse arg isn't a pitfall; parse var would have the same issue") -- verified `parse var` against a Directory-valued variable before rewriting |
+| 2026-09-04 | Corrected: reframed throughout -- `PARSE` stringifying its source is correct, documented behavior, not a defect; the bug is choosing `PARSE` instead of `USE ARG` for a value that's an object | User pushback ("it doesn't fail; it does what it is supposed to. it's a poor workman who blames his tools.") |
 
 ---
 
