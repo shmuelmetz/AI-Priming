@@ -112,7 +112,7 @@ line.
 
 ---
 
-## `PARSE ARG` (and every `PARSE` form) silently stringifies object arguments — use `USE ARG` for objects
+## `PARSE ARG` (and every `PARSE` form) silently stringifies object arguments — `USE ARG` only fixes it at that one boundary
 
 [CRITICAL]
 
@@ -144,21 +144,45 @@ PassAnObject: procedure
 ```
 
 Verified directly against ooRexx 5.2.0, exact wording included above.
-`USE ARG` (or `USE STRICT ARG`) is the fix whenever an argument is a
-genuine object rather than plain text -- it binds the argument
-directly with no string coercion (see the existing `USE ARG` /
-by-reference note in `Rexx/RULES.md`'s Variable References section).
-This is an easy bug to introduce by accident: `PARSE ARG` is the
-classic-Rexx habit for plain-string arguments, correct in that case,
-and the failure only surfaces the moment a routine written that way
-receives something that isn't already a string -- exactly what
-happened here, since every *other* routine in the same file took
-plain string paths and `parse arg` had been copy-pasted as the house
-style without noticing this one call passed an object instead.
+`USE ARG` (or `USE STRICT ARG`) avoids the coercion -- it binds the
+argument directly with no string conversion (see the existing
+`USE ARG` / by-reference note in `Rexx/RULES.md`'s Variable
+References section) -- but **it is not a fix for the object, only for
+that one call boundary**. The safety is a property of how the
+*receiving* routine parses its arguments, not of the object itself, so
+it has to be re-applied at every single routine boundary the object
+crosses. Passing it on doesn't propagate any protection:
+
+```rexx
+call RoutineA .directory~new
+exit
+
+RoutineA: procedure
+    use arg d
+    say 'in A:' d~class    -- "The Directory class" -- fine so far
+    call RoutineB d
+    return
+
+RoutineB: procedure
+    parse arg d
+    say 'in B:' d~class    -- "The String class" -- stringified again,
+                              one hop later, despite A doing it right
+    return
+```
+
+Verified directly: `RoutineA` reports the real class; `RoutineB`,
+receiving the exact same value one call deeper, reports `String`.
+`USE ARG` at the first hop bought nothing for the second. There is no
+single-point fix -- every routine anywhere in a call chain that might
+receive this value as an object must use `USE ARG`/`USE STRICT ARG`
+itself. `PARSE ARG` is only safe to use, anywhere in the chain, for
+arguments that are guaranteed to be plain strings at every hop, not
+just the first one.
 
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-09-04 | `PARSE ARG`/`PARSE VAR`/etc. silently stringify object arguments; use `USE ARG` for objects | Real bug in `deploy-web.rex`'s `SaveDeployState` routine, found while implementing an incremental-deploy cache |
+| 2026-09-04 | Corrected: `USE ARG` only fixes the immediate call boundary, not the object itself -- it stringifies again the moment it crosses a `PARSE ARG` boundary one hop further down the call chain | User pushback ("use arg doesn't resolve the parse arg issue, it just kicks the can down the road") -- verified with a two-routine repro before rewriting the entry |
 
 ---
 
