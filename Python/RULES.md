@@ -49,7 +49,7 @@ class OORexxLexer(RegexLexer):   # class: PascalCase
 ```
 
 A common AI-generated-code failure mode: mixing conventions within one
-file (e.g. `snake_case` functions but `camelCase` local variables), or
+file (e.g., `snake_case` functions but `camelCase` local variables), or
 defaulting to `camelCase` throughout because it's the dominant
 convention in other training-data-heavy languages (JavaScript, Java,
 C#). Python's own standard library and virtually all major frameworks
@@ -221,7 +221,7 @@ processing, not just Pygments lexers.
 
 [IMPORTANT]
 
-On a Windows machine with multiple Python installs (e.g. a bundled
+On a Windows machine with multiple Python installs (e.g., a bundled
 interpreter from another application, plus a separately-installed
 one), bare `python` and `pip` on PATH can resolve to **different**
 interpreters. `pip install X` followed by `python -c "import X"` can

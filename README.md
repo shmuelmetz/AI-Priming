@@ -22,9 +22,9 @@ AI-Priming/
 ```
 
 Language directory names follow established casing conventions:
-- Product names: use the vendor's established casing (e.g. `ooRexx`, `NetRexx`)
-- ANSI/ISO standard names: use the standard's casing (e.g. `Rexx`)
-- Initialisms: all caps (e.g. `HLASM`, `PL1`)
+- Product names: use the vendor's established casing (e.g., `ooRexx`, `NetRexx`)
+- ANSI/ISO standard names: use the standard's casing (e.g., `Rexx`)
+- Initialisms: all caps (e.g., `HLASM`, `PL1`)
 
 ## Languages
 

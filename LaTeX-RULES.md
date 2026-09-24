@@ -92,7 +92,7 @@ in HTML, where it's typed as plain text matching the organization's
 own styling — "RexxLA", not "REXXLA" or "REXLA", both of which were
 found as errors on the website and corrected). If it's ever needed
 in a paper or shirt source, this repo has no existing convention for
-it yet — define one locally (e.g. in `site-macros.sty`) rather than
+it yet — define one locally (e.g., in `site-macros.sty`) rather than
 inventing an ad hoc per-file spelling.
 
 ---

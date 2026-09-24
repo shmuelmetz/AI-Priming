@@ -62,9 +62,9 @@ message-send statement used *bare* -- as a whole clause, its return
 value not assigned to anything -- is handled the same way a `call` to
 an internal routine is: if the invoked method has a real return value,
 `result` is set to it; if the method returns **nothing at all** (not
-even `.nil` -- some Collection methods, e.g. `~put`, are defined to
+even `.nil` -- some Collection methods, e.g., `~put`, are defined to
 return no result object), `result` is **dropped** (reverts to a bare
-symbol, i.e. to its own name, `'RESULT'`, per ordinary Rexx
+symbol, i.e., to its own name, `'RESULT'`, per ordinary Rexx
 dropped-symbol semantics -- ANSI X3.274-1996 §3.1.16 defines "dropped"
 as a state of a *symbol*, not of a variable) exactly as if that had
 been a `call` to a routine with no `return expr`.
@@ -376,7 +376,7 @@ oc~append('b')
 /* Bag, Set, Queue, Stack also available */
 ```
 
-Do NOT generate stem-based collections (e.g. `items.0`, `items.1`)
+Do NOT generate stem-based collections (e.g., `items.0`, `items.1`)
 when an ooRexx collection class is appropriate. Stems are a classic
 Rexx idiom; collection objects are the ooRexx idiom.
 
@@ -467,7 +467,7 @@ dir['name'] = 'Shmuel'
 say dir['name']
 ```
 
-For mixed integer/string keyed collections (e.g. stdout lines plus
+For mixed integer/string keyed collections (e.g., stdout lines plus
 metadata), use a `.Array` with named string indices alongside integer
 indices:
 
@@ -803,7 +803,7 @@ the same thing:
   the receiving object itself, or from a class method in its
   inheritance chain, not from arbitrary outside code. `Class~enhanced`
   is the externally-usable path: it creates a new instance with extra
-  methods attached at creation, taking a collection (e.g. a
+  methods attached at creation, taking a collection (e.g., a
   `.Directory`) mapping method names to method source.
 
 Verified live: `.Array~new~notAMethod('x')` raises a `SYNTAX`
@@ -1451,7 +1451,7 @@ say 'session-'~abbrev('session-2026')             -- 0 (receiver too short)
 `left(x, length(prefix)) = prefix` does the same comparison, but
 requires the reader to separately confirm the `length()` call actually
 measures the right string and that the two operands haven't drifted
-out of sync (e.g. after an edit that changes the literal prefix on one
+out of sync (e.g., after an edit that changes the literal prefix on one
 side but not the `length()` argument on the other) — `~abbrev` removes
 that whole class of transcription error by taking the prefix once.
 Prefer it for any new prefix-check code.

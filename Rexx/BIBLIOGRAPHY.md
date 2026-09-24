@@ -143,7 +143,7 @@ See also `../ooRexx/BIBLIOGRAPHY.md` for ooRexx-specific references.
 
 ### z/VM REXX/VM Reference
 - **Title:** z/VM REXX/VM Reference (SC24-6314/SC24-5963, per release)
-- **URL:** https://www.vm.ibm.com/library/ (per-release PDFs, e.g.
+- **URL:** https://www.vm.ibm.com/library/ (per-release PDFs, e.g.,
   https://www.vm.ibm.com/library/730pdfs/73631400.pdf); current z/VM
   7.4.0 online equivalents (reachable via the browser pane; ibm.com/docs
   returns 403 to direct HTTP requests here):

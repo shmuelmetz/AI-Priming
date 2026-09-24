@@ -168,7 +168,7 @@ Key points for classic Rexx:
   (X3.274-1996), implemented by Regina — it is not an ooRexx extension,
   despite an earlier version of this bullet claiming otherwise. See
   "CALL ON vs SIGNAL ON" below for the full treatment: which conditions
-  each form supports, and real platform gaps (e.g. TSO/E lacks
+  each form supports, and real platform gaps (e.g., TSO/E lacks
   NOTREADY) that are worth checking instead of the retracted claim
   above.
 
@@ -218,7 +218,7 @@ verified identical on ooRexx 5.2.0 and Regina 3.9.7 (an unbalanced
 comment delimiter" error on both).
 
 The trap: ordinary prose *inside* a comment can contain the two-char
-sequence `/*` with no intent to nest anything, e.g. documenting file
+sequence `/*` with no intent to nest anything, e.g., documenting file
 extensions as `*.rex/*.ps1/*.lua` — each `rex/*.ps1` and `ps1/*.lua`
 opens an unintended extra level. With only one `*/` actually written,
 the remaining levels stay open and everything after is silently

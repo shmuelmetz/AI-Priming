@@ -84,7 +84,7 @@ scripts or instructions.
 
 ```rexx
 /* SysDriveMap('C:', 'REMOVABLE') returns space-separated list of    */
-/* removable drives, e.g. 'D: E:'. Search each for the target file.  */
+/* removable drives, e.g., 'D: E:'. Search each for the target file.  */
 /* SysFileExists is the native check -- no shelling out to dir/cmd   */
 /* needed (see the ooRexx RULES.md "Never wrap commands in cmd /c"   */
 /* rule for why a cmd /C dir ... >NUL 2>NUL pattern is discouraged). */
@@ -130,7 +130,7 @@ serving a web context. Exceptions:
 
 - `\href` or similar commands used only for hyperlinking in a web
   rendering, where the printed shirt shows only the visible text
-- URLs that are substantively part of the shirt design (e.g. a URL
+- URLs that are substantively part of the shirt design (e.g., a URL
   printed as content on the shirt)
 
 This rule applies globally to all shirt TeX sources. Where a shirt TeX
@@ -282,7 +282,7 @@ language. Rules:
 - **Nested blocks**: each level adds 4 spaces.
 - **Comments**: align with the code they annotate.
 - **Language overrides**: if a language community has a strong contrary
-  convention (e.g. 2-space JavaScript, 8-space kernel C), note it in the
+  convention (e.g., 2-space JavaScript, 8-space kernel C), note it in the
   language-specific RULES file; CONVENTIONS.md default applies otherwise.
 
 ooRexx/Rexx specifics are in `ooRexx-RULES.md` and `Rexx-RULES.md`.
@@ -370,7 +370,7 @@ The **pairing rule** and **lockstep rule** are synonyms for this rule.
 **What:** Always present the script file and the session zip together in the
 same `present_files` call or in immediately consecutive calls.
 Never present one without the other.
-Never present other files (e.g. CONVENTIONS.md, diff) in place of
+Never present other files (e.g., CONVENTIONS.md, diff) in place of
 or instead of the script+zip pair.
 Never ask the user to save individual files from within the zip;
 present the zip instead and let the script extract what it needs.
@@ -820,7 +820,7 @@ a preventable failure.
 - **When a log is truncated (run did not complete), consider whether
   running the problematic step directly in a command window would
   surface more information faster than another round-trip of edit,
-  run, upload, diagnose.** If the failing step is isolatable (e.g. a
+  run, upload, diagnose.** If the failing step is isolatable (e.g., a
   single external command), log the exact command being run so the
   user can paste it directly into a cmd window without opening any
   files.
@@ -895,7 +895,7 @@ belongs to and implement accordingly:
 |----------|-----------|----------------|
 | **No longer needed** | Task is permanently done and self-evidencing | Remove from script; record in SESSION-NOTES completed-actions table |
 | **One-time / sentinel** | Task must run exactly once | Sentinel file gates it; remove code after sentinel confirmed |
-| **Interval-based** | Task is expensive and state is stable | `fileAgeDays` or date comparison gate (e.g. 30-day MiKTeX pattern) |
+| **Interval-based** | Task is expensive and state is stable | `fileAgeDays` or date comparison gate (e.g., 30-day MiKTeX pattern) |
 | **Special circumstance** | Task only applies when a trigger is present | Gate on presence of file, zip entry, env var, or flag |
 | **Always needed** | Task is cheap and state can drift silently | Run unconditionally every session |
 

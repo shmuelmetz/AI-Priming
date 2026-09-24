@@ -32,15 +32,15 @@ Entries are graded by confidence:
   BSF4ooRexx tutorial example follows this ordering.
 - Object construction for fixed-arity constructors:
   `obj = .bsf~new("fully.qualified.ClassName", arg1, arg2, ...)`.
-- Field access (static or instance): `obj~fieldName`, e.g.
+- Field access (static or instance): `obj~fieldName`, e.g.,
   `clzColor~red` after `clzColor = bsf.importClass("java.awt.Color")`.
-- Method calls: `obj~methodName(args)`, e.g. `dim~setSize(777,888)`.
+- Method calls: `obj~methodName(args)`, e.g., `dim~setSize(777,888)`.
 - Explicit Java array creation: `bsf.createJavaArray("java.lang.String", n1, n2, ...)`.
 
 ## Unverified
 
 1. **Varargs constructor/method matching.** Does passing several
-   trailing Rexx arguments directly (e.g. three separate strings to
+   trailing Rexx arguments directly (e.g., three separate strings to
    `ProcessBuilder(String...)`) get matched to a Java varargs
    parameter, or must a `bsf.createJavaArray(...)` array be built
    first and passed as a single argument? Not demonstrated either way
@@ -57,7 +57,7 @@ Entries are graded by confidence:
 4. **Enum constant access via `clz~CONSTANT_NAME`.** Inferred by
    analogy to plain static fields (Java enum constants are static
    fields under the hood); never demonstrated in the tutorial against
-   an actual Java `enum` type. Would be needed for e.g.
+   an actual Java `enum` type. Would be needed for, e.g.,
    `bsf.importClass("java.util.concurrent.TimeUnit")~SECONDS`.
 5. **`java.lang.Process` methods through the bridge.** `isAlive()`,
    `exitValue()`, `destroyForcibly()` are real, documented

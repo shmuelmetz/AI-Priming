@@ -11,7 +11,7 @@ when their training contradicts the content here.
 - **URL:** https://docs.python.org/3/reference/
 - **Notes:** The definitive language specification for the version in
   use. Check the version selector at the top of the page — behavior
-  (e.g. `match` statements, exception groups) varies across 3.x minor
+  (e.g., `match` statements, exception groups) varies across 3.x minor
   versions.
 
 ### PEP 8 — Style Guide for Python Code
@@ -52,10 +52,10 @@ when their training contradicts the content here.
 ### Pygments source (for verifying, not assuming, API behavior)
 - **URL:** https://github.com/pygments/pygments
 - **Notes:** When uncertain whether a documented behavior is current,
-  read the actual source (e.g. `pygments/lexer.py`, `pygments/plugin.py`)
+  read the actual source (e.g., `pygments/lexer.py`, `pygments/plugin.py`)
   rather than trusting docs or training data — this project's Python
   work has repeatedly found current source disagreeing with
-  assumptions (e.g. `analyse_text`'s no-`self` signature, the eager
+  assumptions (e.g., `analyse_text`'s no-`self` signature, the eager
   entry-point-loading behavior in `plugin.py`).
 
 ## Community
