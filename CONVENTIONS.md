@@ -983,6 +983,6 @@ Within one work, link every Tanakh reference to the same bilingual site.
 - **Sefaria** (`https://www.sefaria.org`): Hebrew and English side by side, one URL per verse or range,
   e.g. `https://www.sefaria.org/Judges.16.30?lang=bi`; `?lang=bi` forces the bilingual view. The default
   choice for links.
-- **Mechon Mamre** (`https://mechon-mamre.org`): the Masoretic Hebrew text, one page per chapter, e.g.
-  `https://mechon-mamre.org/p/pt/pt3101.htm` (Ecclesiastes 1); used for Hebrew-only chapter links, so not
-  a bilingual choice.
+- **Mechon Mamre** (`https://mechon-mamre.org`): also bilingual (its pages are titled "Hebrew - English Bible"),
+  with the vocalized Hebrew and an English translation side by side, one page per chapter, e.g.
+  `https://mechon-mamre.org/p/pt/pt3101.htm` (Ecclesiastes 1).
