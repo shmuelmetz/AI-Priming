@@ -419,23 +419,60 @@ idiom.
 
 ## `do over` — iterating collections
 
-`do var over collection` iterates any ooRexx collection object:
+[IMPORTANT]
+
+`do var over collection` iterates any ooRexx collection object, but
+**what the loop variable receives is not the same thing across
+classes** — it's value for an ordered/unkeyed collection, but index
+for a keyed one, and this is easy to get backwards since both cases
+compile and run without error. Verified directly against the
+interpreter, one survey across all of these at once rather than
+testing each in isolation the next time it comes up:
+
+| Class | `do v over x` gives | Order |
+|-------|----------------------|-------|
+| `Array` | **value** | index order (gaps in a sparse array are skipped, not visited as `.nil`) |
+| `Stem` (`x.`) | **index** (the tail) | storage order — not numeric, not insertion order |
+| `Directory` | **index** (the key) | unordered (hash order) |
+| `Table` | **index** (the key) | unordered (hash order) |
+| `Relation` | **index** (the key), once per value stored under it | unordered (hash order) |
+| `Bag` | **value** (duplicates preserved) | unordered |
+| `Set` | **value** (unique) | unordered |
+| `Queue` | **value** | FIFO (insertion) order |
 
 ```rexx
 arr = .Array~of('a', 'b', 'c')
 do item over arr
-    say item
+    say item                 /* a / b / c -- in index order */
 end
 
 dir = .Directory~new
 dir['x'] = 1
 dir['y'] = 2
 do key over dir
-    say key '->' dir[key]
+    say key '->' dir[key]    /* the loop var is the KEY, not the value */
 end
 ```
 
-This also works over stems:
+The ordering trap is the sharper half of this: a sparse stem populated
+out of index order comes back out of index order too --
+
+```rexx
+s.1 = 'alpha'
+s.2 = 'beta'
+s.5 = 'gamma'
+do v over s.
+    say v                    /* 1 / 5 / 2 -- NOT 1 / 2 / 5 */
+end
+```
+
+so code that needs numeric/insertion order from a `do over` loop over
+a `Stem`, `Directory`, `Table`, or `Relation` is wrong regardless of
+how it reads — sort `~allIndexes` explicitly first, or use `.Array`/
+`.Queue` (which do preserve order) instead.
+
+This also works over stems using the same value/index split as any
+other keyed collection:
 
 ```rexx
 do key over myStem.
@@ -443,7 +480,20 @@ do key over myStem.
 end
 ```
 
+For a count, use `~items` (works on every class above, including
+`Stem`) rather than `x.0` — nothing populates `.0` as a side effect of
+building a stem via `~list`-style native/library calls, only
+`.1`/`.2`/etc., so `do i = 1 to x.0` silently loops zero times against
+an untouched default. `do over` sidesteps the count question
+entirely when a plain enumeration is all that's needed; reach for
+`do i = 1 to x~items` only when the numeric index itself is also
+needed inside the loop body.
+
 Do NOT generate `do i = 1 to stem.0` when `do over` is cleaner.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-10-01 | Table of `do over` value-vs-index behavior across all built-in collection classes, plus the `~items` vs `.0` count gotcha | A `.WindowsRegistry~list`-populated stem whose `.0` was never set caused a 0-result bug in `inventory-tools.rex`; user then pointed out Array's `do over` behavior differs and asked for a systematic table instead of further one-off trial and error |
 
 ---
 
