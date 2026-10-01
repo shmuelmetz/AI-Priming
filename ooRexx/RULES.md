@@ -468,15 +468,39 @@ end
 
 so code that needs numeric/insertion order from a `do over` loop over
 a `Stem`, `Directory`, `Table`, or `Relation` is wrong regardless of
-how it reads. `~allIndexes` returns a plain `.Array` (verified: its
-`~class` really is `The Array class`), so `~sort` works on it directly
-— `do foo over x~allIndexes~sort` visits indexes in sorted order
-(numeric for a Stem's integer tails, string order for string keys),
-with no separate variable needed to hold the sorted list first:
+how it reads. A `Stem`'s tails are not restricted to integers —
+`s.foo = 'x'` is exactly as legal as `s.1 = 'x'` — so there is no
+class-level "numeric vs string" split to begin with; it's purely a
+property of what the actual index values look like.
+
+`~allIndexes` returns a plain `.Array` (verified: its `~class` really
+is `The Array class`), so `~sort` works on it directly — `do foo over
+x~allIndexes~sort` visits indexes in sorted order, with no separate
+variable needed to hold the sorted list first:
 
 ```rexx
 do v over s.~allIndexes~sort
     say v '->' s.v           /* 1 / 2 / 5 -- sorted this time */
+end
+```
+
+**But `~sort`'s default comparison is lexicographic (string) order,
+not numeric** — it only *looks* numeric above because all three tails
+happen to be single digits. Verified directly with mixed digit widths:
+tails `2 3 10 25`, plain `~sort`, come back `10 2 25 3` — '1' sorts
+before '2' as a character, exactly as `'10' < '2'` does under ordinary
+Rexx string comparison, regardless of what the tails are "supposed to"
+mean numerically. For real numeric order, sort with a comparator that
+does numeric comparison instead of the default:
+
+```rexx
+::class NumComparator subclass Comparator
+::method compare
+  use strict arg a, b
+  return a - b          /* numeric subtraction, not string compare */
+...
+do v over s.~allIndexes~sortWith(.NumComparator~new)
+    say v                 /* 2 / 3 / 10 / 25 -- correct numeric order */
 end
 ```
 
@@ -506,7 +530,7 @@ Do NOT generate `do i = 1 to stem.0` when `do over` is cleaner.
 
 | Date | Entry | Triggered by |
 |------|-------|--------------|
-| 2026-10-01 | Table of `do over` value-vs-index behavior across all built-in collection classes, the `~items` vs `.0` count gotcha, and `do over x~allIndexes~sort` as the sorted-iteration idiom | A `.WindowsRegistry~list`-populated stem whose `.0` was never set caused a 0-result bug in `inventory-tools.rex`; user then pointed out Array's `do over` behavior differs and asked for a systematic table instead of further one-off trial and error; user separately supplied the `~allIndexes~sort` idiom, verified directly (`~allIndexes` really does return a plain `.Array`) |
+| 2026-10-01 | Table of `do over` value-vs-index behavior across all built-in collection classes, the `~items` vs `.0` count gotcha, the `do over x~allIndexes~sort` idiom, and the correction that `~sort` is lexicographic (not numeric) even on all-digit Stem tails | A `.WindowsRegistry~list`-populated stem whose `.0` was never set caused a 0-result bug in `inventory-tools.rex`; user then pointed out Array's `do over` behavior differs and asked for a systematic table instead of further one-off trial and error; user supplied the `~allIndexes~sort` idiom; user then caught a further error in that idiom's own writeup -- "numeric for a Stem" is wrong on two counts: Stem tails aren't restricted to integers, and plain `~sort` is lexicographic even when they are (10/2/25/3 sorts as '10' before '2'), confirmed with a custom `.Comparator` subclass for real numeric order |
 
 ---
 
