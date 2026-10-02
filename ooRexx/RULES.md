@@ -286,6 +286,49 @@ str = str~upper       /* ooRexx only -- avoid */
 
 ---
 
+## `~isA` vs `~class ==` for class checks
+
+[IMPORTANT]
+
+Use `obj~class == .SomeClass` for a concrete class-identity check, not
+`obj~isA(.SomeClass)` — `isA` is another ooRexx-only addition absent
+from classic IBM Object REXX 6.00 (ArcaOS), the same category of gap
+as `~upper` above. Confirmed by direct search of the real IBM Object
+REXX reference manual (`REXX.INF`, decoded via `ipfdecode.py`): the
+Object class's method list runs alphabetically `NEW, CLASS, COPY,
+DEFAULTNAME, HASMETHOD, INIT, OBJECTNAME, OBJECTNAME=, REQUEST, RUN,
+SETMETHOD, START, STRING, UNSETMETHOD` — no `ISA` anywhere in that
+sequence, including exactly where it would alphabetically sit (between
+`HASMETHOD` and `INIT`).
+
+```rexx
+if source~archiver~class == .SevenZipArchiver then ...   /* portable */
+if source~archiver~isA(.SevenZipArchiver) then ...        /* ooRexx only -- avoid */
+```
+
+`~class` *is* in the Object method list above, so this is portable to
+both dialects. `==` strict equality is the right comparison when the
+target is a concrete leaf class, not something that needs an
+inheritance-aware check (ooRexx's `isA` additionally walks the
+superclass chain — if that matters for a given check, there's no
+single-call OBJREXX equivalent; fall back to manually walking
+`~class~superclasses`, or `~hasMethod` as a duck-typing substitute).
+
+This exact gap was the real root cause of a long-unresolved `Error 97:
+Object method not found` in `BackupUSB.cmd`'s `findTools` method,
+traced via `TRACE I` output on the real ArcaOS machine — the trace
+showed no narration *inside* the method body (a separate gotcha: `TRACE
+I` doesn't automatically narrate into a newly-entered method scope the
+way it does for internal routines), which first looked like a dispatch
+failure on `findTools` itself before the real failing line (`isA`) was
+identified.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-10-01 | `~isA` is ooRexx-only, absent from OBJREXX 6.00; use `~class ==` | Root-caused a long-standing `BackupUSB.cmd` `findTools` Error 97 via direct REXX.INF manual search |
+
+---
+
 ## Path construction on Windows
 
 Always derive paths from `value('USERPROFILE',,'ENVIRONMENT')` or
