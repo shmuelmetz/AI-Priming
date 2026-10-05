@@ -630,6 +630,10 @@ was present in the source.
 | Hebrew name | שמואל בן לייביש ולאה |
 
 Name handling:
+- Standard form: Seymour J. Metz (H: Shmuel שמואל בן לייביש ולאה).
+  Exceptions: the résumé uses the full legal name, Seymour Jerome Metz;
+  forms and records with separate legal-name and preferred-name fields
+  use each field as intended.
 - Replace middle names with initials where appropriate.
 - The Hebrew patronymic/matronymic (בן לייביש ולאה) may be dropped
   for brevity.

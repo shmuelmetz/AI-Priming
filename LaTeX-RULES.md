@@ -1,7 +1,7 @@
 # LaTeX Rules for AI Priming
 
 Rules and constraints for AI engines working on LaTeX and TeX projects
-for Seymour J. Metz. Treat this document as ground truth.
+for Seymour J. Metz (H: Shmuel שמואל בן לייביש ולאה). Treat this document as ground truth.
 
 ---
 

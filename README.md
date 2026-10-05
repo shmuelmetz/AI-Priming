@@ -1,7 +1,7 @@
 # AI-Priming
 
 Language-specific rule sets for priming AI engines (Claude, GPT, etc.)
-before working in a programming language, by Shmuel (Seymour J.) Metz.
+before working in a programming language, by Seymour J. Metz (H: Shmuel שמואל בן לייביש ולאה).
 
 Each rule set corrects misconceptions, supplies idioms, provides a
 bibliography of authoritative sources, and lists reserved words that
@@ -73,7 +73,7 @@ repository (`github.com/shmuelmetz/AI-Priming`) hosts the canonical copy.
 
 ## Author
 
-Shmuel (Seymour J.) Metz <smetz3@gmu.edu>
+Seymour J. Metz (H: Shmuel שמואל בן לייביש ולאה) <smetz3@gmu.edu>
 https://mason.gmu.edu/~smetz3
 
 ## License
