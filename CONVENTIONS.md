@@ -624,7 +624,10 @@ was present in the source.
 | Email | smetz3@gmu.edu |
 | Website | http://mason.gmu.edu |
 | GitHub | https://github.com/shmuelmetz |
-| Stack Exchange | https://stackexchange.com/users/110591/shmuel |
+| Stack Exchange | https://stackexchange.com/users/8873368/shmuel |
+| TeX SE | https://tex.stackexchange.com/users/110591/shmuel |
+| Math SE | https://math.stackexchange.com/users/629577/shmuel |
+| Unix & Linux SE | https://unix.stackexchange.com/users/361125/shmuel |
 | LinkedIn | https://www.linkedin.com/in/seymour-metz-a89915152 |
 | ORCID | https://orcid.org/0000-0002-6358-8257 |
 | Hebrew name | שמואל בן לייביש ולאה |

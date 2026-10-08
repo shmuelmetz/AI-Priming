@@ -54,7 +54,8 @@ See also `../ooRexx/BIBLIOGRAPHY.md` for ooRexx-specific references.
   SC28-1883-0 (December 1988) and SC28-1883-4 (August 1991) (TSO
   Extensions predates the z/OS/TSO-E rebrand), plus the current z/OS
   2.5 edition, SA32-0972-50 (2021).
-- **URL:** https://www.ibm.com/docs/en/zos/latest?topic=rexx-tsoe-reference
+- **URL (z/OS "latest" alias, i.e. the current release; release 3.2.0 docs:
+  https://www.ibm.com/docs/en/zos/3.2.0):** https://www.ibm.com/docs/en/zos/latest?topic=rexx-tsoe-reference
   (current, blocked here); working sources used instead:
   https://vtda.org/docs/computing/IBM/Mainframe/SysSoft/TSO/SC28-1883-0_TSOExtensionsV2REXXReference_Dec88.pdf
   (1988),
@@ -84,6 +85,31 @@ See also `../ooRexx/BIBLIOGRAPHY.md` for ooRexx-specific references.
   Command Reference and IPCS User's Guide entries below for where those
   three are actually documented, and why EDIT/TEST work by a genuinely
   different mechanism than a SUBCOM-table entry.
+
+- **TSO/E program numbers and releases (announced / GA, letter; each
+  letter checked 2026-10-07 at https://www.ibm.com/docs/en/announcements/archive/ENUSnnn-nnn):**
+  - TSO Extensions for MVS/370: 5665-285; for MVS/XA: 5665-293. Both
+    announced 21 Oct 1981 (European letter ZP81-0796); US MVS/XA
+    overview 31 Mar 1983, 283-042.
+    - Release 2 (adds the Information Center Facility): announced
+      17 May 1983, 283-147; shipping as of 3 Jul 1984, 284-251
+    - Release 2.1 (MVS/XA virtual storage constraint relief): announced
+      17 Jul 1984, 284-255; available early, 18 Dec 1984, 284-487
+    - Release 4: 19 May 1987 / 25 Sep 1987, 287-193
+  - TSO/E Version 2: 5685-025, announced 19 Apr 1988, 288-191 (MVS/ESA
+    feature available fourth quarter 1988; compare SC28-1883-0,
+    December 1988); 288-694 (6 Dec 1988) sets GA of the MVS/ESA feature
+    at 30 Dec 1988 and of the MVS/XA feature at 6 Jan 1989
+    - V2R2: 5 Sep 1990 / 26 Oct 1990, 290-492
+    - V2R3: 5 Sep 1990 / 29 Mar 1991, 290-493
+    - V2R3.1: 25 Jun 1991 / 30 Aug 1991, 291-313 (adds TSO/E support for
+      the Compiler and Library for REXX/370)
+    - V2R5: 26 Sep 1995 / 29 Dec 1995, 295-406 (adds TSOLIB)
+  - Since OS/390, TSO/E is a base element of the operating system and
+    has no program number of its own (from recall, not from the letters).
+  Program numbers first taken from the timeline at
+  https://en.wikipedia.org/wiki/User:Chatul/References (ingested
+  2026-10-07), then checked against the letters.
 
 ### TSO/E Command Reference
 - **Title:** OS/390 IBM TSO/E Command Reference, SC28-1969-02 (Third
@@ -126,6 +152,13 @@ See also `../ooRexx/BIBLIOGRAPHY.md` for ooRexx-specific references.
   (SC34-4821, edition checked: z/OS V1R6.0, SC34-4821-03)
 - **URL:** http://www.manmrk.net/tutorials/ISPF/ispzdg30.pdf (non-ibm.com
   mirror; ibm.com/docs PDF variants return 403 from this session)
+- **URL (z/OS 3.2, current, checked 2026-10-07):** the ISPF element page
+  linked from https://www.ibm.com/docs/en/zos/3.2.0?topic=documentation-pdf-files-zos-320-library
+- **ISPF program numbers (from the Chatul timeline):** ISPF V2 for VM
+  5664-282; ISPF V2.1 for MVS 5665-319, ISPF/PDF 5665-317; ISPF V3 for
+  VM 5684-043; ISPF V3 for MVS 5685-054, later 5665-054, ISPF/PDF V3
+  5665-402; ISPF for MVS V4 5655-042 (V4R1 GA 8 Apr 1994, 294-161;
+  V4R2 GA 21 Jul 1995, 295-247). ISPF is now a z/OS base element.
 - **Notes:** The authoritative ISPF-specific manual, distinct from the
   TSO/E REXX Reference. Does **not** independently restate the REXX
   host command environment list for ISPF -- that list, as used in
@@ -133,6 +166,29 @@ See also `../ooRexx/BIBLIOGRAPHY.md` for ooRexx-specific references.
   of the ISPF case, not on this manual. Worth re-checking here first
   if a future session needs to settle any doubt about ISPF's REXX
   environment behavior specifically.
+
+### Compiler and Library for REXX/370
+- **Products:** Compiler and Library for REXX/370, 5695-013; Library
+  for REXX/370 (run-time only), 5695-014.
+- **Releases (announced / GA, letter):**
+  - Release 1: 25 Jun 1991 / 30 Aug 1991, 291-320
+  - SAA REXX/370 Release 2: 9 Feb 1993 / 28 May 1993, 293-068
+  - SAA REXX/370 Release 3: 25 Oct 1994 / 27 Oct 1994, 294-679
+  - Compiler and Library for REXX on zSeries Release 4 (still 5695-013):
+    29 Jul 2003 / 29 Aug 2003, 203-190
+- **Related products (letters checked 2026-10-07):** VM REXX Compiler for
+  CMS, 5664-390, 19 Sep 1989 / 17 Nov 1989, 289-455 (withdrawn
+  3 Dec 1991, 291-700); REXX/VSE V1R1, 5686-058, 9 Feb 1993 /
+  17 Sep 1993, 293-063.
+- **URL (Release 1 announcement, checked 2026-10-07):** https://www.ibm.com/docs/en/announcements/archive/ENUS291-320
+  (renders in the browser pane; 403 to curl). Current z/OS run-time:
+  the "REXX Alternate Library" element in the z/OS 3.2 PDF library
+  (see IBM Docs navigation below).
+- **Notes:** The 1991 letter names the companion overview
+  *REXX/370: Introducing the Next Step in REXX Programming* (G511-1430).
+  Source for program numbers and announcement letters: the software
+  timeline at https://en.wikipedia.org/wiki/User:Chatul/References
+  (ingested 2026-10-07); letter URLs are https://www.ibm.com/docs/en/announcements/archive/ENUSnnn-nnn.
 
 ### z/OS Using REXX and z/OS UNIX System Services
 - **Title:** z/OS Using REXX and z/OS UNIX System Services (SA23-2283)
@@ -143,8 +199,10 @@ See also `../ooRexx/BIBLIOGRAPHY.md` for ooRexx-specific references.
 
 ### z/VM REXX/VM Reference
 - **Title:** z/VM REXX/VM Reference (SC24-6314/SC24-5963, per release)
-- **URL:** https://www.vm.ibm.com/library/ (per-release PDFs, e.g.,
-  https://www.vm.ibm.com/library/730pdfs/73631400.pdf); current z/VM
+- **URL:** https://www.ibm.com/support/pages/zvm/library/ (per-release PDFs, e.g.,
+  release 7.3.0: https://www.ibm.com/support/pages/zvm/library/730pdfs/73631400.pdf;
+  release 7.4.0: https://www.ibm.com/support/pages/zvm/library/740pdfs/74631400.pdf; the old
+  www.vm.ibm.com/library paths redirect there, checked 2026-10-07); current z/VM
   7.4.0 online equivalents (reachable via the browser pane; ibm.com/docs
   returns 403 to direct HTTP requests here):
   https://www.ibm.com/docs/en/SSB27U_7.4.0/com.ibm.zvm.v740.dmsb1/xenvir.htm
@@ -206,7 +264,8 @@ See also `../ooRexx/BIBLIOGRAPHY.md` for ooRexx-specific references.
 ### z/VM EXECIO Command Reference
 - **Title:** EXECIO (CMS command), part of z/VM CMS Commands and
   Utilities Reference
-- **URL:** https://www.ibm.com/docs/en/zvm/7.2.0?topic=commands-execio
+- **URL (release 7.4.0, current, checked 2026-10-07):** https://www.ibm.com/docs/en/zvm/7.4.0?topic=commands-execio
+  (release 7.2.0: https://www.ibm.com/docs/en/zvm/7.2.0?topic=commands-execio)
   (reachable via the browser pane; ibm.com/docs returns 403 to direct
   HTTP requests here)
 - **Notes:** Confirms CMS's `EXECIO` supports three destinations:
@@ -321,9 +380,69 @@ See also `../ooRexx/BIBLIOGRAPHY.md` for ooRexx-specific references.
   (what's new/changed per collection), https://www.ibm.com/docs/en/redbooks
   (IBM Redbooks -- often has practical, example-driven REXX guidance
   the reference manuals don't).
+- PDF library index for the current z/OS release (checked 2026-10-07,
+  release 3.2, updated 2026-08-07): https://www.ibm.com/docs/en/zos/3.2.0?topic=documentation-pdf-files-zos-320-library
+  -- per-element pages (TSO/E, ISPF, REXX Alternate Library, MVS, ...)
+  each with a "PDF Link"; plus a quarterly Adobe indexed PDF/PDX .zip.
+  (User:Chatul/References still points at the 3.1 page.)
+- z/VM Library Overview (all releases; 200 to curl, checked 2026-10-07):
+  https://www.vm.ibm.com/library/
+- Other IBM Documentation collections (from User:Chatul/References#Resources,
+  checked 2026-10-07): https://www.ibm.com/docs/en/zvm (z/VM),
+  https://www.ibm.com/docs/en/developer-for-zos (IBM Developer for z/OS;
+  see also the ISPF-IDz-mapping repo),
+  https://www.ibm.com/docs/en/explorer-for-zos (IBM Explorer for z/OS),
+  https://www.ibm.com/docs/en/hla-and-tf/1.6.0?topic=pdf-format-documentation
+  (HLASM and Toolkit Feature 1.6 PDFs),
+  https://www.ibm.com/docs/en/systems-hardware/zsystems (IBM Z hardware,
+  including Principles of Operation).
+- Jim Elliott's CMOS Processor Table (IBM Z models, dates and
+  architecture levels, e.g. for ARCH(n) compiler options):
+  https://jlelliotton.blogspot.com/p/cmos-processor-table.html
+- IBM announcement letters: https://www.ibm.com/docs/en/announcements/archive/ENUSnnn-nnn (e.g. ENUS291-320);
+  2022 onward at https://www.ibm.com/docs/en/announcements/<slug>.
+  Search current AND archived letters from
+  https://www.ibm.com/docs/en/announcements ("Search archived
+  announcements"); in-browser API:
+  /docs/api/v1/search/announcements?query=...&type=announcement,archivedAnnouncement
+  (type=announcement alone misses the archive). Letter text:
+  /docs/api/v1/content/announcement_archive?announcement=ENUSnnn-nnn&parsebody=true&lang=en.
+  ENUSnnn-nnn is the US letter; AP, ZP, LP and A prefixes are the Asia
+  Pacific, Europe, Latin America and Canada editions.
+- Reference list with forms codes, program numbers, FMIDs and
+  announcement dates for IBM mainframe software:
+  https://en.wikipedia.org/wiki/User:Chatul/References (a Wikipedia user
+  page -- a finding aid, not itself WP:RS; cite the IBM documents it lists)
 - Site search: https://www.ibm.com/docs/en/search/<url-encoded-query>
   works well for finding a specific topic page when the collection
   landing page's own navigation doesn't turn it up directly.
+
+## IBM Redbooks (checked 2026-10-07; 200 to curl)
+Abstract pages: https://www.redbooks.ibm.com/abstracts/<sgnnnnnn>.html;
+PDFs: https://www.redbooks.ibm.com/redbooks/pdfs/<sgnnnnnn>.pdf. The
+ABCs of z/OS System Programming series (SG24-6981 to SG24-6990,
+SG24-6327, SG24-7621, SG24-7717) is listed by volume at
+https://en.wikipedia.org/wiki/User:Chatul/References#ABCs_of_z/OS_System_Programming_by_volume.
+- *ABCs of z/OS System Programming Volume 1: Introduction to z/OS and
+  storage concepts, TSO/E, ISPF, JCL, SDSF, and z/OS delivery and
+  installation*, SG24-6981-04, fifth edition, November 2017 (updated
+  22 January 2018), ISBN 9780738442761.
+  https://www.redbooks.ibm.com/redbooks/pdfs/sg246981.pdf
+- *ABCs of z/OS System Programming Volume 8: An introduction to z/OS
+  problem diagnosis*, SG24-6988-01, second edition, 26 July 2012 (IPCS;
+  see the IPCS User's Guide entry above).
+  https://www.redbooks.ibm.com/redbooks/pdfs/sg246988.pdf
+- *ABCs of z/OS System Programming Volume 9: z/OS UNIX System Services*,
+  SG24-6989-05, sixth edition, updated 13 May 2011 (REXX under the OMVS
+  shell). https://www.redbooks.ibm.com/redbooks/pdfs/sg246989.pdf
+- *Introduction to the New Mainframe: z/OS Basics*, SG24-6366-02, third
+  edition, updated 5 January 2012 (Chatul cites -01, 2009).
+  https://www.redbooks.ibm.com/redbooks/pdfs/sg246366.pdf
+- *Implementing REXX Support in SDSF*, SG24-7419-00, 26 June 2007 (z/OS
+  V1.9; found by the Redbooks search, not on Chatul's page).
+  https://www.redbooks.ibm.com/abstracts/sg247419.html
+- Search Redbooks: https://www.ibm.com/docs/en/redbooks, or in the
+  browser pane /docs/api/v1/search/redbooksDocs?query=...&offset=0&limit=20&index-doc-type=redbook,redbookWithToc&scope=
 
 ## RexxLA
 - **URL:** https://www.rexxla.org/

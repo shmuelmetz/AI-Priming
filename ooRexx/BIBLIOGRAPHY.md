@@ -8,9 +8,13 @@ when their training contradicts the content here.
 ### ooRexx Language Reference
 - **Title:** Open Object Rexx Reference (Version 5.1.0)
 - **Publisher:** RexxLA (Rexx Language Association)
-- **URL:** https://www.oorexx.org/docs/rexxref/ ; PDF fetched this
-  session from https://www.oorexx.org/docs/pdf/rexxref.pdf (edition
-  2022.12.22, labeled "5.0.0" on its own title page)
+- **URL (release 5.2.0, current GA, checked 2026-10-07):** https://sourceforge.net/projects/oorexx/files/oorexx-docs/5.2.0/rexxref.pdf
+  (HTML: https://sourceforge.net/projects/oorexx/files/oorexx-docs/5.2.0/rexxref-html.zip; all docs: https://sourceforge.net/projects/oorexx/files/oorexx-docs/5.2.0/).
+  Release 5.3.0beta is also on SourceForge. https://www.oorexx.org/docs/pdf/rexxref.pdf
+  is release 5.0.0 (edition 2022.12.22) -- the PDF originally fetched for these
+  notes; https://www.oorexx.org/docs/html/docref.rex?book=rexxref is a placeholder
+  pointing to SourceForge; the original https://www.oorexx.org/docs/rexxref/ no
+  longer resolves.
 - **PDF:** Included in ooRexx-5.1.0-pdf.zip (RexxLA download page)
 - **Notes:** The definitive language specification. All syntax,
   built-in functions, special variables (`rc`, `result`, `sigl`),
@@ -33,14 +37,19 @@ when their training contradicts the content here.
 ### ooRexx Programming Guide
 - **Title:** Open Object Rexx Programming Guide (Version 5.1.0)
 - **Publisher:** RexxLA
-- **URL:** https://www.oorexx.org/docs/pgguide/
+- **URL (release 5.2.0, current GA, checked 2026-10-07):** https://sourceforge.net/projects/oorexx/files/oorexx-docs/5.2.0/rexxpg.pdf
+  (https://www.oorexx.org/docs/pdf/rexxpg.pdf is release 5.0.0; the old
+  https://www.oorexx.org/docs/pgguide/ no longer resolves)
 - **Notes:** Examples and idiomatic usage. Covers classes, methods,
   collections, and concurrency.
 
 ### RexxUtil Reference
 - **Title:** Open Object Rexx Windows Installation and RexxUtil Reference
 - **Publisher:** RexxLA
-- **URL:** https://www.oorexx.org/docs/winrexxutil/
+- **URL (release 5.2.0, current GA, checked 2026-10-07):** RexxUtil now lives in
+  the Language Reference, §8: https://sourceforge.net/projects/oorexx/files/oorexx-docs/5.2.0/rexxref.pdf (Windows-only
+  extensions: https://sourceforge.net/projects/oorexx/files/oorexx-docs/5.2.0/winextensions.pdf); the old
+  https://www.oorexx.org/docs/winrexxutil/ no longer resolves
 - **Notes:** Documents `SysFileCopy`, `SysFileDelete`, `SysFileExists`,
   `SysFileTree`, `SysGetFileDateTime`, `SysMkDir`, `SysTempFileName`,
   and all other RexxUtil functions. Return value conventions differ
@@ -67,7 +76,8 @@ when their training contradicts the content here.
 
 ### IBM TSO/E REXX Reference
 - **Title:** z/OS TSO/E REXX Reference (SA32-0972)
-- **URL:** https://www.ibm.com/docs/en/zos/latest?topic=rexx-tsoe-reference
+- **URL (z/OS "latest" alias, i.e. the current release; release 3.2.0 docs:
+  https://www.ibm.com/docs/en/zos/3.2.0):** https://www.ibm.com/docs/en/zos/latest?topic=rexx-tsoe-reference
 - **Notes:** IBM mainframe REXX. Relevant for `rc` semantics,
   `address` environments, and classic built-in functions.
   The `address...with` clause is ANSI X3.274-1996 standard Rexx (see
