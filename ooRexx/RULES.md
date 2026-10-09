@@ -329,6 +329,49 @@ identified.
 
 ---
 
+## `::REQUIRES` before every other directive
+
+[IMPORTANT]
+
+OBJREXX 6.00 (ArcaOS) requires every `::REQUIRES` directive to come
+before all `::CLASS`, `::METHOD` and `::ROUTINE` directives; ooRexx
+accepts it anywhere. Put `::REQUIRES` right after the main program, ahead
+of the first other directive, in any program that may run on ArcaOS.
+
+```rexx
+exit 0
+::requires 'platform.cmd'     /* portable: first directive */
+::routine helper
+```
+
+---
+
+## RexxUtil on OBJREXX 6.00: no SysFileExists, SysFileCopy, SysFileMove
+
+[IMPORTANT]
+
+OBJREXX 6.00's RexxUtil has none of `SysFileExists`, `SysFileCopy` or
+`SysFileMove`; calling them gives Error 43 (routine not found).
+Portable replacements:
+
+- Existence: `stream(f, 'C', 'QUERY EXISTS') <> ''`, which works in
+  classic REXX, OBJREXX and ooRexx alike.
+- Copy or move keeping the file name: `SysCopyObject(file, folder)` /
+  `SysMoveObject(file, folder)` handle ordinary files, not only
+  Workplace Shell objects. Their second argument is the destination
+  folder, and they return 1 for success, not 0.
+- Copy or move to a new name: the `COPY` / `MOVE` commands.
+
+Also, OBJREXX's `SysFileTree` takes only a stem for its result
+(`stem.0` holds the count); ooRexx 5.2 also accepts an Array.
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-10-09 | `::REQUIRES` must precede other directives on OBJREXX | `test-platform.cmd` on ArcaOS: "::REQUIRE must precede other directives" |
+| 2026-10-09 | No `SysFileExists`/`SysFileCopy`/`SysFileMove` on OBJREXX; `SysFileTree` stem only | `test-platform.cmd` on ArcaOS: Error 43 in testFiles; checked against `REXX.INF` |
+
+---
+
 ## Path construction on Windows
 
 Always derive paths from `value('USERPROFILE',,'ENVIRONMENT')` or
