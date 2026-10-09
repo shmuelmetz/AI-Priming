@@ -369,6 +369,7 @@ Also, OBJREXX's `SysFileTree` takes only a stem for its result
 |------|-------|--------------|
 | 2026-10-09 | `::REQUIRES` must precede other directives on OBJREXX | `test-platform.cmd` on ArcaOS: "::REQUIRE must precede other directives" |
 | 2026-10-09 | No `SysFileExists`/`SysFileCopy`/`SysFileMove` on OBJREXX; `SysFileTree` stem only | `test-platform.cmd` on ArcaOS: Error 43 in testFiles; checked against `REXX.INF` |
+| 2026-10-09 | `~caselessEquals` is ooRexx-only (Error 97 on OBJREXX); compare `~translate` results with `==` | `test-platform.cmd` on ArcaOS, second run: Error 97 in testFiles; REXX.INF's String class has no CASELESSEQUALS |
 
 ---
 
