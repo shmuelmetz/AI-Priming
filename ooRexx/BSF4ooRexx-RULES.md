@@ -21,6 +21,21 @@ Entries are graded by confidence:
   provisional, not as an established convention, until confirmed
   across more than one run/case.
 
+## When to use BSF4ooRexx [IMPORTANT]
+
+Prefer native ooRexx classes; exploit BSF4ooRexx when appropriate.
+
+- First check the standard ooRexx distribution (`json.cls`,
+  `csvStream.cls`, `yaml.cls`, `mime.cls`, `rxregexp.cls`,
+  `socket.cls`, RexxUtil, the built-in classes) for a class that does
+  the job, and use it.
+- Reach for BSF4ooRexx when ooRexx has nothing comparable and a Java
+  library does the job properly -- e.g. parsing real-world HTML into a
+  tree (jsoup), where string scanning is fragile.
+- A script that uses BSF4ooRexx says so in its header, along with any
+  extra jars it needs; it will not run where Java and BSF4ooRexx are
+  not installed (e.g. OREXX on ArcaOS without them).
+
 ## Established (confirmed against the tutorial)
 
 - `::requires "BSF.CLS"` must be the LAST line of the file. This is a
@@ -67,4 +82,18 @@ Entries are graded by confidence:
 
 ## Tested but unverified
 
-(none yet — pending results of `test-bsf-process.rex`)
+Run 2026-10-16 on Windows 11, ooRexx 5.2.0, BSF4ooRexx850
+(v850-20260326-refresh), IBM Semeru Java 21.0.5, from a fresh shell
+with plain `rexx` (no `rexxj.cmd`):
+
+- `bsf.import("java.lang.System")~getProperty("java.version")` returns
+  the Java version as a Rexx string.
+- `bsf.import("java.lang.String")~new("x")` returns a Java object;
+  `say` shows its Java identity (`java.lang.String@...`), so call
+  `~toString` to get the text.
+- jsoup: `doc = bsf.import("org.jsoup.Jsoup")~parse(.bsf~new("java.io.File", path), "UTF-8")`
+  then `doc~select("p.drop.verse")~size`, `~get(0)~text`,
+  `el~select("span.tooltiptext")~size` all work as expected.
+
+`test-bsf-process.rex` (the `ProcessBuilder` questions above) is still
+untested.
