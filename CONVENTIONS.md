@@ -657,19 +657,80 @@ non-trivial.
 
 ### Wikipedia sourcing (when contributing to Wikipedia)
 
+No LLM-written text is allowed in Wikipedia. An AI may construct complete
+citations (templates with all their parameters), but must not craft
+expositions: article prose, explanations, talk-page posts and the like are
+the user's own.
+
 Evaluate sources for WP:RS (reliable sources) and provide citations in
 WP:CS2 form:
 - Set `=` signs off on both sides with spaces and align them.
 - Place `title=` and `id=` parameters first; place `publisher=` and
   `access-date=` last.
 - Provide `author-link=` parameters if an author article exists on wiki.
-- Wikilink publisher if a Wikipedia page exists.
+- Wikilink publisher if a Wikipedia page exists (for example
+  `publisher = [[IBM]]`).
 - Attempt to generate `section-url=` and `url=` pointing to sources
   not behind pay walls or subscription walls.
+- Give a CS2 template `archive-url=` if a copy of the source exists on
+  the Wayback Machine (with the `archive-date=` the template requires
+  alongside it).
+- A `<ref>` in wikitext never has leading white space: the tag follows
+  the preceding character directly, with no space or line break
+  before it; and there is no space between `<ref>` and `{{cite`. This
+  rule is about `<ref>`: in a bulleted or numbered list of citations, a
+  space after the list marker (`* {{cite ...`) is normal.
+
+This section is the canonical home of the citation rules. PERSONAL-RULES.md
+("Citations") repeats the core of it because Claude Code sessions load that
+file automatically; Personal\docs\CODING-GUIDELINES.md points here. Change
+the rules here first, then bring PERSONAL-RULES.md into step.
+
+Templates and authors:
+- Use `{{cite journal}}`, `{{cite book}}`, `{{cite web}}`,
+  `{{cite standard}}` as appropriate, in CS2 form.
+- Authors: one author per parameter set, numbered: `last1`/`first1`,
+  `last2`/`first2`, ..., with `author-link1`, `author-link2`, ...
+  Never an `author=` list and never `authorN`. (`firstn`/`lastn` in
+  descriptions of this rule are metavariables, not parameter names.)
+- `author-link` points to the author's Wikipedia article if one exists
+  (e.g., `author-link1 = Mike Cowlishaw`); never to a user page.
+- Names follow the Manual of Style: generational and regnal suffixes per
+  MOS:JRSR -- the suffix goes with the given name, never on the surname,
+  and takes no comma (`first1 = John F. Jr.`, `last1 = Kennedy`);
+  honorifics per MOS:HON (generally omitted). Apply this to new
+  citations; do not edit old citations only to fix this, but fix them
+  when an edit is needed for other reasons.
+- Check author names against the book itself (for Redbooks, the "team
+  who wrote this book" paragraph); older editions may list authors only
+  in the acknowledgments.
+- Titles: sentence case for journal articles and book chapters; title
+  case for book titles and journal names (WP:CITESTYLE).
+
+Editions, series and IBM publications:
+- `edition = Fifth`, never `version = Fifth Edition`.
+- For IBM manuals, include the FORM code (the publication number printed
+  on the manual cover).
+- SG24 books are always Redbooks: `series = {{red|Red}}books`, whatever
+  else the cover shows; IBM renders the prefix "Red" in red.
+- For dates, trust IBM announcement letters over third-party sources
+  (Datapro, Computerworld, trade press); use a third-party source only
+  where no letter exists (for example before 1981).
+
+Links and maintenance:
+- Bitsavers links go to `https://bitsavers.org/...`; use the
+  bitsavers.trailing-edge.com mirror only when the file is missing from
+  bitsavers.org.
+- Keep `access-date=`: stripping it changes nothing, since a bot puts it
+  back.
+- Err on the side of too much bibliographic information.
 
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-05-14 | AIprofile.txt rules folded in | TSM/AIprofile.txt parsed from LCS.zip |
+| 2026-11-01 | `archive-url=` and no white space before `<ref>` | User's to-do list, 1 Nov 2026 |
+| 2026-11-02 | Citation rules consolidated here from Personal\docs\CODING-GUIDELINES.md (templates, numbered authors, author-link, title case) and the user's rulings of 9-10 Oct 2026 (no author lists, edition not version, Redbooks series, Bitsavers, announcement-letter dates, access-date, author-name checks); `<ref>` rule scoped as the user stated it (no space between `<ref>` and `{{cite`; list-marker space normal). Not carried over, as the user ruled: a one-off name ruling and a generalized leading-space rule | User, 2 Nov 2026: "put the rules where they need to be in order to be בעלי קיום" |
+| 2026-11-02 | `author-link` to an article only, never a user page (the old example `User:Chatul` was his user page, not article space); names per MOS:JRSR and MOS:HON going forward, old citations fixed only when edited for other reasons; no LLM-written text in Wikipedia | User, 2 Nov 2026 |
 
 ## Repo seeding from ingested zip files
 
