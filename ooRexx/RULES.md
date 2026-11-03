@@ -1633,3 +1633,22 @@ Prefer it for any new prefix-check code.
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-09-01 | Prefer `~abbrev(prefix)` over `left(x,n)=prefix` | Chat-export review (real-world-conventions pass) surfaced a user rule from 2026-06-05 that never made it into this file |
+
+## Routine results: RETURN/EXIT for status, collections for data, SAY for output
+
+- `RETURN` or `EXIT` from a routine indicates success or failure; the
+  caller tests that result.
+- Data a caller needs back come through a mutable object the caller
+  passes in (a `.Directory`, `.Array` or similar) that the routine fills,
+  not through `SAY` -- `SAY` as a value channel forces the caller to run
+  the routine as a subprocess and capture its standard output just to
+  get an answer.
+- `SAY` is for output meant to go somewhere outside the program, for
+  example a report or log the user redirects to an external file.
+- New interfaces take their arguments as separate arguments or objects,
+  not as one string the routine has to parse (`parse arg argLine` plus a
+  token loop).
+
+| Date | Entry | Triggered by |
+|------|-------|--------------|
+| 2026-11-02 | RETURN/EXIT = success/failure; data via passed collection; SAY for external output | claude.ai memory export (Jul 2026), clarified by the user 2 Nov 2026: "exit and return indicate success/failure; some information is intended for an external file" |

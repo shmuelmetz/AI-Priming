@@ -1054,3 +1054,17 @@ Within one work, link every Tanakh reference to the same bilingual site.
 - **Mechon Mamre** (`https://mechon-mamre.org`): also bilingual (its pages are titled "Hebrew - English Bible"),
   with the vocalized Hebrew and an English translation side by side, one page per chapter, e.g.
   `https://mechon-mamre.org/p/pt/pt3101.htm` (Ecclesiastes 1).
+
+## Hebrew phrases on web pages
+
+On web pages, write a Hebrew phrase in ktav malei (full spelling, כתיב מלא),
+followed in parentheses by a transliteration and a translation.
+
+- Exception: when the point is to show the niqqud, write the phrase with niqqud.
+- The user's own Hebrew name follows the Identity rules in PERSONAL-RULES.md:
+  no transliteration unless one is explicitly provided.
+- In replies to the user (not web content), Hebrew is ktav malei or niqqud,
+  with no transliteration.
+
+Source: the user's CONVENTIONS rule in claude.ai memory (export of Jul 2026),
+confirmed for AI-Priming 2 Nov 2026.
