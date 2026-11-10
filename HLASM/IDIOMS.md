@@ -24,8 +24,10 @@ JXLE, JXLEG (BRXH, BRXHG, BRXLE, BRXLG).
 - Each execution both tests a switch and advances to the next: Collier's
   words are "to both test and advance a bit string in a register". Each test
   relies on the previous one having shifted the register left one bit.
-- The 32-bit forms can test 30 consecutive bits and the 64-bit forms 62. The
-  high and low bits should be zero.
+- The 32-bit forms can test 30 consecutive bits and the 64-bit (grande) forms
+  62. The high-order bit is never tested; the low-order bit is a guard and
+  must be 1 (the forwarded post said both should be zero; corrected
+  2026-11-10, see below).
 - Use BXH or BXLE according to which sense of the test should branch.
 - Every test runs, in sequence. This is not a SELECT: a SELECT stops after
   the first successful test (Metz, 9 June 2024, answering a suggestion to
@@ -44,11 +46,16 @@ and both BXH operands are the same odd register, and the constant is
          IF    (BXH,R15,R15)
              action 30
          ENDIF
-STATUS   DC    AL.1(0,flag1,...,flag30,0)
+STATUS   DC    AL.1(0,flag1,...,flag30,1)
 ```
 
-The leading and trailing zero bits are required for the technique to work,
-so a fullword holds 2 guard bits and 30 flags (a doubleword, 62 flags).
+A fullword holds 2 guard bits and 30 flags (a doubleword, with the grande
+forms, 62 flags). The **trailing guard must be 1**: it keeps the register
+non-zero while flags remain to be tested, and with a 0 there a flag followed
+only by zero flags reads as on. The leading bit is never tested, so its
+value does not matter. (Established 2026-11-10 from the S/360 Principles of
+Operation and exhaustive simulation, and confirmed by the author; see
+`papers/BXH-switches.tex`.)
 
 As posted, the example loaded R1 (`L R1,STATUS`), tested `R15,r15`, wrote
 the constant as `A.1(`, and listed `flag1` to `flag31`; those were slips,
