@@ -54,8 +54,9 @@ forms, 62 flags). The **trailing guard must be 1**: it keeps the register
 non-zero while flags remain to be tested, and with a 0 there a flag followed
 only by zero flags reads as on. The leading bit is never tested, so its
 value does not matter. (Established 2026-11-10 from the S/360 Principles of
-Operation and exhaustive simulation, and confirmed by the author; see
-`papers/BXH-switches.tex`.)
+Operation and exhaustive simulation, and confirmed by the author; see the
+paper `Techniques/BXH-switches.tex` in the tools repository,
+https://github.com/shmuelmetz/Tools.)
 
 As posted, the example loaded R1 (`L R1,STATUS`), tested `R15,r15`, wrote
 the constant as `A.1(`, and listed `flag1` to `flag31`; those were slips,
