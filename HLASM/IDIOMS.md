@@ -44,14 +44,15 @@ and both BXH operands are the same odd register, and the constant is
          IF    (BXH,R15,R15)
              action 30
          ENDIF
-STATUS   DC    AL.1(0,flag1,...,flag31,0)
+STATUS   DC    AL.1(0,flag1,...,flag30,0)
 ```
 
-As posted, the example loaded R1 (`L R1,STATUS`), tested `R15,r15`, and
-wrote the constant as `A.1(`; those were slips.
+The leading and trailing zero bits are required for the technique to work,
+so a fullword holds 2 guard bits and 30 flags (a doubleword, 62 flags).
 
-**Open query on the example:** the prose gives 30 testable bits, but the DC
-lists `flag1` to `flag31`.
+As posted, the example loaded R1 (`L R1,STATUS`), tested `R15,r15`, wrote
+the constant as `A.1(`, and listed `flag1` to `flag31`; those were slips,
+corrected by the author on 2026-11-10.
 
 **Not yet verified here:** the exact arithmetic (which value is the
 comparand when R1 and R3 are the same odd register, and which bit decides the
