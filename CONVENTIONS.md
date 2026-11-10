@@ -680,6 +680,10 @@ WP:CS2 form:
   before it; and there is no space between `<ref>` and `{{cite`. This
   rule is about `<ref>`: in a bulleted or numbered list of citations, a
   space after the list marker (`* {{cite ...`) is normal.
+- Wrap every wiki citation in `<ref></ref>` (`<ref>{{cite ...}}</ref>`)
+  unless the request says otherwise.
+- Write bulleted lists for a wiki as wikitext (`* item`), not Markdown
+  or HTML.
 
 This section is the canonical home of the citation rules. PERSONAL-RULES.md
 ("Citations") repeats the core of it because Claude Code sessions load that
@@ -731,6 +735,7 @@ Links and maintenance:
 | 2026-11-01 | `archive-url=` and no white space before `<ref>` | User's to-do list, 1 Nov 2026 |
 | 2026-11-02 | Citation rules consolidated here from Personal\docs\CODING-GUIDELINES.md (templates, numbered authors, author-link, title case) and the user's rulings of 9-10 Oct 2026 (no author lists, edition not version, Redbooks series, Bitsavers, announcement-letter dates, access-date, author-name checks); `<ref>` rule scoped as the user stated it (no space between `<ref>` and `{{cite`; list-marker space normal). Not carried over, as the user ruled: a one-off name ruling and a generalized leading-space rule | User, 2 Nov 2026: "put the rules where they need to be in order to be בעלי קיום" |
 | 2026-11-02 | `author-link` to an article only, never a user page (the old example `User:Chatul` was his user page, not article space); names per MOS:JRSR and MOS:HON going forward, old citations fixed only when edited for other reasons; no LLM-written text in Wikipedia | User, 2 Nov 2026 |
+| 2026-11-10 | Wiki citations wrapped in `<ref></ref>` unless told otherwise; wiki bulleted lists in wikitext | User, 10 Nov 2026 |
 
 ## Repo seeding from ingested zip files
 
