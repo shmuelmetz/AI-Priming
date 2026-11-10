@@ -35,6 +35,7 @@ Language directory names follow established casing conventions:
 | NetRexx | `NetRexx/` | Active | Rexx for the Java platform |
 | PL/I | `PL1/` | Active | IBM Enterprise PL/I for z/OS |
 | Python | `Python/` | Active | Started 2026-08-27 from the `pygments-extensions` project |
+| HLASM | `HLASM/` | Started | IBM High Level Assembler; `IDIOMS.md` and `BIBLIOGRAPHY.md` only so far (2026-11-10) |
 | LaTeX | -- | Active | No `LaTeX/` directory exists; rules live in the top-level `LaTeX-RULES.md` instead (see below) |
 
 ## Top-level rule files
