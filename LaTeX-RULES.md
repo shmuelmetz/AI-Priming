@@ -12,8 +12,8 @@ cross-contaminate:
 
 | Project | Scope | Macro layer |
 |---------|-------|-------------|
-| arXiv papers (LCS + M-Atlas) | Papers 1801.05775 and 1906.11690 | `shared-macros.sty` (arXiv-safe) |
-| CTAN package | `latex-semantic-markup` | `latex-semantic-markup.dtx` / `.sty` |
+| arXiv papers (LCS + M-Atlas) | Papers 1801.05775 and 1906.11690 | `lcs-common.sty` (arXiv-safe; loads `shmuelsemtex`) |
+| CTAN package | `LaTeX-Semantic-Markup` | `shmuelsemtex.dtx` / `.sty` |
 | Personal website | HTML/XHTML/TeX pages | `site-macros.sty` (website-only) |
 
 Do not use arXiv macros in the CTAN package, website macros in papers,
@@ -23,8 +23,10 @@ or CTAN package macros in the website.
 
 ## Shared macro constraint: LCS + M-Atlas
 
-The two arXiv papers share a single common macro file (`shared-macros.sty`
-or equivalent). This is a **hard constraint**:
+The two arXiv papers share a single common macro file, `lcs-common.sty`
+in the Local-Coordinate-Spaces repository. The papers and the package
+build against one shared `.sty` directory, `../texmf/tex/latex`, filled by
+each repository's `make install`. This is a **hard constraint**:
 
 - Any macro that appears in both LCS and M-Atlas **must have identical
   semantics** in both papers.
