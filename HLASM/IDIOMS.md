@@ -24,7 +24,7 @@ JXLE, JXLEG (BRXH, BRXHG, BRXLE, BRXLG).
 - Each execution both tests a switch and advances to the next: Collier's
   words are "to both test and advance a bit string in a register". Each test
   relies on the previous one having shifted the register left one bit.
-- The 32-bit forms can test 30 consecutive bits and the 64-bit (grande) forms
+- The 32-bit forms can test 30 consecutive bits and the 64-bit (grandé) forms
   62. The high-order bit is never tested; the low-order bit is a guard and
   must be 1 (the forwarded post said both should be zero; corrected
   2026-11-10, see below).
@@ -49,7 +49,7 @@ and both BXH operands are the same odd register, and the constant is
 STATUS   DC    AL.1(0,flag1,...,flag30,1)
 ```
 
-A fullword holds 2 guard bits and 30 flags (a doubleword, with the grande
+A fullword holds 2 guard bits and 30 flags (a doubleword, with the grandé
 forms, 62 flags). The **trailing guard must be 1**: it keeps the register
 non-zero while flags remain to be tested, and with a 0 there a flag followed
 only by zero flags reads as on. The leading bit is never tested, so its
