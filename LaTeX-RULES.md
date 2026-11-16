@@ -12,8 +12,8 @@ cross-contaminate:
 
 | Project | Scope | Macro layer |
 |---------|-------|-------------|
-| arXiv papers (LCS + M-Atlas) | Papers 1801.05775 and 1906.11690 | `lcs-common.sty` (arXiv-safe; loads `shmuelsemtex`) |
-| CTAN package | `LaTeX-Semantic-Markup` | `shmuelsemtex.dtx` / `.sty` |
+| arXiv papers (LCS + M-Atlas) | Papers 1801.05775 and 1906.11690 | `lcs-common.sty` (arXiv-safe; loads `semanticmath`) |
+| CTAN package | `LaTeX-Semantic-Markup` | `semanticmath.dtx` / `.sty` |
 | Personal website | HTML/XHTML/TeX pages | `site-macros.sty` (website-only) |
 
 Do not use arXiv macros in the CTAN package, website macros in papers,
