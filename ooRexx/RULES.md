@@ -1450,7 +1450,10 @@ program itself. The relative path is *not* resolved relative to the
 directory containing the `::REQUIRES` directive.
 
 A bare filename with no path prefix, by contrast, is resolved via the
-program search path (`PATH`), independent of CWD -- this is exactly how
+requiring program's own directory and the program search path (`PATH`),
+independent of CWD (verified 2026-11-17 against ooRexx 5.2: a
+`::requires 'lib.cls'` found `lib.cls` beside the requiring program
+when run from another directory) -- this is exactly how
 upstream Rexx projects (the Rexx Parser, net-oo-rexx) get away with
 `::REQUIRES 'Rexx.Parser.cls'` from anywhere: they ship a `setenv.cmd` /
 `setenv.sh` that prepends their own `bin/` to `PATH`, and the require uses a
@@ -1500,6 +1503,7 @@ mainline code anywhere in the file to call the routine that was defined.
 | Date | Entry | Triggered by |
 |------|-------|--------------|
 | 2026-08-31 | `::CLASS ... PUBLIC` required across `::REQUIRES`; `PUBLIC` not transitive; `::REQUIRES` relative paths resolve against CWD, use bare filename + `PATH`/`setenv` instead; mainline must precede all directives, and defining `::ROUTINE main` does not call it | Building `rexx-lint`'s first check against Josep Maria Blasco's Rexx Parser -- four separate silent/confusing failures in a row before the tool produced any output at all |
+| 2026-11-17 | A bare `::REQUIRES` filename is also found in the requiring program's own directory | Building `pfx/gen/pfxdef.cls` for the prefix-macro generator; verified with a two-file test run from another directory |
 
 ## Pitfall: reaching a directive at runtime silently terminates the program (like `EXIT`, not `RETURN`)
 

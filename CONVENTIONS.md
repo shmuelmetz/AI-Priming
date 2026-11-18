@@ -699,8 +699,11 @@ Templates and authors:
   `{{cite standard}}` as appropriate, in CS2 form.
 - Authors: one author per parameter set, numbered: `last1`/`first1`,
   `last2`/`first2`, ..., with `author-link1`, `author-link2`, ...
-  Never an `author=` list and never `authorN`. (`firstn`/`lastn` in
-  descriptions of this rule are metavariables, not parameter names.)
+  Never an `author=` list. `firstN`/`lastN` are for people only: a
+  corporate author (an organization, e.g. RexxLA) takes `authorN` in its
+  place in the numbering, e.g. `last1`/`first1` for a person and
+  `author2 = RexxLA`; a corporation is not a person. (`firstn`/`lastn`
+  in descriptions of this rule are metavariables, not parameter names.)
 - `author-link` points to the author's Wikipedia article if one exists
   (e.g., `author-link1 = Mike Cowlishaw`); never to a user page.
 - Names follow the Manual of Style: generational and regnal suffixes per
@@ -741,6 +744,7 @@ Links and maintenance:
 | 2026-11-02 | `author-link` to an article only, never a user page (the old example `User:Chatul` was his user page, not article space); names per MOS:JRSR and MOS:HON going forward, old citations fixed only when edited for other reasons; no LLM-written text in Wikipedia | User, 2 Nov 2026 |
 | 2026-11-10 | Wiki citations wrapped in `<ref></ref>` unless told otherwise; wiki bulleted lists in wikitext | User, 10 Nov 2026 |
 | 2026-11-15 | Omit redundant `format=PDF`; `mode=cs1`/`mode=cs2` only if the article already uses it | User, 15 Nov 2026: "In citations, omit redundant format=pds and only use mode=cs1\|cs2 if the article already uses it." |
+| 2026-11-17 | Corporate authors take `authorN`; `firstN`/`lastN` only for people (replaces "never `authorN`") | User, 17 Nov 2026: "firstn and lastn are for people; ... a corporation is not a person and you use authorn" |
 
 ## Repo seeding from ingested zip files
 
